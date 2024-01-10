@@ -1,0 +1,5 @@
+---
+variables:
+  azureConnection: root
+  subscriptionId: e678d35b-125e-41ad-ae35-c04dfd4162e5
+  location: swedencentral

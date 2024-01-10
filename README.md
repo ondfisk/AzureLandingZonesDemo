@@ -1,2 +1,1 @@
-# AzureLandingZonesDemo
-Azure Landing Zones Demo
+# Azure Landing Zones Demo
