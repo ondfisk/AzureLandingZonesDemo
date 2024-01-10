@@ -1,0 +1,182 @@
+---
+trigger:
+  paths:
+    include:
+      - .azdo/pipelines/management.yml
+      - environments/canary/management.bicepparam
+      - environments/prod/management.bicepparam
+      - modules/management/**
+    exclude:
+      - README.md
+
+variables:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: build
+    displayName: Build
+    jobs:
+      - job: build
+        displayName: Build
+        variables:
+          - template: ../../environments/canary/vars.yml
+        pool:
+          vmImage: $(vmImage)
+        steps:
+          - task: AzureCLI@2
+            displayName: Build Bicep Template
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az account set --subscription ${{ variables.subscriptionId }}
+                az bicep build --file modules/management/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
+                az bicep build-params --file environments/canary/management.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
+                az bicep build-params --file environments/prod/management.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Artifacts
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifact: drop
+              publishLocation: pipeline
+
+  - stage: test
+    displayName: Test
+    dependsOn: build
+    jobs:
+      - deployment: test_canary
+        displayName: Test (Canary)
+        condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+        variables:
+          - template: ../../environments/canary/vars.yml
+        pool:
+          vmImage: $(vmImage)
+        environment: Canary
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureCLI@2
+                  displayName: Validate Template
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment mg validate \
+                      --management-group-id ${{ variables.managementGroupId }} \
+                      --name "management-$(date -u +"%Y%m%d%H%M%S")" \
+                      --location ${{ variables.location }} \
+                      --template-file $(Pipeline.Workspace)/drop/main.json \
+                      --parameters $(Pipeline.Workspace)/drop/main.canary.parameters.json
+
+                - task: AzureCLI@2
+                  displayName: What-if Template
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment mg validate \
+                      --management-group-id ${{ variables.managementGroupId }} \
+                      --name "management-$(date -u +"%Y%m%d%H%M%S")" \
+                      --location ${{ variables.location }} \
+                      --template-file $(Pipeline.Workspace)/drop/main.json \
+                      --parameters $(Pipeline.Workspace)/drop/main.canary.parameters.json
+
+      - deployment: test
+        displayName: Test (Production)
+        variables:
+          - template: ../../environments/prod/vars.yml
+        pool:
+          vmImage: $(vmImage)
+        environment: Production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureCLI@2
+                  displayName: Validate Template
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment mg validate \
+                      --management-group-id ${{ variables.managementGroupId }} \
+                      --name "management-$(date -u +"%Y%m%d%H%M%S")" \
+                      --location ${{ variables.location }} \
+                      --template-file $(Pipeline.Workspace)/drop/main.json \
+                      --parameters $(Pipeline.Workspace)/drop/main.prod.parameters.json
+
+                - task: AzureCLI@2
+                  displayName: What-if Template
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment mg validate \
+                      --management-group-id ${{ variables.managementGroupId }} \
+                      --name "management-$(date -u +"%Y%m%d%H%M%S")" \
+                      --location ${{ variables.location }} \
+                      --template-file $(Pipeline.Workspace)/drop/main.json \
+                      --parameters $(Pipeline.Workspace)/drop/main.prod.parameters.json
+
+  - stage: deploy
+    displayName: Deploy
+    dependsOn: test
+    jobs:
+      - deployment: deploy_canary
+        displayName: Deploy (Canary)
+        condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+        variables:
+          - template: ../../environments/canary/vars.yml
+        pool:
+          vmImage: $(vmImage)
+        environment: Canary
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureCLI@2
+                  displayName: Deploy Template
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment mg create \
+                      --management-group-id ${{ variables.managementGroupId }} \
+                      --name "management-$(date -u +"%Y%m%d%H%M%S")" \
+                      --location ${{ variables.location }} \
+                      --template-file $(Pipeline.Workspace)/drop/main.json \
+                      --parameters $(Pipeline.Workspace)/drop/main.canary.parameters.json
+
+      - deployment: deploy_prod
+        displayName: Deploy (Production)
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+        variables:
+          - template: ../../environments/prod/vars.yml
+        pool:
+          vmImage: $(vmImage)
+        environment: Production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureCLI@2
+                  displayName: Deploy Template
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment mg create \
+                      --management-group-id ${{ variables.managementGroupId }} \
+                      --name "management-$(date -u +"%Y%m%d%H%M%S")" \
+                      --location ${{ variables.location }} \
+                      --template-file $(Pipeline.Workspace)/drop/main.json \
+                      --parameters $(Pipeline.Workspace)/drop/main.prod.parameters.json
