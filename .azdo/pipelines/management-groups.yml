@@ -24,13 +24,12 @@ stages:
           vmImage: $(vmImage)
         steps:
           - task: AzureCLI@2
-            displayName: Build Bicep Template
+            displayName: Build Template
             inputs:
               azureSubscription: ${{ variables.azureConnection }}
               scriptType: bash
               scriptLocation: inlineScript
               inlineScript: |
-                az account set --subscription ${{ variables.subscriptionId }}
                 az bicep build --file modules/management-groups/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
                 az bicep build-params --file environments/canary/management-groups.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
                 az bicep build-params --file environments/prod/management-groups.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
@@ -42,12 +41,12 @@ stages:
               artifact: drop
               publishLocation: pipeline
 
-  - stage: test
-    displayName: Test
+  - stage: validate
+    displayName: Validate
     dependsOn: build
     jobs:
-      - deployment: test_canary
-        displayName: Test (Canary)
+      - deployment: canary
+        displayName: Canary
         condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
         variables:
           - template: ../../environments/canary/vars.yml
@@ -58,34 +57,24 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: AzureCLI@2
-                  displayName: Validate Template
-                  inputs:
-                    azureSubscription: ${{ variables.azureConnection }}
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az deployment tenant validate \
-                      --name "management-groups-$(date -u +"%Y%m%d%H%M%S")" \
-                      --location ${{ variables.location }} \
-                      --template-file $(Pipeline.Workspace)/drop/main.json \
-                      --parameters $(Pipeline.Workspace)/drop/main.canary.parameters.json
+                - template: templates/tenant-deployment.yml
+                  parameters:
+                    deploymentName: management-groups
+                    environment: canary
+                    command: validate
+                    azureConnection: ${{ variables.azureConnection }}
+                    location: ${{ variables.location }}
 
-                - task: AzureCLI@2
-                  displayName: What-if Template
-                  inputs:
-                    azureSubscription: ${{ variables.azureConnection }}
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az deployment tenant validate \
-                      --name "management-groups-$(date -u +"%Y%m%d%H%M%S")" \
-                      --location ${{ variables.location }} \
-                      --template-file $(Pipeline.Workspace)/drop/main.json \
-                      --parameters $(Pipeline.Workspace)/drop/main.canary.parameters.json
+                - template: templates/tenant-deployment.yml
+                  parameters:
+                    deploymentName: management-groups
+                    environment: canary
+                    command: what-if
+                    azureConnection: ${{ variables.azureConnection }}
+                    location: ${{ variables.location }}
 
-      - deployment: test
-        displayName: Test (Production)
+      - deployment: prod
+        displayName: Production
         variables:
           - template: ../../environments/prod/vars.yml
         pool:
@@ -95,38 +84,28 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: AzureCLI@2
-                  displayName: Validate Template
-                  inputs:
-                    azureSubscription: ${{ variables.azureConnection }}
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az deployment tenant validate \
-                      --name "management-groups-$(date -u +"%Y%m%d%H%M%S")" \
-                      --location ${{ variables.location }} \
-                      --template-file $(Pipeline.Workspace)/drop/main.json \
-                      --parameters $(Pipeline.Workspace)/drop/main.prod.parameters.json
+                - template: templates/tenant-deployment.yml
+                  parameters:
+                    deploymentName: management-groups
+                    environment: prod
+                    command: validate
+                    azureConnection: ${{ variables.azureConnection }}
+                    location: ${{ variables.location }}
 
-                - task: AzureCLI@2
-                  displayName: What-if Template
-                  inputs:
-                    azureSubscription: ${{ variables.azureConnection }}
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az deployment tenant validate \
-                      --name "management-groups-$(date -u +"%Y%m%d%H%M%S")" \
-                      --location ${{ variables.location }} \
-                      --template-file $(Pipeline.Workspace)/drop/main.json \
-                      --parameters $(Pipeline.Workspace)/drop/main.prod.parameters.json
+                - template: templates/tenant-deployment.yml
+                  parameters:
+                    deploymentName: management-groups
+                    environment: prod
+                    command: what-if
+                    azureConnection: ${{ variables.azureConnection }}
+                    location: ${{ variables.location }}
 
   - stage: deploy
     displayName: Deploy
-    dependsOn: test
+    dependsOn: validate
     jobs:
-      - deployment: deploy_canary
-        displayName: Deploy (Canary)
+      - deployment: canary
+        displayName: Canary
         condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
         variables:
           - template: ../../environments/canary/vars.yml
@@ -137,21 +116,16 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: AzureCLI@2
-                  displayName: Deploy Template
-                  inputs:
-                    azureSubscription: ${{ variables.azureConnection }}
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az deployment tenant create \
-                      --name "management-groups-$(date -u +"%Y%m%d%H%M%S")" \
-                      --location ${{ variables.location }} \
-                      --template-file $(Pipeline.Workspace)/drop/main.json \
-                      --parameters $(Pipeline.Workspace)/drop/main.canary.parameters.json
+                - template: templates/tenant-deployment.yml
+                  parameters:
+                    deploymentName: management-groups
+                    environment: canary
+                    command: create
+                    azureConnection: ${{ variables.azureConnection }}
+                    location: ${{ variables.location }}
 
-      - deployment: deploy_prod
-        displayName: Deploy (Production)
+      - deployment: prod
+        displayName: Production
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
         variables:
           - template: ../../environments/prod/vars.yml
@@ -162,15 +136,10 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: AzureCLI@2
-                  displayName: Deploy Template
-                  inputs:
-                    azureSubscription: ${{ variables.azureConnection }}
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az deployment tenant create \
-                      --name "management-groups-$(date -u +"%Y%m%d%H%M%S")" \
-                      --location ${{ variables.location }} \
-                      --template-file $(Pipeline.Workspace)/drop/main.json \
-                      --parameters $(Pipeline.Workspace)/drop/main.prod.parameters.json
+                - template: templates/tenant-deployment.yml
+                  parameters:
+                    deploymentName: management-groups
+                    environment: prod
+                    command: create
+                    azureConnection: ${{ variables.azureConnection }}
+                    location: ${{ variables.location }}

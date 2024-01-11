@@ -2,10 +2,8 @@
 trigger:
   paths:
     include:
-      - .azdo/pipelines/management.yml
-      - environments/canary/management.bicepparam
-      - environments/prod/management.bicepparam
-      - modules/management/**
+      - .azdo/pipelines/policy-definitions.yml
+      - modules/policies/policy-definitions/**
     exclude:
       - README.md
 
@@ -14,10 +12,10 @@ variables:
 
 stages:
   - stage: build
-    displayName: Build
+    displayName: Build & Test
     jobs:
       - job: build
-        displayName: Build
+        displayName: Build & Test
         variables:
           - template: ../../environments/canary/vars.yml
         pool:
@@ -27,12 +25,29 @@ stages:
             displayName: Build Template
             inputs:
               azureSubscription: ${{ variables.azureConnection }}
-              scriptType: bash
+              scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                az bicep build --file modules/management/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
-                az bicep build-params --file environments/canary/management.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
-                az bicep build-params --file environments/prod/management.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
+                ./modules/policies/scripts/Build-PolicyTemplate.ps1 -Path modules/policies/policy-definitions | Out-File -FilePath modules/policies/policy-definitions/main.bicep
+                az bicep build --file modules/policies/policy-definitions/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
+                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
+                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
+
+          - task: PowerShell@2
+            displayName: Run Pester Tests
+            inputs:
+              targetType: inline
+              script: |
+                Invoke-Pester -CI
+              pwsh: true
+
+          - task: PublishTestResults@2
+            displayName: Publish Test Results
+            inputs:
+              testResultsFormat: NUnit
+              testResultsFiles: "**/testResults.xml"
+              failTaskOnFailedTests: true
+              failTaskOnMissingResultsFile: true
 
           - task: PublishPipelineArtifact@1
             displayName: Publish Artifacts
@@ -59,7 +74,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management
+                    deploymentName: policy-definitions
                     environment: canary
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -68,7 +83,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management
+                    deploymentName: policy-definitions
                     environment: canary
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
@@ -88,7 +103,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management
+                    deploymentName: policy-definitions
                     environment: prod
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -97,12 +112,13 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management
+                    deploymentName: policy-definitions
                     environment: prod
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+
 
   - stage: deploy
     displayName: Deploy
@@ -122,13 +138,12 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management
+                    deploymentName: policy-definitions
                     environment: canary
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-
 
       - deployment: prod
         displayName: Production
@@ -144,7 +159,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management
+                    deploymentName: policy-definitions
                     environment: prod
                     command: create
                     azureConnection: ${{ variables.azureConnection }}

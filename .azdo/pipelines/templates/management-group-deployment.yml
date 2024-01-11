@@ -1,0 +1,23 @@
+---
+parameters:
+  - name: deploymentName
+  - name: environment
+  - name: command
+  - name: azureConnection
+  - name: location
+  - name: managementGroupId
+
+steps:
+  - task: AzureCLI@2
+    displayName: Management Group Deployment (${{ parameters.command }}) (${{ parameters.environment }})
+    inputs:
+      azureSubscription: ${{ parameters.azureConnection }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az deployment mg ${{ parameters.command }} \
+        --management-group-id ${{ parameters.managementGroupId }} \
+        --name "${{ parameters.deploymentName }}-$(date -u +"%Y%m%d%H%M%S")" \
+        --location ${{ parameters.location }} \
+        --template-file $(Pipeline.Workspace)/drop/main.json \
+        --parameters $(Pipeline.Workspace)/drop/main.${{ parameters.environment }}.parameters.json

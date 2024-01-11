@@ -1,0 +1,56 @@
+{
+  "properties": {
+    "displayName": "Configure Key Vault to enable soft delete",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "description": "Configure Key Vault to enable soft delete",
+    "metadata": {
+      "version": "1.0",
+      "category": "Key Vault"
+    },
+    "parameters": {
+      "effectType": {
+        "type": "String",
+        "allowedValues": [
+          "Disabled",
+          "Modify"
+        ],
+        "defaultValue": "Modify"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.KeyVault/vaults"
+          },
+          {
+            "not": {
+              "field": "Microsoft.KeyVault/vaults/enableSoftDelete",
+              "equals": "true"
+            }
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effectType')]",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+          ],
+          "conflictEffect": "deny",
+          "operations": [
+            {
+              "operation": "addOrReplace",
+              "field": "Microsoft.KeyVault/vaults/enableSoftDelete",
+              "value": true
+            }
+          ]
+        }
+      }
+    }
+  },
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "key-vault-configure-soft-delete"
+}

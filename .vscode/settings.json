@@ -14,5 +14,12 @@
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
     "cSpell.language": "en",
-    "cSpell.enabled": true
+    "cSpell.enabled": true,
+    "cSpell.ignoreWords": [
+        "azdo",
+        "bicepparam",
+        "outfile",
+        "pscore",
+        "pwsh"
+    ]
 }
