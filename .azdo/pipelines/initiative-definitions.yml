@@ -1,11 +1,11 @@
 ---
-trigger:
-  paths:
-    include:
-      - .azdo/pipelines/initiative-definitions.yml
-      - modules/policies/initiative-definitions/**
-    exclude:
-      - README.md
+resources:
+  pipelines:
+  - pipeline: policy-definitions
+    source: Policy Definitions
+    trigger: true
+
+trigger: none
 
 variables:
   - template: ../../environments/build/vars.yml
@@ -88,6 +88,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
+                    displayName: Validate Template
                     deploymentName: initiative-definitions
                     environment: canary
                     command: validate
@@ -99,6 +100,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
+                    displayName: What-If Template
                     deploymentName: initiative-definitions
                     environment: canary
                     command: what-if
@@ -121,6 +123,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
+                    displayName: Validate Template
                     deploymentName: initiative-definitions
                     environment: prod
                     command: validate
@@ -132,6 +135,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
+                    displayName: What-If Template
                     deploymentName: initiative-definitions
                     environment: prod
                     command: what-if
@@ -159,6 +163,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
+                    displayName: Deploy Template
                     deploymentName: initiative-definitions
                     environment: canary
                     command: create
@@ -182,6 +187,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
+                    displayName: Deploy Template
                     deploymentName: initiative-definitions
                     environment: prod
                     command: create

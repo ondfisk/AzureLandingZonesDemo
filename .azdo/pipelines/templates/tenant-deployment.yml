@@ -1,5 +1,6 @@
 ---
 parameters:
+  - name: displayName
   - name: deploymentName
   - name: environment
   - name: command
@@ -10,7 +11,7 @@ parameters:
 
 steps:
   - task: AzureCLI@2
-    displayName: Tenant Deployment (${{ parameters.command }}) (${{ parameters.environment }})
+    displayName: ${{ parameters.displayName }}
     inputs:
       azureSubscription: ${{ parameters.azureConnection }}
       scriptType: bash

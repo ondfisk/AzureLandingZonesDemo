@@ -58,6 +58,7 @@ stages:
               steps:
                 - template: templates/tenant-deployment.yml
                   parameters:
+                    displayName: Validate Template
                     deploymentName: management-groups
                     environment: canary
                     command: validate
@@ -68,6 +69,7 @@ stages:
 
                 - template: templates/tenant-deployment.yml
                   parameters:
+                    displayName: What-If Template
                     deploymentName: management-groups
                     environment: canary
                     command: what-if
@@ -89,6 +91,7 @@ stages:
               steps:
                 - template: templates/tenant-deployment.yml
                   parameters:
+                    displayName: Validate Template
                     deploymentName: management-groups
                     environment: prod
                     command: validate
@@ -99,6 +102,7 @@ stages:
 
                 - template: templates/tenant-deployment.yml
                   parameters:
+                    displayName: What-If Template
                     deploymentName: management-groups
                     environment: prod
                     command: what-if
@@ -125,6 +129,7 @@ stages:
               steps:
                 - template: templates/tenant-deployment.yml
                   parameters:
+                    displayName: Deploy Template
                     deploymentName: management-groups
                     environment: canary
                     command: create
@@ -147,6 +152,7 @@ stages:
               steps:
                 - template: templates/tenant-deployment.yml
                   parameters:
+                    displayName: Deploy Template
                     deploymentName: management-groups
                     environment: prod
                     command: create
