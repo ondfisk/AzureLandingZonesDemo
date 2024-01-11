@@ -6,6 +6,8 @@ parameters:
   - name: azureConnection
   - name: location
   - name: managementGroupId
+  - name: templateFile
+  - name: parameters
 
 steps:
   - task: AzureCLI@2
@@ -19,5 +21,6 @@ steps:
         --management-group-id ${{ parameters.managementGroupId }} \
         --name "${{ parameters.deploymentName }}-$(date -u +"%Y%m%d%H%M%S")" \
         --location ${{ parameters.location }} \
-        --template-file $(Pipeline.Workspace)/drop/main.json \
-        --parameters $(Pipeline.Workspace)/drop/main.${{ parameters.environment }}.parameters.json
+        --template-file ${{ parameters.templateFile }} \
+        --parameters ${{ parameters.parameters }}
+      failOnStandardError: true

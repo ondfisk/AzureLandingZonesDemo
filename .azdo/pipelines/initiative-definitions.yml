@@ -2,37 +2,57 @@
 trigger:
   paths:
     include:
-      - .azdo/pipelines/management-groups.yml
-      - environments/canary/management-groups.bicepparam
-      - environments/prod/management-groups.bicepparam
-      - modules/management-groups/**
+      - .azdo/pipelines/initiative-definitions.yml
+      - modules/policies/initiative-definitions/**
     exclude:
       - README.md
 
 variables:
   vmImage: ubuntu-latest
+  canaryRootManagementGroupId: lz-canary
+  productionRootManagementGroupId: lz
 
 stages:
   - stage: build
-    displayName: Build
+    displayName: Build & Test
     jobs:
       - job: build
-        displayName: Build
+        displayName: Build & Test
         variables:
           - template: ../../environments/canary/vars.yml
         pool:
           vmImage: $(vmImage)
         steps:
+          - task: PowerShell@2
+            displayName: Run Pester Tests
+            inputs:
+              targetType: inline
+              script: |
+                Invoke-Pester -Path modules/policies/scripts/Test-Initiative.Tests.ps1 -CI
+              pwsh: true
+
+          - task: PublishTestResults@2
+            displayName: Publish Test Results
+            inputs:
+              testResultsFormat: NUnit
+              testResultsFiles: "**/testResults.xml"
+              failTaskOnFailedTests: true
+              failTaskOnMissingResultsFile: true
+
           - task: AzureCLI@2
             displayName: Build Template
             inputs:
               azureSubscription: ${{ variables.azureConnection }}
-              scriptType: bash
+              scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                az bicep build --file modules/management-groups/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
-                az bicep build-params --file environments/canary/management-groups.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
-                az bicep build-params --file environments/prod/management-groups.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
+                ./modules/policies/scripts/Build-InitiativeDefinitionTemplate.ps1 -ManagementGroupId ${{ variables.canaryRootManagementGroupId }} -OutFile main.bicep
+                az bicep build --file modules/policies/initiative-definitions/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.canary.json
+                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
+
+                ./modules/policies/scripts/Build-InitiativeDefinitionTemplate.ps1 -ManagementGroupId ${{ variables.productionRootManagementGroupId }} -OutFile main.bicep
+                az bicep build --file modules/policies/initiative-definitions/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.prod.json
+                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
               failOnStandardError: true
 
           - task: PublishPipelineArtifact@1
@@ -58,24 +78,38 @@ stages:
           runOnce:
             deploy:
               steps:
-                - template: templates/tenant-deployment.yml
+                - checkout: self
+
+                - task: AzurePowerShell@5
+                  displayName: Compare initiative definitions
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    ScriptType: InlineScript
+                    Inline: |
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-InitiativeDefinition.ps1 -Path $(Build.SourcesDirectory)/modules/policies/initiative-definitions -ManagementGroupId ${{ variables.managementGroupId }}
+                    azurePowerShellVersion: LatestVersion
+                    pwsh: true
+
+                - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management-groups
+                    deploymentName: initiative-definitions
                     environment: canary
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.canary.json
                     parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
-                - template: templates/tenant-deployment.yml
+                - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management-groups
+                    deploymentName: initiative-definitions
                     environment: canary
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.canary.json
                     parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
       - deployment: prod
@@ -89,24 +123,26 @@ stages:
           runOnce:
             deploy:
               steps:
-                - template: templates/tenant-deployment.yml
+                - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management-groups
+                    deploymentName: initiative-definitions
                     environment: prod
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.prod.json
                     parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
 
-                - template: templates/tenant-deployment.yml
+                - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management-groups
+                    deploymentName: initiative-definitions
                     environment: prod
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.prod.json
                     parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
 
   - stage: deploy
@@ -125,14 +161,15 @@ stages:
           runOnce:
             deploy:
               steps:
-                - template: templates/tenant-deployment.yml
+                - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management-groups
+                    deploymentName: initiative-definitions
                     environment: canary
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.canary.json
                     parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
       - deployment: prod
@@ -147,12 +184,13 @@ stages:
           runOnce:
             deploy:
               steps:
-                - template: templates/tenant-deployment.yml
+                - template: templates/management-group-deployment.yml
                   parameters:
-                    deploymentName: management-groups
+                    deploymentName: initiative-definitions
                     environment: prod
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.prod.json
                     parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json

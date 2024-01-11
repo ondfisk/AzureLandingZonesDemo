@@ -33,6 +33,7 @@ stages:
                 az bicep build --file modules/management/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
                 az bicep build-params --file environments/canary/management.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
                 az bicep build-params --file environments/prod/management.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
+              failOnStandardError: true
 
           - task: PublishPipelineArtifact@1
             displayName: Publish Artifacts
@@ -65,6 +66,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
@@ -74,6 +77,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
       - deployment: prod
         displayName: Production
@@ -94,6 +99,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
@@ -103,6 +110,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
 
   - stage: deploy
     displayName: Deploy
@@ -128,6 +137,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
 
       - deployment: prod
@@ -150,3 +161,5 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json

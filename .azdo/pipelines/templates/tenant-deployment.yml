@@ -5,6 +5,8 @@ parameters:
   - name: command
   - name: azureConnection
   - name: location
+  - name: templateFile
+  - name: parameters
 
 steps:
   - task: AzureCLI@2
@@ -17,5 +19,6 @@ steps:
         az deployment tenant ${{ parameters.command }} \
         --name "${{ parameters.deploymentName }}-$(date -u +"%Y%m%d%H%M%S")" \
         --location ${{ parameters.location }} \
-        --template-file $(Pipeline.Workspace)/drop/main.json \
-        --parameters $(Pipeline.Workspace)/drop/main.${{ parameters.environment }}.parameters.json
+        --template-file ${{ parameters.templateFile }} \
+        --parameters ${{ parameters.parameters }}
+      failOnStandardError: true

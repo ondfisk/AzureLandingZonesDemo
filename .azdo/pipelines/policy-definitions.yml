@@ -21,24 +21,12 @@ stages:
         pool:
           vmImage: $(vmImage)
         steps:
-          - task: AzureCLI@2
-            displayName: Build Template
-            inputs:
-              azureSubscription: ${{ variables.azureConnection }}
-              scriptType: pscore
-              scriptLocation: inlineScript
-              inlineScript: |
-                ./modules/policies/scripts/Build-PolicyTemplate.ps1 -Path modules/policies/policy-definitions | Out-File -FilePath modules/policies/policy-definitions/main.bicep
-                az bicep build --file modules/policies/policy-definitions/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
-                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
-                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
-
           - task: PowerShell@2
             displayName: Run Pester Tests
             inputs:
               targetType: inline
               script: |
-                Invoke-Pester -CI
+                Invoke-Pester -Path modules/policies/scripts/Test-Policy.Tests.ps1 -CI
               pwsh: true
 
           - task: PublishTestResults@2
@@ -48,6 +36,19 @@ stages:
               testResultsFiles: "**/testResults.xml"
               failTaskOnFailedTests: true
               failTaskOnMissingResultsFile: true
+
+          - task: AzureCLI@2
+            displayName: Build Template
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                ./modules/policies/scripts/Build-PolicyDefinitionTemplate.ps1 -OutFile main.bicep
+                az bicep build --file modules/policies/policy-definitions/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
+                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
+                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
+              failOnStandardError: true
 
           - task: PublishPipelineArtifact@1
             displayName: Publish Artifacts
@@ -72,6 +73,18 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: self
+
+                - task: AzurePowerShell@5
+                  displayName: Compare policy definitions
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    ScriptType: InlineScript
+                    Inline: |
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-PolicyDefinition.ps1 -Path $(Build.SourcesDirectory)/modules/policies/policy-definitions -ManagementGroupId ${{ variables.managementGroupId }}
+                    azurePowerShellVersion: LatestVersion
+                    pwsh: true
+
                 - template: templates/management-group-deployment.yml
                   parameters:
                     deploymentName: policy-definitions
@@ -80,6 +93,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
@@ -89,6 +104,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
       - deployment: prod
         displayName: Production
@@ -109,6 +126,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
@@ -118,6 +137,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
 
 
   - stage: deploy
@@ -144,6 +165,8 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
 
       - deployment: prod
         displayName: Production
@@ -165,3 +188,5 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
+                    templateFile: $(Pipeline.Workspace)/drop/main.json
+                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json

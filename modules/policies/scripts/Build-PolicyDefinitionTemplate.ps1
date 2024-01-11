@@ -3,7 +3,7 @@ param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNull()]
     [String]
-    $Path
+    $OutFile
 )
 
 function Join-Template {
@@ -13,7 +13,7 @@ function Join-Template {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [ValidateNotNull()]
         [Object[]]
-        $Path
+        $Definition
     )
 
     begin {
@@ -25,8 +25,8 @@ var definitions = [
     }
 
     process {
-        $Path | ForEach-Object {
-            "  loadJsonContent('$Path')"
+        $Definition | ForEach-Object {
+            "  loadJsonContent('$($PSItem.Name)')"
         }
     }
 
@@ -42,4 +42,4 @@ resource policyDefinitionResources 'Microsoft.Authorization/policyDefinitions@20
     }
 }
 
-Get-ChildItem -Path $Path -Filter *.json | Select-Object -ExpandProperty Name | Join-Template
+Get-ChildItem -Path "$PSScriptRoot/../policy-definitions" -Filter *.json | Join-Template | Out-File -Path "$PSScriptRoot/../policy-definitions/$OutFile"
