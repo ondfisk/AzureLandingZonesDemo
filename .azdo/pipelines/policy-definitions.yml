@@ -8,7 +8,7 @@ trigger:
       - README.md
 
 variables:
-  vmImage: ubuntu-latest
+  - template: ../../environments/build/vars.yml
 
 stages:
   - stage: build
@@ -16,10 +16,8 @@ stages:
     jobs:
       - job: build
         displayName: Build & Test
-        variables:
-          - template: ../../environments/canary/vars.yml
         pool:
-          vmImage: $(vmImage)
+          vmImage: ${{ variables.vmImage }}
         steps:
           - task: PowerShell@2
             displayName: Run Pester Tests
@@ -63,11 +61,11 @@ stages:
     jobs:
       - deployment: canary
         displayName: Canary
-        condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+        condition: succeeded()
         variables:
           - template: ../../environments/canary/vars.yml
         pool:
-          vmImage: $(vmImage)
+          vmImage: ${{ variables.vmImage }}
         environment: Canary
         strategy:
           runOnce:
@@ -112,7 +110,7 @@ stages:
         variables:
           - template: ../../environments/prod/vars.yml
         pool:
-          vmImage: $(vmImage)
+          vmImage: ${{ variables.vmImage }}
         environment: Production
         strategy:
           runOnce:
@@ -147,11 +145,11 @@ stages:
     jobs:
       - deployment: canary
         displayName: Canary
-        condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+        condition: succeeded()
         variables:
           - template: ../../environments/canary/vars.yml
         pool:
-          vmImage: $(vmImage)
+          vmImage: ${{ variables.vmImage }}
         environment: Canary
         strategy:
           runOnce:
@@ -174,7 +172,7 @@ stages:
         variables:
           - template: ../../environments/prod/vars.yml
         pool:
-          vmImage: $(vmImage)
+          vmImage: ${{ variables.vmImage }}
         environment: Production
         strategy:
           runOnce:
