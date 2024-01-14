@@ -1,0 +1,120 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.24.24.22086",
+      "templateHash": "13323033195958738068"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[deployment().location]"
+    },
+    "identity": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "key-vault-configuration-assignment",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "policyAssignmentName": {
+            "value": "key-vault-configuration"
+          },
+          "policyDefinitionId": {
+            "value": "[extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policySetDefinitions', 'configure-key-vault-security')]"
+          },
+          "userAssignedIdentity": {
+            "value": "[parameters('identity')]"
+          },
+          "parameters": {
+            "value": {}
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.24.24.22086",
+              "templateHash": "2819739436536444846"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[deployment().location]"
+            },
+            "policyAssignmentName": {
+              "type": "string",
+              "maxLength": 24
+            },
+            "policyAssignmentDisplayName": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "policyAssignmentDescription": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "policyDefinitionId": {
+              "type": "string"
+            },
+            "userAssignedIdentity": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "enforcementMode": {
+              "type": "string",
+              "defaultValue": "Default",
+              "allowedValues": [
+                "Default",
+                "DoNotEnforce"
+              ]
+            },
+            "parameters": {
+              "type": "object",
+              "defaultValue": {}
+            },
+            "notScopes": {
+              "type": "array",
+              "defaultValue": []
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Authorization/policyAssignments",
+              "apiVersion": "2021-06-01",
+              "name": "[parameters('policyAssignmentName')]",
+              "location": "[parameters('location')]",
+              "identity": "[if(empty(parameters('userAssignedIdentity')), createObject('type', 'None'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('userAssignedIdentity')), createObject())))]",
+              "properties": {
+                "displayName": "[if(empty(parameters('policyAssignmentDisplayName')), reference(parameters('policyDefinitionId'), '2021-06-01').displayName, parameters('policyAssignmentDisplayName'))]",
+                "description": "[if(empty(parameters('policyAssignmentDescription')), reference(parameters('policyDefinitionId'), '2021-06-01').description, parameters('policyAssignmentDescription'))]",
+                "enforcementMode": "[parameters('enforcementMode')]",
+                "policyDefinitionId": "[parameters('policyDefinitionId')]",
+                "parameters": "[parameters('parameters')]",
+                "notScopes": "[parameters('notScopes')]"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

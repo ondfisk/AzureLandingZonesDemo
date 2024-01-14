@@ -3,12 +3,7 @@ param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNull()]
     [String]
-    $ManagementGroupId,
-
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNull()]
-    [String]
-    $OutFile
+    $ManagementGroupId
 )
 
 function Join-Template {
@@ -36,7 +31,7 @@ var definitions = [
 
     process {
         $Definition | ForEach-Object {
-            (Get-Content -Path $PSItem -Raw) -replace "<prefix>", $ManagementGroupId | Out-File -Path "$PSScriptRoot/../initiative-definitions/temp/$($PSItem.Name)"
+            (Get-Content -Path $PSItem -Raw) -replace "<prefix>", $ManagementGroupId | Out-File -Path "$PSScriptRoot/../initiatives/temp/$($PSItem.Name)"
             "  loadJsonContent('temp/$($PSItem.Name)')"
         }
     }
@@ -53,6 +48,6 @@ resource policySetDefinitionResources 'Microsoft.Authorization/policySetDefiniti
     }
 }
 
-New-Item -Path "$PSScriptRoot/../initiative-definitions/temp" -ItemType Directory -Force
+New-Item -Path "$PSScriptRoot/../initiatives/temp" -ItemType Directory -Force
 
-Get-ChildItem -Path "$PSScriptRoot/../initiative-definitions" -Filter *.json | Join-Template -ManagementGroupId $ManagementGroupId | Out-File -Path "$PSScriptRoot/../initiative-definitions/$OutFile"
+Get-ChildItem -Path "$PSScriptRoot/../initiatives" -Filter *.json | Join-Template -ManagementGroupId $ManagementGroupId | Out-File -Path "$PSScriptRoot/../initiatives/main.bicep"

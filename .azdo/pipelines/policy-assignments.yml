@@ -1,0 +1,145 @@
+---
+resources:
+  pipelines:
+  - pipeline: initiatives
+    source: Initiative Definitions
+    trigger: true
+
+trigger: none
+
+variables:
+  - template: ../../environments/build/vars.yml
+
+stages:
+  - stage: build
+    displayName: Build & Test
+    jobs:
+      - job: build
+        displayName: Build & Test
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        steps:
+          - task: PowerShell@2
+            displayName: Run Pester Tests
+            inputs:
+              targetType: inline
+              script: |
+                Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1 -CI
+              pwsh: true
+
+          - task: PublishTestResults@2
+            displayName: Publish Test Results
+            inputs:
+              testResultsFormat: NUnit
+              testResultsFiles: "**/testResults.xml"
+              failTaskOnFailedTests: true
+              failTaskOnMissingResultsFile: true
+
+          - task: AzureCLI@2
+            displayName: Build Template (Canary)
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $rootManagementGroupId = "${{ variables.canaryRootManagementGroupId }}"
+                $assignmentsDirectory = "$(Build.SourcesDirectory)[\\/]modules[\\/]policies[\\/]assignments"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$rootManagementGroupId"
+                $environment = "canary"
+
+                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -RootManagementGroupId $rootManagementGroupId -Environment $environment
+                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicep -Recurse | ForEach-Object {
+                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+                    New-Item -Path $path -ItemType Directory -Force | Out-Null
+                    az bicep build --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).json"
+                }
+                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicepparam -Recurse | ForEach-Object {
+                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+                    New-Item -Path $path -ItemType Directory -Force | Out-Null
+                    az bicep build-params --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).parameters.json"
+                }
+              failOnStandardError: true
+
+          - task: AzureCLI@2
+            displayName: Build Template (Production)
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $rootManagementGroupId = "${{ variables.prodRootManagementGroupId }}"
+                $assignmentsDirectory = "$(Build.SourcesDirectory)[\\/]modules[\\/]policies[\\/]assignments"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$rootManagementGroupId"
+                $environment = "prod"
+
+                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -RootManagementGroupId $rootManagementGroupId -Environment $environment
+                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicep -Recurse | ForEach-Object {
+                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+                    New-Item -Path $path -ItemType Directory -Force | Out-Null
+                    az bicep build --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).json"
+                }
+                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicepparam -Recurse | ForEach-Object {
+                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+                    New-Item -Path $path -ItemType Directory -Force | Out-Null
+                    az bicep build-params --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).parameters.json"
+                }
+              failOnStandardError: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Artifacts
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifact: drop
+              publishLocation: pipeline
+
+  - stage: validate
+    displayName: Validate
+    dependsOn: build
+    jobs:
+      - deployment: canary
+        displayName: Canary
+        condition: succeeded()
+        variables:
+          - template: ../../environments/canary/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        environment: Canary
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: AzurePowerShell@5
+                  displayName: Compare assignments
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    ScriptType: InlineScript
+                    Inline: |
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Assignment.ps1 -Prefix ${{ variables.managementGroupId }}
+                    azurePowerShellVersion: LatestVersion
+                    pwsh: true
+
+      - deployment: prod
+        displayName: Production
+        variables:
+          - template: ../../environments/prod/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        environment: Production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                - task: AzurePowerShell@5
+                  displayName: Compare assignments
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    ScriptType: InlineScript
+                    Inline: |
+                      $ErrorActionPreference = ("$(Build.SourceBranch)" -eq "refs/heads/main") ? "Stop" : "Continue"
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Assignment.ps1 -Prefix ${{ variables.managementGroupId }}
+                    azurePowerShellVersion: LatestVersion
+                    pwsh: true

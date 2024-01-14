@@ -3,4 +3,4 @@ variables:
   azureConnection: root
   vmImage: ubuntu-latest
   canaryRootManagementGroupId: lz-canary
-  productionRootManagementGroupId: lz
+  prodRootManagementGroupId: lz

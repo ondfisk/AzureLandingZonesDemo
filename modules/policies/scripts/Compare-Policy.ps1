@@ -2,14 +2,10 @@
 param (
     [Parameter(Mandatory = $true)]
     [String]
-    $Path,
-
-    [Parameter(Mandatory = $true)]
-    [String]
     $ManagementGroupId
 )
 
-function Write-Compare ($Label, $Object, $SideIndicator, $Prefix) {
+function Write-Compare ([Parameter(Mandatory = $true)][String]$Label, $Object, $SideIndicator, $Prefix) {
     $compare = $Object | Where-Object SideIndicator -eq $SideIndicator | ForEach-Object { "$Prefix $($PSItem.InputObject)" }
     if ($compare) {
         Write-Output $Label
@@ -24,21 +20,20 @@ function Get-ResourceNameFromTemplate ($Path, $Pattern) {
     }
 }
 
-function Compare-Item ($Source, $Cloud, $Label, $ManagementGroupId) {
-    Write-Output "Comparing initiatives under '$ManagementGroupId'..."
+function Compare-Item ($Source, $Cloud, $ManagementGroupId) {
+    Write-Output "Comparing definitions under '$ManagementGroupId'..."
     $compare = Compare-Object -ReferenceObject ($Cloud ?? @()) -DifferenceObject ($Source ?? @()) -IncludeEqual
-    Write-Compare -Label "Initiatives to be created:" -Object $compare -SideIndicator "=>" -Prefix "+"
-    Write-Compare -Label "Initiatives to be updated:" -Object $compare -SideIndicator "==" -Prefix "*"
-    Write-Compare -Label "Initiatives to be deleted:" -Object $compare -SideIndicator "<=" -Prefix "-"
+    Write-Compare -Label "Policy definitions to be created:" -Object $compare -SideIndicator "=>" -Prefix "+"
+    Write-Compare -Label "Policy definitions to be updated:" -Object $compare -SideIndicator "==" -Prefix "*"
+    Write-Compare -Label "Policy definitions to be deleted:" -Object $compare -SideIndicator "<=" -Prefix "-"
 
     if ($compare | Where-Object SideIndicator -EQ "<=") {
         Write-Error "Delete detected. Manual intervention required."
     }
 }
 
-$cloud = Get-AzPolicySetDefinition -ManagementGroupName $ManagementGroupId -Custom |
+$cloud = Get-AzPolicyDefinition -ManagementGroupName $ManagementGroupId -Custom |
 Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
 Select-Object -ExpandProperty Name
-
-$source = Get-ResourceNameFromTemplate -Path $Path -Pattern "resource .+ 'Microsoft.Authorization/policySetDefinitions@.+' = \{\s+name: '(.+)'"
+$source = Get-ResourceNameFromTemplate -Path "$PSScriptRoot/../policies"
 Compare-Item -Source $source -Cloud $cloud -ManagementGroupId $ManagementGroupId

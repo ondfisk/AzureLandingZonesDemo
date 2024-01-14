@@ -3,6 +3,8 @@ trigger:
   paths:
     include:
       - .azdo/pipelines/policy-definitions.yml
+      - .azdo/pipelines/initiative-definitions.yml
+      - .azdo/pipelines/policy-assignments.yml
       - modules/policies/**
     exclude:
       - README.md
@@ -42,10 +44,10 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                ./modules/policies/scripts/Build-PolicyDefinitionTemplate.ps1 -OutFile main.bicep
-                az bicep build --file modules/policies/policy-definitions/main.bicep --outfile $(Build.ArtifactStagingDirectory)/main.json
-                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.canary.parameters.json
-                az bicep build-params --file modules/policies/scripts/empty.bicepparam --outfile $(Build.ArtifactStagingDirectory)/main.prod.parameters.json
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
+
+                ./modules/policies/scripts/Build-PolicyTemplate.ps1
+                az bicep build --file modules/policies/policies/main.bicep --outfile "$stagingDirectory/main.json"
               failOnStandardError: true
 
           - task: PublishPipelineArtifact@1
@@ -74,38 +76,38 @@ stages:
                 - checkout: self
 
                 - task: AzurePowerShell@5
-                  displayName: Compare policy definitions
+                  displayName: Compare policies
                   inputs:
                     azureSubscription: ${{ variables.azureConnection }}
                     ScriptType: InlineScript
                     Inline: |
-                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-PolicyDefinition.ps1 -Path $(Build.SourcesDirectory)/modules/policies/policy-definitions -ManagementGroupId ${{ variables.managementGroupId }}
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ variables.managementGroupId }}
                     azurePowerShellVersion: LatestVersion
                     pwsh: true
 
                 - template: templates/management-group-deployment.yml
                   parameters:
                     displayName: Validate Template
-                    deploymentName: policy-definitions
+                    deploymentName: policies
                     environment: canary
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
+                    parameters: "{}"
 
                 - template: templates/management-group-deployment.yml
                   parameters:
                     displayName: What-If Template
-                    deploymentName: policy-definitions
+                    deploymentName: policies
                     environment: canary
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
+                    parameters: "{}"
 
       - deployment: prod
         displayName: Production
@@ -118,29 +120,42 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: self
+
+                - task: AzurePowerShell@5
+                  displayName: Compare policies
+                  inputs:
+                    azureSubscription: ${{ variables.azureConnection }}
+                    ScriptType: InlineScript
+                    Inline: |
+                      $ErrorActionPreference = ("$(Build.SourceBranch)" -eq "refs/heads/main") ? "Stop" : "Continue"
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ variables.managementGroupId }}
+                    azurePowerShellVersion: LatestVersion
+                    pwsh: true
+
                 - template: templates/management-group-deployment.yml
                   parameters:
                     displayName: Validate Template
-                    deploymentName: policy-definitions
+                    deploymentName: policies
                     environment: prod
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
+                    parameters: "{}"
 
                 - template: templates/management-group-deployment.yml
                   parameters:
                     displayName: What-If Template
-                    deploymentName: policy-definitions
+                    deploymentName: policies
                     environment: prod
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
+                    parameters: "{}"
 
 
   - stage: deploy
@@ -162,14 +177,14 @@ stages:
                 - template: templates/management-group-deployment.yml
                   parameters:
                     displayName: Deploy Template
-                    deploymentName: policy-definitions
+                    deploymentName: policies
                     environment: canary
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: $(Pipeline.Workspace)/drop/main.canary.parameters.json
+                    parameters: "{}"
 
       - deployment: prod
         displayName: Production
@@ -186,11 +201,11 @@ stages:
                 - template: templates/management-group-deployment.yml
                   parameters:
                     displayName: Deploy Template
-                    deploymentName: policy-definitions
+                    deploymentName: policies
                     environment: prod
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
+                    parameters: "{}"

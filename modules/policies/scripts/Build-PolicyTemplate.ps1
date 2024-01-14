@@ -1,10 +1,5 @@
 [CmdletBinding()]
-param (
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNull()]
-    [String]
-    $OutFile
-)
+param ()
 
 function Join-Template {
     [CmdletBinding()]
@@ -42,4 +37,4 @@ resource policyDefinitionResources 'Microsoft.Authorization/policyDefinitions@20
     }
 }
 
-Get-ChildItem -Path "$PSScriptRoot/../policy-definitions" -Filter *.json | Join-Template | Out-File -Path "$PSScriptRoot/../policy-definitions/$OutFile"
+Get-ChildItem -Path "$PSScriptRoot/../policies" -Filter *.json | Join-Template | Out-File -Path "$PSScriptRoot/../policies/main.bicep"

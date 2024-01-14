@@ -1,15 +1,15 @@
 BeforeDiscovery {
-    $path = Resolve-Path "$PSScriptRoot/../policy-definitions"
-    $definitions = Get-ChildItem -Path "$path/*.json"
+    $path = Resolve-Path "$PSScriptRoot/../policies"
+    $policies = Get-ChildItem -Path "$path/*.json"
 }
 
 Describe "Test-Policy" {
-    It "<PSItem.Name> name is same as file name" -ForEach $definitions {
+    It "<PSItem.Name> name is same as file name" -ForEach $policies {
         $template = Get-Content -Path $PSItem | ConvertFrom-Json
         $template.name | Should -BeExactly $PSItem.BaseName
     }
 
-    It "<PSItem.Name> is a policy definition" -ForEach $definitions {
+    It "<PSItem.Name> is a policy definition" -ForEach $policies {
         $template = Get-Content -Path $PSItem | ConvertFrom-Json
         $template.type | Should -Be "Microsoft.Authorization/policyDefinitions"
     }
