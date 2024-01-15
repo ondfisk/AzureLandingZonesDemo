@@ -1,6 +1,6 @@
 using '../../modules/management-groups/main.bicep'
 
-param rootManagementGroupDisplayName = 'Azure Landing Zones'
+param displayName = 'Azure Landing Zones'
 
 param prefix = 'lz'
 

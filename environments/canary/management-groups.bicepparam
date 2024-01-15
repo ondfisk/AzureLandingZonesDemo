@@ -1,6 +1,6 @@
 using '../../modules/management-groups/main.bicep'
 
-param rootManagementGroupDisplayName = 'Azure Landing Zones - Canary'
+param displayName = 'Azure Landing Zones - Canary'
 
 param prefix = 'lz-canary'
 
