@@ -42,12 +42,12 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $rootManagementGroupId = "${{ variables.canaryRootManagementGroupId }}"
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
-                $environment = "canary"
+                $managementGroupId = "${{ variables.canaryManagementGroupId }}"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
+                New-Item -Path $stagingDirectory -ItemType Directory -Force | Out-Null
 
-                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $rootManagementGroupId
-                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.$environment.json"
+                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.json"
               failOnStandardError: true
 
           - task: AzureCLI@2
@@ -57,12 +57,12 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $rootManagementGroupId = "${{ variables.prodRootManagementGroupId }}"
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
-                $environment = "prod"
+                $managementGroupId = "${{ variables.prodManagementGroupId }}"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
+                New-Item -Path $stagingDirectory -ItemType Directory -Force | Out-Null
 
-                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $rootManagementGroupId
-                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.$environment.json"
+                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.json"
               failOnStandardError: true
 
           - task: PublishPipelineArtifact@1
@@ -102,27 +102,23 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate Template
+                    displayName: Validate deployment
                     deploymentName: initiatives
-                    environment: canary
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.canary.json
-                    parameters: "{}"
+                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-If Template
+                    displayName: What-if deployment
                     deploymentName: initiatives
-                    environment: canary
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.canary.json
-                    parameters: "{}"
+                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
 
       - deployment: prod
         displayName: Production
@@ -150,27 +146,23 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate Template
+                    displayName: Validate deployment
                     deploymentName: initiatives
-                    environment: prod
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.prod.json
-                    parameters: "{}"
+                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-If Template
+                    displayName: What-if deployment
                     deploymentName: initiatives
-                    environment: prod
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.prod.json
-                    parameters: "{}"
+                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
 
   - stage: deploy
     displayName: Deploy
@@ -190,15 +182,13 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Deploy Template
+                    displayName: Deploy initiatives
                     deploymentName: initiatives
-                    environment: canary
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.canary.json
-                    parameters: "{}"
+                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
 
       - deployment: prod
         displayName: Production
@@ -214,12 +204,10 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Deploy Template
+                    displayName: Deploy initiatives
                     deploymentName: initiatives
-                    environment: prod
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/main.prod.json
-                    parameters: "{}"
+                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json

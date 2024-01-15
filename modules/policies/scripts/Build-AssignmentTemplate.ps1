@@ -9,7 +9,7 @@ param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNull()]
     [String]
-    $RootManagementGroupId
+    $ManagementGroupId
 )
 
 function Join-Template {
@@ -55,7 +55,7 @@ function Join-Parameter {
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
         [String]
-        $RootManagementGroupId
+        $ManagementGroupId
     )
 
     begin {
@@ -69,7 +69,7 @@ function Join-Parameter {
         Where-Object { $PSItem } |
         Where-Object { $PSItem -notmatch "^using " } |
         ForEach-Object {
-            $parameter = $PSItem.Trim() -replace "^param rootManagementGroupId string$", "param rootManagementGroupId string = '$RootManagementGroupId'"
+            $parameter = $PSItem.Trim() -replace "^param managementGroupId string$", "param managementGroupId string = '$ManagementGroupId'"
             if ($parameters.Add($parameter)) {
                 $parameter
             }
@@ -81,7 +81,6 @@ function Join-Parameter {
 }
 
 Get-ChildItem -Path "$PSScriptRoot/.." -Directory -Recurse | Where-Object FullName -Match "[/\\]assignments" | ForEach-Object {
-    # $managementGroupId = $PSItem.FullName -replace "^.+[/\\]assignments", $RootManagementGroupId -replace "[/\\]", "-"
     $templateFile = "$PSItem/main.$Environment.bicep"
     $parameterFile = "$PSItem/main.$Environment.bicepparam"
 
@@ -89,6 +88,6 @@ Get-ChildItem -Path "$PSScriptRoot/.." -Directory -Recurse | Where-Object FullNa
     if ($assignments) {
         $assignments | Join-Template | Out-File -Path $templateFile
         $parameters = Get-ChildItem -Path $PSItem -Filter *.$Environment.bicepparam | Where-Object { $PSItem.Name -notin "main.bicepparam", "main.canary.bicepparam", "main.prod.bicepparam" }
-        $parameters | Join-Parameter -Environment $Environment -RootManagementGroupId $RootManagementGroupId | Out-File -Path $parameterFile
+        $parameters | Join-Parameter -Environment $Environment -ManagementGroupId $ManagementGroupId | Out-File -Path $parameterFile
     }
 }

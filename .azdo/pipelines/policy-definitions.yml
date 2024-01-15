@@ -87,27 +87,23 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate Template
+                    displayName: Validate deployment
                     deploymentName: policies
-                    environment: canary
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: "{}"
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-If Template
+                    displayName: What-if deployment
                     deploymentName: policies
-                    environment: canary
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: "{}"
 
       - deployment: prod
         displayName: Production
@@ -135,27 +131,23 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate Template
+                    displayName: Validate deployment
                     deploymentName: policies
-                    environment: prod
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: "{}"
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-If Template
+                    displayName: What-if deployment
                     deploymentName: policies
-                    environment: prod
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: "{}"
 
 
   - stage: deploy
@@ -178,13 +170,11 @@ stages:
                   parameters:
                     displayName: Deploy Template
                     deploymentName: policies
-                    environment: canary
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: "{}"
 
       - deployment: prod
         displayName: Production
@@ -202,10 +192,8 @@ stages:
                   parameters:
                     displayName: Deploy Template
                     deploymentName: policies
-                    environment: prod
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
-                    parameters: "{}"

@@ -42,21 +42,21 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $rootManagementGroupId = "${{ variables.canaryRootManagementGroupId }}"
+                $managementGroupId = "${{ variables.canaryManagementGroupId }}"
                 $assignmentsDirectory = "$(Build.SourcesDirectory)[\\/]modules[\\/]policies[\\/]assignments"
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$rootManagementGroupId"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
                 $environment = "canary"
 
-                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -RootManagementGroupId $rootManagementGroupId -Environment $environment
+                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -Environment $environment
                 Get-ChildItem modules/policies/assignments -Filter main.$environment.bicep -Recurse | ForEach-Object {
                     $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
                     New-Item -Path $path -ItemType Directory -Force | Out-Null
-                    az bicep build --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).json"
+                    az bicep build --file $PSItem.FullName --outfile "$path/main.json"
                 }
                 Get-ChildItem modules/policies/assignments -Filter main.$environment.bicepparam -Recurse | ForEach-Object {
                     $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
                     New-Item -Path $path -ItemType Directory -Force | Out-Null
-                    az bicep build-params --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).parameters.json"
+                    az bicep build-params --file $PSItem.FullName --outfile "$path/main.parameters.json"
                 }
               failOnStandardError: true
 
@@ -67,21 +67,21 @@ stages:
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $rootManagementGroupId = "${{ variables.prodRootManagementGroupId }}"
+                $managementGroupId = "${{ variables.prodManagementGroupId }}"
                 $assignmentsDirectory = "$(Build.SourcesDirectory)[\\/]modules[\\/]policies[\\/]assignments"
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$rootManagementGroupId"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
                 $environment = "prod"
 
-                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -RootManagementGroupId $rootManagementGroupId -Environment $environment
+                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -Environment $environment
                 Get-ChildItem modules/policies/assignments -Filter main.$environment.bicep -Recurse | ForEach-Object {
                     $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
                     New-Item -Path $path -ItemType Directory -Force | Out-Null
-                    az bicep build --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).json"
+                    az bicep build --file $PSItem.FullName --outfile "$path/main.json"
                 }
                 Get-ChildItem modules/policies/assignments -Filter main.$environment.bicepparam -Recurse | ForEach-Object {
                     $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
                     New-Item -Path $path -ItemType Directory -Force | Out-Null
-                    az bicep build-params --file $PSItem.FullName --outfile "$path/$($PSItem.BaseName).parameters.json"
+                    az bicep build-params --file $PSItem.FullName --outfile "$path/main.parameters.json"
                 }
               failOnStandardError: true
 
@@ -120,6 +120,29 @@ stages:
                     azurePowerShellVersion: LatestVersion
                     pwsh: true
 
+                - ${{ each folder in split(variables.policyAssignmentFolders, ', ') }}:
+                    - template: templates/management-group-deployment.yml
+                      parameters:
+                        displayName: Validate deployment in ${{ folder }}
+                        deploymentName: assignments
+                        command: validate
+                        azureConnection: ${{ variables.azureConnection }}
+                        location: ${{ variables.location }}
+                        managementGroupId: ${{ replace(folder, '/', '-') }}
+                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
+                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+
+                    - template: templates/management-group-deployment.yml
+                      parameters:
+                        displayName: What-if deployment in ${{ folder }}
+                        deploymentName: assignments
+                        command: what-if
+                        azureConnection: ${{ variables.azureConnection }}
+                        location: ${{ variables.location }}
+                        managementGroupId: ${{ replace(folder, '/', '-') }}
+                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
+                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+
       - deployment: prod
         displayName: Production
         variables:
@@ -143,3 +166,78 @@ stages:
                       $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Assignment.ps1 -Prefix ${{ variables.managementGroupId }}
                     azurePowerShellVersion: LatestVersion
                     pwsh: true
+
+                - ${{ each folder in split(variables.policyAssignmentFolders, ', ') }}:
+                    - template: templates/management-group-deployment.yml
+                      parameters:
+                        displayName: Validate deployment in ${{ folder }}
+                        deploymentName: assignments
+                        command: validate
+                        azureConnection: ${{ variables.azureConnection }}
+                        location: ${{ variables.location }}
+                        managementGroupId: ${{ replace(folder, '/', '-') }}
+                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
+                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+
+                    - template: templates/management-group-deployment.yml
+                      parameters:
+                        displayName: What-if deployment in ${{ folder }}
+                        deploymentName: assignments
+                        command: what-if
+                        azureConnection: ${{ variables.azureConnection }}
+                        location: ${{ variables.location }}
+                        managementGroupId: ${{ replace(folder, '/', '-') }}
+                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
+                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+
+  - stage: deploy
+    displayName: Deploy
+    dependsOn: validate
+    jobs:
+      - deployment: canary
+        displayName: Canary
+        condition: succeeded()
+        variables:
+          - template: ../../environments/canary/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        environment: Canary
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - ${{ each folder in split(variables.policyAssignmentFolders, ', ') }}:
+                    - template: templates/management-group-deployment.yml
+                      parameters:
+                        displayName: Deploy assignments in ${{ folder }}
+                        deploymentName: assignments
+                        command: create
+                        azureConnection: ${{ variables.azureConnection }}
+                        location: ${{ variables.location }}
+                        managementGroupId: ${{ replace(folder, '/', '-') }}
+                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
+                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+
+      - deployment: prod
+        displayName: Production
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+        variables:
+          - template: ../../environments/prod/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        environment: Production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - ${{ each folder in split(variables.policyAssignmentFolders, ', ') }}:
+                    - template: templates/management-group-deployment.yml
+                      parameters:
+                        displayName: Deploy assignments in ${{ folder }}
+                        deploymentName: assignments
+                        command: create
+                        azureConnection: ${{ variables.azureConnection }}
+                        location: ${{ variables.location }}
+                        managementGroupId: ${{ replace(folder, '/', '-') }}
+                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
+                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json

@@ -2,13 +2,18 @@
 parameters:
   - name: displayName
   - name: deploymentName
-  - name: environment
   - name: command
+    values:
+      - create
+      - validate
+      - what-if
   - name: azureConnection
   - name: location
   - name: managementGroupId
   - name: templateFile
   - name: parameters
+    type: string
+    default: "{}"
 
 steps:
   - task: AzureCLI@2

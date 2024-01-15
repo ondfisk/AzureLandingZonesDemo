@@ -4,3 +4,4 @@ variables:
   vmImage: ubuntu-latest
   managementGroupId: lz-canary
   location: swedencentral
+  policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp

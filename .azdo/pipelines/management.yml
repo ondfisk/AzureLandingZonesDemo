@@ -58,9 +58,8 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate Template
+                    displayName: Validate deployment
                     deploymentName: management
-                    environment: canary
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
@@ -70,9 +69,8 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-If Template
+                    displayName: What-if deployment
                     deploymentName: management
-                    environment: canary
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
@@ -93,9 +91,8 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate Template
+                    displayName: Validate deployment
                     deploymentName: management
-                    environment: prod
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
@@ -105,9 +102,8 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-If Template
+                    displayName: What-if deployment
                     deploymentName: management
-                    environment: prod
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
@@ -133,9 +129,8 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Deploy Template
+                    displayName: Deploy management resources
                     deploymentName: management
-                    environment: canary
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
@@ -158,9 +153,8 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Deploy Template
+                    displayName: Deploy management resources
                     deploymentName: management
-                    environment: prod
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
