@@ -1,4 +1,6 @@
 ---
+name: Initiative Definitions
+
 resources:
   pipelines:
   - pipeline: policy-definitions
@@ -7,15 +9,14 @@ resources:
 
 trigger: none
 
-variables:
-  - template: ../../environments/build/vars.yml
-
 stages:
   - stage: build
     displayName: Build & Test
     jobs:
       - job: build
         displayName: Build & Test
+        variables:
+          - template: ../../environments/build/vars.yml
         pool:
           vmImage: ${{ variables.vmImage }}
         steps:

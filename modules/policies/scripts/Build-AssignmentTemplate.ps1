@@ -1,4 +1,5 @@
 [CmdletBinding()]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", "", Justification = "False positive (Environment, ManagementGroupId)")]
 param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
@@ -38,6 +39,7 @@ function Join-Template {
 }
 
 function Join-Parameter {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", "", Justification = "False positive (ManagementGroupId)")]
     [CmdletBinding()]
     [OutputType([String])]
     param (

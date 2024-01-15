@@ -1,5 +1,7 @@
 BeforeDiscovery {
     $path = Resolve-Path "$PSScriptRoot/../policies"
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignment", "", Justification = "False positive (policies)")]
     $policies = Get-ChildItem -Path "$path/*.json"
 }
 

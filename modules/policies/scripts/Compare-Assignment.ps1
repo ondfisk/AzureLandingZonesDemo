@@ -36,6 +36,7 @@ function Compare-Item ($Source, $Cloud, $ManagementGroupId) {
 }
 
 function Get-AssignmentGroup {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", "", Justification = "False positive (Prefix)")]
     param (
         [Parameter(Mandatory = $true)]
         [String]
@@ -68,6 +69,7 @@ Get-AssignmentGroup -Path "$PSScriptRoot/../assignments" -Prefix $Prefix | ForEa
     $source = Get-ResourceNameFromTemplate -Path $path -Pattern "policyAssignmentName: '(.+)'"
     $compared = Compare-Item -Source $source -Cloud $cloud -ManagementGroupId $managementGroupId
     if ($compared -eq $false) {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignment", "", Justification = "False positive (deletedDetected)")]
         $deletedDetected = $true
     }
 }

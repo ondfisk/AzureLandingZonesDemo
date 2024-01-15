@@ -1,6 +1,10 @@
 BeforeDiscovery {
     $path = Resolve-Path "$PSScriptRoot/../assignments"
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignment", "", Justification = "False positive (parameters)")]
     $parameters = Get-ChildItem -Path $path -Filter *.bicepparam -Recurse
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignment", "", Justification = "False positive (folders)")]
     $folders = Get-ChildItem -Path "$path/.." -Directory -Recurse
 }
 
@@ -31,7 +35,7 @@ Describe "Test-AssignmentParameter" {
             $content = Get-Content -Path $parameters
             $match = $content | Select-String -Pattern "param ([a-z0-9-]+) = '(.+)'"
 
-            $table = New-Object hashtable
+            $table = @{}
 
             $match.Matches | ForEach-Object {
                 $parameter = $PSItem.Groups[1].Value
@@ -53,7 +57,7 @@ Describe "Test-AssignmentParameter" {
             $content = Get-Content -Path $parameters
             $match = $content | Select-String -Pattern "param ([a-z0-9-]+) = '(.+)'"
 
-            $table = New-Object hashtable
+            $table = @{}
 
             $match.Matches | ForEach-Object {
                 $parameter = $PSItem.Groups[1].Value

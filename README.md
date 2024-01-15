@@ -12,6 +12,9 @@ The primary focus is on [Policy-driven governance](https://learn.microsoft.com/e
 .
 ├───.azdo
 │   └───pipelines                   # Azure DevOps Pipelines
+├───.github
+│   ├───linters
+│   └───workflows
 ├───environments                    # Parameters and variables
 │   ├───build
 │   ├───canary

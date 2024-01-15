@@ -1,5 +1,7 @@
 BeforeDiscovery {
     $path = Resolve-Path "$PSScriptRoot/../assignments"
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignment", "", Justification = "False positive (initiatives)")]
     $assignments = Get-ChildItem -Path $path -Filter *.bicep -Recurse
 }
 

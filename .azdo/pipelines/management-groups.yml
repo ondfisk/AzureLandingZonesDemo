@@ -1,4 +1,6 @@
 ---
+name: Management Groups
+
 trigger:
   paths:
     include:
@@ -9,15 +11,14 @@ trigger:
     exclude:
       - README.md
 
-variables:
-  - template: ../../environments/build/vars.yml
-
 stages:
   - stage: build
     displayName: Build
     jobs:
       - job: build
         displayName: Build
+        variables:
+          - template: ../../environments/build/vars.yml
         pool:
           vmImage: ${{ variables.vmImage }}
         steps:
