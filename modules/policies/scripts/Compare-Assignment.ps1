@@ -28,10 +28,7 @@ function Compare-Item ($Source, $Cloud, $ManagementGroupId) {
     Write-Compare -Label "Assignments to be deleted:" -Object $compare -SideIndicator "<=" -Prefix "-"
 
     if ($compare | Where-Object SideIndicator -EQ "<=") {
-        $false
-    }
-    else {
-        $true
+        Write-Error "Delete detected. Manual intervention required."
     }
 }
 
@@ -59,21 +56,11 @@ function Get-AssignmentGroup {
     }
 }
 
-$deletedDetected = $false
-
 Get-AssignmentGroup -Path "$PSScriptRoot/../assignments" -Prefix $Prefix | ForEach-Object {
     $path = $PSItem.Path
     $managementGroupId = $PSItem.ManagementGroupId
     $managementGroup = Get-AzManagementGroup -GroupName $managementGroupId
     $cloud = Get-AzPolicyAssignment -Scope $managementGroup.Id | Where-Object { $PSItem.Properties.Scope -eq $managementGroup.Id } | Select-Object -ExpandProperty Name
     $source = Get-ResourceNameFromTemplate -Path $path -Pattern "policyAssignmentName: '(.+)'"
-    $compared = Compare-Item -Source $source -Cloud $cloud -ManagementGroupId $managementGroupId
-    if ($compared -eq $false) {
-        [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignment", "", Justification = "False positive (deletedDetected)")]
-        $deletedDetected = $true
-    }
-}
-
-if ($deletedDetected) {
-    Write-Error "Delete detected. Manual intervention required."
+    Compare-Item -Source $source -Cloud $cloud -ManagementGroupId $managementGroupId
 }

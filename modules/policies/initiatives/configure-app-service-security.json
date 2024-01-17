@@ -1,0 +1,41 @@
+{
+  "properties": {
+    "displayName": "Configure App Service security",
+    "policyType": "Custom",
+    "description": "This policy initiative is a group of policies that configures security settings App Services.",
+    "metadata": {
+      "version": "1.0",
+      "category": "App Service"
+    },
+    "parameters": {},
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "app-service-https",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0f98368e-36bc-4716-8ac2-8f8067203b63",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "app-service-slot-https",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a18c77f2-3d6d-497a-9f61-849a7e8a3b79",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "app-service-tls",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ae44c1d1-0df2-4ca9-98fa-a3d3ae5b409d",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "app-service-slot-tls",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/014664e7-e348-41a3-aeb9-566e4ff6a9df",
+        "parameters": {},
+        "groupNames": []
+      }
+    ],
+    "policyDefinitionGroups": []
+  },
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "name": "configure-app-service-security"
+}

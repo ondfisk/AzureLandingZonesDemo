@@ -2,6 +2,7 @@
 name: Management Groups
 
 trigger:
+  batch: true
   paths:
     include:
       - .azdo/pipelines/management-groups.yml

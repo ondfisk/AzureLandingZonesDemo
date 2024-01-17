@@ -2,6 +2,7 @@
 name: Policy Definitions
 
 trigger:
+  batch: true
   paths:
     include:
       - .azdo/pipelines/policy-definitions.yml
