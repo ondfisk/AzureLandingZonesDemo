@@ -2,7 +2,7 @@
   "properties": {
     "displayName": "Configure Key Vault security",
     "policyType": "Custom",
-    "description": "This policy initiative is a group of policies that configures security settings Key Vaults.",
+    "description": "This initiative configures security settings for Key Vaults.",
     "metadata": {
       "version": "1.0",
       "category": "Key Vault"

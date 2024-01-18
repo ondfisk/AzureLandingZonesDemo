@@ -13,8 +13,8 @@ stages:
   - stage: build
     displayName: Build & Test
     jobs:
-      - job: build
-        displayName: Build & Test
+      - job: test
+        displayName: Test
         variables:
           - template: ../../environments/build/vars.yml
         pool:
@@ -36,53 +36,31 @@ stages:
               failTaskOnFailedTests: true
               failTaskOnMissingResultsFile: true
 
+      - job: canary
+        displayName: Build Canary
+        variables:
+          - template: ../../environments/canary/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        steps:
           - task: AzureCLI@2
-            displayName: Build Template (Canary)
+            displayName: Build Template
             inputs:
               azureSubscription: ${{ variables.azureConnection }}
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                $managementGroupId = "${{ variables.canaryManagementGroupId }}"
+                $managementGroupId = "${{ variables.managementGroupId }}"
+                $managedIdentityId = "${{ variables.managedIdentityId }}"
+                $logAnalyticsWorkspaceId = "${{ variables.logAnalyticsWorkspaceId }}"
                 $assignmentsDirectory = "$(Build.SourcesDirectory)[\\/]modules[\\/]policies[\\/]assignments"
                 $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
-                $environment = "canary"
 
-                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -Environment $environment
-                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicep -Recurse | ForEach-Object {
+                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -ManagedIdentityId $managedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+                Get-ChildItem modules/policies/assignments -Filter main.bicep -Recurse | ForEach-Object {
                     $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
                     New-Item -Path $path -ItemType Directory -Force | Out-Null
                     az bicep build --file $PSItem.FullName --outfile "$path/main.json"
-                }
-                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicepparam -Recurse | ForEach-Object {
-                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
-                    New-Item -Path $path -ItemType Directory -Force | Out-Null
-                    az bicep build-params --file $PSItem.FullName --outfile "$path/main.parameters.json"
-                }
-              failOnStandardError: true
-
-          - task: AzureCLI@2
-            displayName: Build Template (Production)
-            inputs:
-              azureSubscription: ${{ variables.azureConnection }}
-              scriptType: pscore
-              scriptLocation: inlineScript
-              inlineScript: |
-                $managementGroupId = "${{ variables.prodManagementGroupId }}"
-                $assignmentsDirectory = "$(Build.SourcesDirectory)[\\/]modules[\\/]policies[\\/]assignments"
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
-                $environment = "prod"
-
-                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -Environment $environment
-                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicep -Recurse | ForEach-Object {
-                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
-                    New-Item -Path $path -ItemType Directory -Force | Out-Null
-                    az bicep build --file $PSItem.FullName --outfile "$path/main.json"
-                }
-                Get-ChildItem modules/policies/assignments -Filter main.$environment.bicepparam -Recurse | ForEach-Object {
-                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
-                    New-Item -Path $path -ItemType Directory -Force | Out-Null
-                    az bicep build-params --file $PSItem.FullName --outfile "$path/main.parameters.json"
                 }
               failOnStandardError: true
 
@@ -90,7 +68,42 @@ stages:
             displayName: Publish Artifacts
             inputs:
               targetPath: $(Build.ArtifactStagingDirectory)
-              artifact: drop
+              artifact: canary
+              publishLocation: pipeline
+
+      - job: prod
+        displayName: Build Production
+        variables:
+          - template: ../../environments/prod/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        steps:
+          - task: AzureCLI@2
+            displayName: Build Template
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $managementGroupId = "${{ variables.managementGroupId }}"
+                $managedIdentityId = "${{ variables.managedIdentityId }}"
+                $logAnalyticsWorkspaceId = "${{ variables.logAnalyticsWorkspaceId }}"
+                $assignmentsDirectory = "$(Build.SourcesDirectory)[\\/]modules[\\/]policies[\\/]assignments"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
+
+                ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -ManagedIdentityId $managedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+                Get-ChildItem modules/policies/assignments -Filter main.bicep -Recurse | ForEach-Object {
+                    $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+                    New-Item -Path $path -ItemType Directory -Force | Out-Null
+                    az bicep build --file $PSItem.FullName --outfile "$path/main.json"
+                }
+              failOnStandardError: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Artifacts
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifact: prod
               publishLocation: pipeline
 
   - stage: validate
@@ -130,8 +143,7 @@ stages:
                         azureConnection: ${{ variables.azureConnection }}
                         location: ${{ variables.location }}
                         managementGroupId: ${{ replace(folder, '/', '-') }}
-                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
-                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+                        templateFile: $(Pipeline.Workspace)/canary/${{ folder }}/main.json
 
                     - template: templates/management-group-deployment.yml
                       parameters:
@@ -141,8 +153,7 @@ stages:
                         azureConnection: ${{ variables.azureConnection }}
                         location: ${{ variables.location }}
                         managementGroupId: ${{ replace(folder, '/', '-') }}
-                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
-                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+                        templateFile: $(Pipeline.Workspace)/canary/${{ folder }}/main.json
 
       - deployment: prod
         displayName: Production
@@ -177,8 +188,7 @@ stages:
                         azureConnection: ${{ variables.azureConnection }}
                         location: ${{ variables.location }}
                         managementGroupId: ${{ replace(folder, '/', '-') }}
-                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
-                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+                        templateFile: $(Pipeline.Workspace)/prod/${{ folder }}/main.json
 
                     - template: templates/management-group-deployment.yml
                       parameters:
@@ -188,8 +198,7 @@ stages:
                         azureConnection: ${{ variables.azureConnection }}
                         location: ${{ variables.location }}
                         managementGroupId: ${{ replace(folder, '/', '-') }}
-                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
-                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+                        templateFile: $(Pipeline.Workspace)/prod/${{ folder }}/main.json
 
   - stage: deploy
     displayName: Deploy
@@ -216,8 +225,7 @@ stages:
                         azureConnection: ${{ variables.azureConnection }}
                         location: ${{ variables.location }}
                         managementGroupId: ${{ replace(folder, '/', '-') }}
-                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
-                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+                        templateFile: $(Pipeline.Workspace)/canary/${{ folder }}/main.json
 
       - deployment: prod
         displayName: Production
@@ -240,5 +248,4 @@ stages:
                         azureConnection: ${{ variables.azureConnection }}
                         location: ${{ variables.location }}
                         managementGroupId: ${{ replace(folder, '/', '-') }}
-                        templateFile: $(Pipeline.Workspace)/drop/${{ folder }}/main.json
-                        parameters: $(Pipeline.Workspace)/drop/${{ folder }}/main.parameters.json
+                        templateFile: $(Pipeline.Workspace)/prod/${{ folder }}/main.json

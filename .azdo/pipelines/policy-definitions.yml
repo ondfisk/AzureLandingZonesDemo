@@ -17,7 +17,34 @@ stages:
     displayName: Build & Test
     jobs:
       - job: build
-        displayName: Build & Test
+        displayName: Build
+        variables:
+          - template: ../../environments/build/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        steps:
+          - task: AzureCLI@2
+            displayName: Build Template
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
+
+                ./modules/policies/scripts/Build-PolicyTemplate.ps1
+                az bicep build --file modules/policies/policies/main.bicep --outfile "$stagingDirectory/main.json"
+              failOnStandardError: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Artifacts
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifact: drop
+              publishLocation: pipeline
+
+      - job: test
+        displayName: Test
         variables:
           - template: ../../environments/build/vars.yml
         pool:
@@ -38,26 +65,6 @@ stages:
               testResultsFiles: "**/testResults.xml"
               failTaskOnFailedTests: true
               failTaskOnMissingResultsFile: true
-
-          - task: AzureCLI@2
-            displayName: Build Template
-            inputs:
-              azureSubscription: ${{ variables.azureConnection }}
-              scriptType: pscore
-              scriptLocation: inlineScript
-              inlineScript: |
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
-
-                ./modules/policies/scripts/Build-PolicyTemplate.ps1
-                az bicep build --file modules/policies/policies/main.bicep --outfile "$stagingDirectory/main.json"
-              failOnStandardError: true
-
-          - task: PublishPipelineArtifact@1
-            displayName: Publish Artifacts
-            inputs:
-              targetPath: $(Build.ArtifactStagingDirectory)
-              artifact: drop
-              publishLocation: pipeline
 
   - stage: validate
     displayName: Validate

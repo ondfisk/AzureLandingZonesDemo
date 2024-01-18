@@ -1,22 +1,21 @@
 BeforeDiscovery {
     $path = Resolve-Path "$PSScriptRoot/../initiatives"
 
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignment", "", Justification = "False positive (initiatives)")]
-    $initiatives = Get-ChildItem -Path "$path/*.json"
+    $script:initiatives = Get-ChildItem -Path "$path/*.json"
 }
 
 Describe "Test-Initiative" {
-    It "<PSItem.Name> name is same as file name" -ForEach $initiatives {
+    It "<PSItem.Name> name is same as file name" -ForEach $script:initiatives {
         $template = Get-Content -Path $PSItem | ConvertFrom-Json
         $template.name | Should -BeExactly $PSItem.BaseName
     }
 
-    It "<PSItem.Name> is an initiative definition" -ForEach $initiatives {
+    It "<PSItem.Name> is an initiative definition" -ForEach $script:initiatives {
         $template = Get-Content -Path $PSItem | ConvertFrom-Json
         $template.type | Should -Be "Microsoft.Authorization/policySetDefinitions"
     }
 
-    It "<PSItem.Name> refers to custom initiatives by prefix" -ForEach $initiatives {
+    It "<PSItem.Name> refers to custom initiatives by prefix" -ForEach $script:initiatives {
         $template = Get-Content -Path $PSItem | ConvertFrom-Json
 
         $managementGroupIds = $template.properties.policyDefinitions.policyDefinitionId | Select-String -Pattern "^/providers/Microsoft.Management/managementGroups/(.+)/providers/Microsoft.Authorization/policyDefinitions/.+$"

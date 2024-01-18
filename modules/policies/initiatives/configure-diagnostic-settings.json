@@ -1,0 +1,40 @@
+{
+  "properties": {
+    "displayName": "Configure Diagnostic Settings",
+    "policyType": "Custom",
+    "description": "This initiative configures diagnostic settings for all resources.",
+    "metadata": {
+      "version": "1.0",
+      "category": "Monitoring"
+    },
+    "parameters": {
+      "logAnalytics": {
+        "type": "String",
+        "metadata": {
+          "strongType": "omsWorkspace"
+        }
+      }
+    },
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-key-vault",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/bef3f64c-5290-43b7-85b0-9b254eef4c47",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalytics')]"
+          },
+          "profileName": {
+            "value": "set_by_policy_log_analytics"
+          },
+          "matchWorkspace": {
+            "value": true
+          }
+        },
+        "groupNames": []
+      }
+    ],
+    "policyDefinitionGroups": []
+  },
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "name": "configure-diagnostic-settings"
+}

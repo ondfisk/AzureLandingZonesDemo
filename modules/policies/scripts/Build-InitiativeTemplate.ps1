@@ -7,7 +7,6 @@ param (
 )
 
 function Join-Template {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", "", Justification = "False positive (ManagementGroupId)")]
     [CmdletBinding()]
     [OutputType([String])]
     param (
@@ -31,6 +30,7 @@ var definitions = [
     }
 
     process {
+        $ManagementGroupId = $ManagementGroupId # Workaround for PSReviewUnusedParameter
         $Definition | ForEach-Object {
             (Get-Content -Path $PSItem -Raw) -replace "<prefix>", $ManagementGroupId | Out-File -Path "$PSScriptRoot/../initiatives/temp/$($PSItem.Name)"
             "  loadJsonContent('temp/$($PSItem.Name)')"

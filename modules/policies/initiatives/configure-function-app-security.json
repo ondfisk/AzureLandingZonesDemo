@@ -2,7 +2,7 @@
   "properties": {
     "displayName": "Configure Function App security",
     "policyType": "Custom",
-    "description": "This policy initiative is a group of policies that configures security settings Function Apps.",
+    "description": "This initiative configures security settings for Function Apps.",
     "metadata": {
       "version": "1.0",
       "category": "App Service"

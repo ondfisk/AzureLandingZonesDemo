@@ -1,7 +1,7 @@
 targetScope = 'managementGroup'
 
 param location string = deployment().location
-param identity string
+param managedIdentityId string
 
 module Key_Vault_Config '../../shared/policy-assignment.bicep' = {
   name: 'key-vault-config-assignment'
@@ -9,7 +9,7 @@ module Key_Vault_Config '../../shared/policy-assignment.bicep' = {
     location: location
     policyAssignmentName: 'key-vault-config'
     policyDefinitionId: extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policySetDefinitions', 'configure-key-vault-security')
-    userAssignedIdentity: identity
+    userAssignedIdentity: managedIdentityId
     parameters: {}
   }
 }

@@ -13,8 +13,65 @@ stages:
   - stage: build
     displayName: Build & Test
     jobs:
-      - job: build
-        displayName: Build & Test
+      - job: canary
+        displayName: Build (Canary)
+        variables:
+          - template: ../../environments/canary/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        steps:
+          - task: AzureCLI@2
+            displayName: Build Template
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $managementGroupId = "${{ variables.managementGroupId }}"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
+
+                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.json"
+              failOnStandardError: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Artifacts
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifact: canary
+              publishLocation: pipeline
+
+      - job: prod
+        displayName: Build (Production)
+        variables:
+          - template: ../../environments/prod/vars.yml
+        pool:
+          vmImage: ${{ variables.vmImage }}
+        steps:
+          - task: AzureCLI@2
+            displayName: Build Template
+            inputs:
+              azureSubscription: ${{ variables.azureConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                $managementGroupId = "${{ variables.managementGroupId }}"
+                $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
+                New-Item -Path $stagingDirectory -ItemType Directory -Force | Out-Null
+
+                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.json"
+              failOnStandardError: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Artifacts
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)
+              artifact: prod
+              publishLocation: pipeline
+
+      - job: test
+        displayName: Test
         variables:
           - template: ../../environments/build/vars.yml
         pool:
@@ -35,43 +92,6 @@ stages:
               testResultsFiles: "**/testResults.xml"
               failTaskOnFailedTests: true
               failTaskOnMissingResultsFile: true
-
-          - task: AzureCLI@2
-            displayName: Build Template (Canary)
-            inputs:
-              azureSubscription: ${{ variables.azureConnection }}
-              scriptType: pscore
-              scriptLocation: inlineScript
-              inlineScript: |
-                $managementGroupId = "${{ variables.canaryManagementGroupId }}"
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
-                New-Item -Path $stagingDirectory -ItemType Directory -Force | Out-Null
-
-                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
-                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.json"
-              failOnStandardError: true
-
-          - task: AzureCLI@2
-            displayName: Build Template (Production)
-            inputs:
-              azureSubscription: ${{ variables.azureConnection }}
-              scriptType: pscore
-              scriptLocation: inlineScript
-              inlineScript: |
-                $managementGroupId = "${{ variables.prodManagementGroupId }}"
-                $stagingDirectory = "$(Build.ArtifactStagingDirectory)/$managementGroupId"
-                New-Item -Path $stagingDirectory -ItemType Directory -Force | Out-Null
-
-                ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
-                az bicep build --file modules/policies/initiatives/main.bicep --outfile "$stagingDirectory/main.json"
-              failOnStandardError: true
-
-          - task: PublishPipelineArtifact@1
-            displayName: Publish Artifacts
-            inputs:
-              targetPath: $(Build.ArtifactStagingDirectory)
-              artifact: drop
-              publishLocation: pipeline
 
   - stage: validate
     displayName: Validate
@@ -109,7 +129,7 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
+                    templateFile: $(Pipeline.Workspace)/canary/main.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
@@ -119,7 +139,7 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
+                    templateFile: $(Pipeline.Workspace)/canary/main.json
 
       - deployment: prod
         displayName: Production
@@ -153,7 +173,7 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
+                    templateFile: $(Pipeline.Workspace)/prod/main.json
 
                 - template: templates/management-group-deployment.yml
                   parameters:
@@ -163,7 +183,7 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
+                    templateFile: $(Pipeline.Workspace)/prod/main.json
 
   - stage: deploy
     displayName: Deploy
@@ -189,7 +209,7 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
+                    templateFile: $(Pipeline.Workspace)/canary/main.json
 
       - deployment: prod
         displayName: Production
@@ -211,4 +231,4 @@ stages:
                     azureConnection: ${{ variables.azureConnection }}
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
-                    templateFile: $(Pipeline.Workspace)/drop/${{ variables.managementGroupId }}/main.json
+                    templateFile: $(Pipeline.Workspace)/prod/main.json
