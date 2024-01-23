@@ -2,16 +2,16 @@
   "properties": {
     "displayName": "Configure Diagnostic Settings",
     "policyType": "Custom",
-    "description": "This initiative configures diagnostic settings for all resources.",
+    "description": "Configure Diagnostic Settings",
     "metadata": {
-      "version": "1.0",
+      "version": "1.0.0",
       "category": "Monitoring"
     },
     "parameters": {
       "logAnalytics": {
         "type": "String",
         "metadata": {
-          "strongType": "omsWorkspace"
+          "strongType": "Microsoft.OperationalInsights/workspaces"
         }
       }
     },

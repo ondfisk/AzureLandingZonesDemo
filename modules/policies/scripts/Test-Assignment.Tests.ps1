@@ -1,11 +1,11 @@
 BeforeDiscovery {
     $path = Resolve-Path "$PSScriptRoot/../assignments"
 
-    $script:assignments = Get-ChildItem -Path $path -Filter *.bicep -Recurse
+    $script:Assignments = Get-ChildItem -Path $path -Filter *.bicep -Recurse
 }
 
 Describe "Test-Assignment" {
-    It "<PSItem.Name> module name matches file name" -ForEach $script:assignments {
+    It "<PSItem.Name> module name matches file name" -ForEach $script:Assignments {
         $content = Get-Content -Path $PSItem -Raw
         $match = $content | Select-String -Pattern "\nmodule ([a-zA-Z0-9_]+)"
 
@@ -14,7 +14,7 @@ Describe "Test-Assignment" {
         $match.Matches.Groups[1].Value | Should -Be $moduleName
     }
 
-    It "<PSItem.Name> deployment name matches file name" -ForEach $script:assignments {
+    It "<PSItem.Name> deployment name matches file name" -ForEach $script:Assignments {
         $content = Get-Content -Path $PSItem -Raw
         $match = $content | Select-String -Pattern "\n +name: '([a-z0-9-]+)'"
 
@@ -23,7 +23,7 @@ Describe "Test-Assignment" {
         $match.Matches.Groups[1].Value | Should -BeExactly $deploymentName
     }
 
-    It "<PSItem.Name> assignment name matches file name" -ForEach $script:assignments {
+    It "<PSItem.Name> assignment name matches file name" -ForEach $script:Assignments {
         $content = Get-Content -Path $PSItem -Raw
         $match = $content | Select-String -Pattern "\n +policyAssignmentName: '([a-z0-9-]+)'"
 

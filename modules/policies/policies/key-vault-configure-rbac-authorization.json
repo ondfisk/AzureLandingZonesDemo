@@ -5,7 +5,7 @@
     "mode": "Indexed",
     "description": "Configure Key Vault to enable RBAC authorization",
     "metadata": {
-      "version": "1.0",
+      "version": "1.0.0",
       "category": "Key Vault"
     },
     "parameters": {

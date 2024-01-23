@@ -50,3 +50,23 @@ module workspace '../shared/log-analytics-workspace.bicep' = {
     workspaceName: workspaceName
   }
 }
+
+var solutions = [
+  'Security'
+  'SecurityCenterFree'
+  'SQLAdvancedThreatProtection'
+  'SQLVulnerabilityAssessment'
+]
+
+module solution '../shared/log-analytics-workspace-solution.bicep' = [for solution in solutions: {
+  scope: resourceGroup(managementSubscriptionId,resourceGroupName)
+  name: 'log-analytics-workspace-solution-${uniqueString(resourceGroupName, workspaceName, solution)}'
+  dependsOn: [
+    workspace
+  ]
+  params: {
+    location: location
+    logAnalyticsWorkspaceName: workspaceName
+    solutionName: solution
+  }
+}]

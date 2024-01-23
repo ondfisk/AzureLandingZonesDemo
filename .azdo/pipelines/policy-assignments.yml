@@ -25,7 +25,7 @@ stages:
             inputs:
               targetType: inline
               script: |
-                Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1 -CI
+                Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1, modules/policies/scripts/Test-AssignmentVars.Tests.ps1 -CI
               pwsh: true
 
           - task: PublishTestResults@2

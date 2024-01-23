@@ -2,7 +2,7 @@ targetScope = 'managementGroup'
 
 param location string = deployment().location
 
-module Nic_Deny_Public_IP '../.././../../shared/policy-assignment.bicep' = {
+module Nic_Deny_Public_IP '../../../../shared/policy-assignment.bicep' = {
   name: 'nic-deny-public-ip-assignment'
   params: {
     location: location

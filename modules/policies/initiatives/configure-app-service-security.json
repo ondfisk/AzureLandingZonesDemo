@@ -2,9 +2,9 @@
   "properties": {
     "displayName": "Configure App Service security",
     "policyType": "Custom",
-    "description": "This policy initiative configures security settings for App Services.",
+    "description": "Configure App Service security",
     "metadata": {
-      "version": "1.0",
+      "version": "1.0.0",
       "category": "App Service"
     },
     "parameters": {},

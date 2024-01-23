@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "displayName": "Configure Storage security",
+    "policyType": "Custom",
+    "description": "Configure Storage security",
+    "metadata": {
+      "version": "1.0",
+      "category": "Storage"
+    },
+    "parameters": {},
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "configure-secure-transfer-of-data-on-a-storage-account",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f81e3117-0093-4b17-8a60-82363134f0eb",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "ConfigureStorageAccountsToUseTheLatestTlsVersion",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/storage-configure-minimum-tls",
+        "parameters": {},
+        "groupNames": []
+      }
+    ],
+    "policyDefinitionGroups": []
+  },
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "name": "configure-storage-security"
+}
