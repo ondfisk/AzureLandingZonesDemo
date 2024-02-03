@@ -7,3 +7,7 @@ param resourceGroupName = 'Management'
 param userAssignedIdentityName = 'ondfisklzcanary'
 
 param workspaceName = 'ondfisklzcanary'
+
+param storageAccountName = 'ondfisklzcanary'
+
+param keyVaultName = 'ondfisklzcanary'

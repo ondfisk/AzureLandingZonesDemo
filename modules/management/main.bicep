@@ -5,6 +5,8 @@ param managementSubscriptionId string
 param resourceGroupName string
 param userAssignedIdentityName string
 param workspaceName string
+param storageAccountName string
+param keyVaultName string
 
 module group '../shared/resource-group.bicep' = {
   scope: subscription(managementSubscriptionId)
@@ -70,3 +72,28 @@ module solution '../shared/log-analytics-workspace-solution.bicep' = [for soluti
     solutionName: solution
   }
 }]
+
+module storageAccount '../shared/storage-account.bicep' = {
+  scope: resourceGroup(managementSubscriptionId, resourceGroupName)
+  name: 'storage-account-${uniqueString(resourceGroupName, storageAccountName)}'
+  dependsOn: [
+    group
+  ]
+  params: {
+    location: location
+    skuName: 'Standard_LRS'
+    storageAccountName: storageAccountName
+  }
+}
+
+module keyVault '../shared/key-vault.bicep' = {
+  scope: resourceGroup(managementSubscriptionId, resourceGroupName)
+  name: 'key-vault-${uniqueString(resourceGroupName, keyVaultName)}'
+  dependsOn: [
+    group
+  ]
+  params: {
+    location: location
+    keyVaultName: keyVaultName
+  }
+}
