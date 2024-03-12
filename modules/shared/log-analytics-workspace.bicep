@@ -4,7 +4,7 @@ param workspaceName string
 @maxValue(730)
 param retentionInDays int = 30
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+resource workspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: workspaceName
   location: location
   properties: {

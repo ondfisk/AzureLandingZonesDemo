@@ -29,7 +29,7 @@ var definitions = [
         @"
 ]
 
-resource policyDefinitionResources 'Microsoft.Authorization/policyDefinitions@2021-06-01' = [for definition in definitions: {
+resource policyDefinitionResources 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [for definition in definitions: {
   name: definition.name
   properties: definition.properties
 }]

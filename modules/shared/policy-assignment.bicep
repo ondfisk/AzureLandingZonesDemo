@@ -15,7 +15,7 @@ param enforcementMode string = 'Default'
 param parameters object = {}
 param notScopes array = []
 
-resource policyAssignment 'Microsoft.Authorization/policyAssignments@2021-06-01' = {
+resource policyAssignment 'Microsoft.Authorization/policyAssignments@2023-04-01' = {
   name: policyAssignmentName
   location: location
   identity: empty(userAssignedIdentity) ? { type: 'None' } : {
@@ -25,8 +25,8 @@ resource policyAssignment 'Microsoft.Authorization/policyAssignments@2021-06-01'
     }
   }
   properties: {
-    displayName: empty(policyAssignmentDisplayName) ? reference(policyDefinitionId, '2021-06-01').displayName : policyAssignmentDisplayName
-    description: empty(policyAssignmentDescription) ? reference(policyDefinitionId, '2021-06-01').description : policyAssignmentDescription
+    displayName: empty(policyAssignmentDisplayName) ? reference(policyDefinitionId, '2023-04-01').displayName : policyAssignmentDisplayName
+    description: empty(policyAssignmentDescription) ? reference(policyDefinitionId, '2023-04-01').description : policyAssignmentDescription
     enforcementMode: enforcementMode
     policyDefinitionId: policyDefinitionId
     parameters: parameters

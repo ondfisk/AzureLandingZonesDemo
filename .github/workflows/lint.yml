@@ -10,21 +10,27 @@ name: Lint
       - main
   workflow_dispatch: { }
 
-permissions:
-  contents: read
-  packages: read
-  statuses: write
 
 jobs:
-  lint:
-    name: Lint Code Base
+  build:
+    name: Lint
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
 
-      - name: Run github/super-linter
-        uses: super-linter/super-linter@v5.7.2
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+
+      - name: Super-Linter
+        uses: super-linter/super-linter@v6.3.0
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
