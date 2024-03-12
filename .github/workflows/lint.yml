@@ -34,12 +34,7 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_JSON: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_POWERSHELL: true
-          VALIDATE_YAML: true
           YAMLLINT_CONFIG_FILE: .github/workflows/lint.yml
-          VALIDATE_EDITORCONFIG: true
 
       - name: Lint Bicep Files
         shell: pwsh
