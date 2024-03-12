@@ -8,7 +8,7 @@ module VNET_Deny_Peering '../../../../shared/policy-assignment.bicep' = {
   params: {
     location: location
     policyAssignmentName: 'vnet-deny-peering'
-    policyDefinitionId: extensionResourceId(managementGroupId, 'Microsoft.Authorization/policyDefinitions', 'vnet-deny-peering')
+    policyDefinitionId: managementGroupResourceId(managementGroupId, 'Microsoft.Authorization/policyDefinitions', 'vnet-deny-peering')
     parameters: {}
   }
 }

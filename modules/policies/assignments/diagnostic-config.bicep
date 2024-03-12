@@ -9,7 +9,7 @@ module Diagnostic_Config '../../shared/policy-assignment.bicep' = {
   params: {
     location: location
     policyAssignmentName: 'diagnostic-config'
-    policyDefinitionId: extensionResourceId(managementGroup().id, 'Microsoft.Authorization/policySetDefinitions', 'configure-diagnostic-settings')
+    policyDefinitionId: managementGroupResourceId('Microsoft.Authorization/policySetDefinitions', 'configure-diagnostic-settings')
     userAssignedIdentity: managedIdentityId
     parameters: {
       logAnalytics: {
