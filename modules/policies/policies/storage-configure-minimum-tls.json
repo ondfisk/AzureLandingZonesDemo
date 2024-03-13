@@ -5,8 +5,8 @@
     "mode": "Indexed",
     "description": "Configure Storage Accounts to use the latest TLS version",
     "metadata": {
-      "version": "1.0",
-      "category": "Cache"
+      "version": "1.0.0",
+      "category": "Storage"
     },
     "parameters": {
       "effect": {
