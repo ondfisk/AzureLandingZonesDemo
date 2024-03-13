@@ -24,8 +24,20 @@
     },
     "policyRule": {
       "if": {
-        "equals": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-        "field": "type"
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Network/virtualNetworks"
+          },
+          {
+            "field": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "exists": "true"
+          },
+          {
+            "value": "[length(field('Microsoft.Network/virtualNetworks/virtualNetworkPeerings'))]",
+            "greater": 0
+          }
+        ]
       },
       "then": {
         "effect": "[parameters('effect')]"
