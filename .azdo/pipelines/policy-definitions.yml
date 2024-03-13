@@ -206,3 +206,4 @@ stages:
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
+...

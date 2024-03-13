@@ -68,3 +68,4 @@ stages:
                       $(Build.SourcesDirectory)/modules/policies/scripts/Start-PolicyRemediation.ps1 -ManagementGroupId ${{ variables.managementGroupId }}
                     azurePowerShellVersion: LatestVersion
                     pwsh: true
+...

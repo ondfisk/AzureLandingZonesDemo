@@ -43,3 +43,4 @@ jobs:
             Write-Host "Linting $PSItem"
             az bicep lint --file $PSItem
           }
+...

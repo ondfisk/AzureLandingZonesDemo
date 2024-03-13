@@ -30,3 +30,4 @@ steps:
         --template-file ${{ parameters.templateFile }} \
         --parameters ${{ parameters.parameters }}
       failOnStandardError: true
+...

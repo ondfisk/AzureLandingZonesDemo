@@ -163,3 +163,4 @@ stages:
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/drop/main.json
                     parameters: $(Pipeline.Workspace)/drop/main.prod.parameters.json
+...

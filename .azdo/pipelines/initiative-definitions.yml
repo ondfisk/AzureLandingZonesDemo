@@ -232,3 +232,4 @@ stages:
                     location: ${{ variables.location }}
                     managementGroupId: ${{ variables.managementGroupId }}
                     templateFile: $(Pipeline.Workspace)/prod/main.json
+...
