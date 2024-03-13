@@ -4,12 +4,13 @@ name: Lint
 "on":
   push:
     branches:
-      - "*"
+      - main
   pull_request:
     branches:
       - main
   workflow_dispatch: { }
 
+permissions: read-all
 
 jobs:
   build:
@@ -19,6 +20,7 @@ jobs:
     permissions:
       contents: read
       packages: read
+      # To report GitHub Actions status checks
       statuses: write
 
     steps:
@@ -32,14 +34,7 @@ jobs:
       - name: Super-Linter
         uses: super-linter/super-linter@v6.3.0
         env:
-          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_JSON: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_POWERSHELL: true
-          VALIDATE_YAML: true
-          YAMLLINT_CONFIG_FILE: .github/workflows/lint.yml
-          VALIDATE_EDITORCONFIG: true
 
       - name: Lint Bicep Files
         shell: pwsh
@@ -48,3 +43,4 @@ jobs:
             Write-Host "Linting $PSItem"
             az bicep lint --file $PSItem
           }
+...

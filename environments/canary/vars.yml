@@ -4,6 +4,6 @@ variables:
   vmImage: ubuntu-latest
   managementGroupId: lz-canary
   location: swedencentral
-  policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp
+  policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp, lz-canary/landing-zones/online
   managedIdentityId: /subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklzcanary
   logAnalyticsWorkspaceId: /subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklzcanary
