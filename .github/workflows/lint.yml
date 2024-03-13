@@ -19,6 +19,7 @@ jobs:
     permissions:
       contents: read
       packages: read
+      # To report GitHub Actions status checks
       statuses: write
 
     steps:
@@ -32,9 +33,7 @@ jobs:
       - name: Super-Linter
         uses: super-linter/super-linter@v6.3.0
         env:
-          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          YAMLLINT_CONFIG_FILE: .github/workflows/lint.yml
 
       - name: Lint Bicep Files
         shell: pwsh
