@@ -1,0 +1,276 @@
+name: AzureLandingZonesDemo/Policy_Assignments
+on:
+  pull_request:
+    branches:
+    - assignments
+  workflow_run:
+    workflows:
+    - Initiative Definitions
+    types: completed
+jobs:
+  build-test:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Test
+    runs-on: ${{ env.vmImage }}
+    env:
+      azureConnection: root
+      vmImage: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: Run Pester Tests
+      run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1, modules/policies/scripts/Test-AssignmentVars.Tests.ps1 -CI
+      shell: pwsh
+    - name: Publish NUnit test results
+      uses: dorny/test-reporter@v1.7.0
+      if: always()
+      with:
+        name: Test Results
+        path: "**/testResults.xml"
+        reporter: dotnet-trx
+        list-suites: all
+        list-tests: all
+        max-annotations: 10
+        fail-on-error: 'true'
+  build-canary:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Build Canary
+    runs-on: ${{ env.vmImage }}
+    env:
+      azureConnection: root
+      location: swedencentral
+      logAnalyticsWorkspaceId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklzcanary"
+      managedIdentityId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklzcanary"
+      managementGroupId: lz-canary
+      policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp, lz-canary/landing-zones/online
+      vmImage: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: Build Template
+      uses: azure/login@v1.6.0
+      with:
+        creds: "${{ secrets.AZURE_CREDENTIALS }}"
+    - name: Build Template
+      run: |-
+        $ErrorActionPreference = 'stop'
+        $managementGroupId = "${{ env.managementGroupId }}"
+        $managedIdentityId = "${{ env.managedIdentityId }}"
+        $logAnalyticsWorkspaceId = "${{ env.logAnalyticsWorkspaceId }}"
+        $assignmentsDirectory = "${{ github.workspace }}[\\/]modules[\\/]policies[\\/]assignments"
+        $stagingDirectory = "${{ runner.temp }}/$managementGroupId"
+        ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -ManagedIdentityId $managedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+        Get-ChildItem modules/policies/assignments -Filter main.bicep -Recurse | ForEach-Object {
+            $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+            New-Item -Path $path -ItemType Directory -Force | Out-Null
+            az bicep build --file $PSItem.FullName --outfile "$path/main.json"
+        }
+        if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) { exit $LASTEXITCODE }
+      shell: pwsh
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4.1.0
+      with:
+        name: canary
+        path: "${{ runner.temp }}"
+  build-prod:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Build Production
+    runs-on: ${{ env.vmImage }}
+    env:
+      azureConnection: root
+      location: swedencentral
+      logAnalyticsWorkspaceId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklz"
+      managedIdentityId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklz"
+      managementGroupId: lz
+      policyAssignmentFolders: lz, lz/landing-zones/corp, lz/landing-zones/online
+      vmImage: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: Build Template
+      uses: azure/login@v1.6.0
+      with:
+        creds: "${{ secrets.AZURE_CREDENTIALS }}"
+    - name: Build Template
+      run: |-
+        $ErrorActionPreference = 'stop'
+        $managementGroupId = "${{ env.managementGroupId }}"
+        $managedIdentityId = "${{ env.managedIdentityId }}"
+        $logAnalyticsWorkspaceId = "${{ env.logAnalyticsWorkspaceId }}"
+        $assignmentsDirectory = "${{ github.workspace }}[\\/]modules[\\/]policies[\\/]assignments"
+        $stagingDirectory = "${{ runner.temp }}/$managementGroupId"
+        ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -ManagedIdentityId $managedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+        Get-ChildItem modules/policies/assignments -Filter main.bicep -Recurse | ForEach-Object {
+            $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+            New-Item -Path $path -ItemType Directory -Force | Out-Null
+            az bicep build --file $PSItem.FullName --outfile "$path/main.json"
+        }
+        if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) { exit $LASTEXITCODE }
+      shell: pwsh
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4.1.0
+      with:
+        name: prod
+        path: "${{ runner.temp }}"
+  validate-canary:
+    name: Canary
+    needs:
+    - build-test
+    - build-canary
+    - build-prod
+    runs-on: ${{ env.vmImage }}
+    environment:
+      name: Canary
+    env:
+      azureConnection: root
+      location: swedencentral
+      logAnalyticsWorkspaceId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklzcanary"
+      managedIdentityId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklzcanary"
+      managementGroupId: lz-canary
+      policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp, lz-canary/landing-zones/online
+      vmImage: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && success() && github.RUN_NUMBER == 1 }}
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: download artifact
+      uses: actions/download-artifact@v4.1.0
+    - uses: actions/checkout@v4.1.0
+    - name: Compare assignments
+      uses: azure/login@v1.6.0
+      with:
+        creds: "${{ secrets.AZURE_CREDENTIALS }}"
+        enable-AzPSSession: true
+    - name: Compare assignments
+      uses: azure/powershell@v1.4.0
+      with:
+        inlineScript: "${{ github.workspace }}/modules/policies/scripts/Compare-Assignment.ps1 -Prefix ${{ env.managementGroupId }}"
+        errorActionPreference: Stop
+        failOnStandardError: false
+        azPSVersion: latest
+#     # section was not transformed because it contains unsupported usage of the `each` syntax
+#     - path: templates/management-group-deployment.yml
+#       parameters:
+#         displayName: Validate deployment in ${{ folder }}
+#         deploymentName: assignments
+#         command: validate
+#         azureConnection: "${{ env.azureConnection }}"
+#         location: "${{ env.location }}"
+#         managementGroupId: "${{ replace(folder, '/', '-') }}"
+#         templateFile: "${{ runner.workspace }}/canary/${{ folder }}/main.json"
+#       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
+  validate-prod:
+    name: Production
+    needs:
+    - build-test
+    - build-canary
+    - build-prod
+    runs-on: ${{ env.vmImage }}
+    environment:
+      name: Production
+    env:
+      azureConnection: root
+      location: swedencentral
+      logAnalyticsWorkspaceId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklz"
+      managedIdentityId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklz"
+      managementGroupId: lz
+      policyAssignmentFolders: lz, lz/landing-zones/corp, lz/landing-zones/online
+      vmImage: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.RUN_NUMBER == 1 }}
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: download artifact
+      uses: actions/download-artifact@v4.1.0
+    - uses: actions/checkout@v4.1.0
+    - name: Compare assignments
+      uses: azure/login@v1.6.0
+      with:
+        creds: "${{ secrets.AZURE_CREDENTIALS }}"
+        enable-AzPSSession: true
+    - name: Compare assignments
+      uses: azure/powershell@v1.4.0
+      with:
+        inlineScript: |-
+          $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
+          ${{ github.workspace }}/modules/policies/scripts/Compare-Assignment.ps1 -Prefix ${{ env.managementGroupId }}
+        errorActionPreference: Stop
+        failOnStandardError: false
+        azPSVersion: latest
+#     # section was not transformed because it contains unsupported usage of the `each` syntax
+#     - path: templates/management-group-deployment.yml
+#       parameters:
+#         displayName: Validate deployment in ${{ folder }}
+#         deploymentName: assignments
+#         command: validate
+#         azureConnection: "${{ env.azureConnection }}"
+#         location: "${{ env.location }}"
+#         managementGroupId: "${{ replace(folder, '/', '-') }}"
+#         templateFile: "${{ runner.workspace }}/prod/${{ folder }}/main.json"
+#       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
+  deploy-canary:
+    name: Canary
+    needs:
+    - validate-canary
+    - validate-prod
+    runs-on: ${{ env.vmImage }}
+    environment:
+      name: Canary
+    env:
+      azureConnection: root
+      location: swedencentral
+      logAnalyticsWorkspaceId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklzcanary"
+      managedIdentityId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklzcanary"
+      managementGroupId: lz-canary
+      policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp, lz-canary/landing-zones/online
+      vmImage: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && success() && github.RUN_NUMBER == 1 }}
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: download artifact
+      uses: actions/download-artifact@v4.1.0
+#     # section was not transformed because it contains unsupported usage of the `each` syntax
+#     - path: templates/management-group-deployment.yml
+#       parameters:
+#         displayName: Deploy assignments in ${{ folder }}
+#         deploymentName: assignments
+#         command: create
+#         azureConnection: "${{ env.azureConnection }}"
+#         location: "${{ env.location }}"
+#         managementGroupId: "${{ replace(folder, '/', '-') }}"
+#         templateFile: "${{ runner.workspace }}/canary/${{ folder }}/main.json"
+#       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
+  deploy-prod:
+    name: Production
+    needs:
+    - validate-canary
+    - validate-prod
+    runs-on: ${{ env.vmImage }}
+    environment:
+      name: Production
+    env:
+      azureConnection: root
+      location: swedencentral
+      logAnalyticsWorkspaceId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklz"
+      managedIdentityId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklz"
+      managementGroupId: lz
+      policyAssignmentFolders: lz, lz/landing-zones/corp, lz/landing-zones/online
+      vmImage: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && (success() && github.ref == 'refs/heads/main') && github.RUN_NUMBER == 1 }}
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: download artifact
+      uses: actions/download-artifact@v4.1.0
+#     # section was not transformed because it contains unsupported usage of the `each` syntax
+#     - path: templates/management-group-deployment.yml
+#       parameters:
+#         displayName: Deploy assignments in ${{ folder }}
+#         deploymentName: assignments
+#         command: create
+#         azureConnection: "${{ env.azureConnection }}"
+#         location: "${{ env.location }}"
+#         managementGroupId: "${{ replace(folder, '/', '-') }}"
+#         templateFile: "${{ runner.workspace }}/prod/${{ folder }}/main.json"
+#       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
