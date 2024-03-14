@@ -1,0 +1,36 @@
+name: azdo_pipelines_templates_management_group_deployment
+inputs:
+  displayName:
+    required: false
+  deploymentName:
+    required: false
+  command:
+    required: false
+  azureConnection:
+    required: false
+  location:
+    required: false
+  managementGroupId:
+    required: false
+  templateFile:
+    required: false
+  parameters:
+    required: false
+    default: "{}"
+    type: string
+runs:
+  using: composite
+  steps:
+  - name: "${{ inputs.displayName }}"
+    uses: azure/login@v1.6.0
+    with:
+      creds: "${{ secrets.AZURE_CREDENTIALS }}"
+  - name: "${{ inputs.displayName }}"
+    run: |-
+      az deployment mg ${{ inputs.command }} \
+      --management-group-id ${{ inputs.managementGroupId }} \
+      --name "${{ inputs.deploymentName }}-$(date -u +"%Y%m%d%H%M%S")" \
+      --location ${{ inputs.location }} \
+      --template-file ${{ inputs.templateFile }} \
+      --parameters ${{ inputs.parameters }}
+    shell: bash
