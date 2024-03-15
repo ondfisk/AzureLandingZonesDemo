@@ -6,8 +6,6 @@ inputs:
     required: false
   command:
     required: false
-  azureConnection:
-    required: false
   location:
     required: false
   managementGroupId:

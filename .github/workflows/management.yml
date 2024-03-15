@@ -1,183 +1,155 @@
+---
 name: AzureLandingZonesDemo/Management
-on:
+
+"on":
   push:
+    branches:
+      - main
     paths:
-    - ".azdo/pipelines/management.yml"
-    - environments/canary/management.bicepparam
-    - environments/prod/management.bicepparam
-    - modules/management/**
-    - "!README.md"
+      - ".azdo/pipelines/management.yml"
+      - environments/canary/management.bicepparam
+      - environments/prod/management.bicepparam
+      - modules/management/**
+      - "!README.md"
+
   pull_request:
     branches:
-    - management/deploy
+      - main
+    paths:
+      - ".azdo/pipelines/management.yml"
+      - environments/canary/management.bicepparam
+      - environments/prod/management.bicepparam
+      - modules/management/**
+      - "!README.md"
+
+  workflow_dispatch:
+
 jobs:
-  build-build:
+  build:
     name: Build
-    runs-on: ${{ env.vmImage }}
-    env:
-      azureConnection: root
-      vmImage: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
-    - name: checkout
-      uses: actions/checkout@v4.1.0
-    - name: Build Template
-      uses: azure/login@v1.6.0
-      with:
-        creds: "${{ secrets.AZURE_CREDENTIALS }}"
-    - name: Build Template
-      run: |-
-        az bicep build --file modules/management/main.bicep --outfile ${{ runner.temp }}/main.json
-        az bicep build-params --file environments/canary/management.bicepparam --outfile ${{ runner.temp }}/main.canary.parameters.json
-        az bicep build-params --file environments/prod/management.bicepparam --outfile ${{ runner.temp }}/main.prod.parameters.json
-      shell: bash
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v4.1.0
-      with:
-        name: drop
-        path: "${{ runner.temp }}"
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build Template
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az bicep build --file modules/management/main.bicep --outfile ${{ runner.temp }}/main.json
+            az bicep build-params --file environments/canary/management.bicepparam --outfile ${{ runner.temp }}/main.canary.parameters.json
+            az bicep build-params --file environments/prod/management.bicepparam --outfile ${{ runner.temp }}/main.prod.parameters.json
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: drop
+          path: "${{ runner.temp }}"
+
   validate-canary:
     name: Canary
+    runs-on: ubuntu-latest
     needs:
-    - build-build
-    runs-on: ${{ env.vmImage }}
+      - build
     environment:
       name: Canary
-    env:
-      azureConnection: root
-      location: swedencentral
-      logAnalyticsWorkspaceId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklzcanary"
-      managedIdentityId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklzcanary"
-      managementGroupId: lz-canary
-      policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp, lz-canary/landing-zones/online
-      vmImage: ubuntu-latest
-    if: success() && github.RUN_NUMBER == 1
     steps:
-    - name: checkout
-      uses: actions/checkout@v4.1.0
-    - name: download artifact
-      uses: actions/download-artifact@v4.1.0
-    - uses: "./.github/actions/azdo_pipelines_templates_management_group_deployment"
-      with:
-        displayName: Validate deployment
-        deploymentName: management
-        command: validate
-        azureConnection: "${{ env.azureConnection }}"
-        location: "${{ env.location }}"
-        managementGroupId: "${{ env.managementGroupId }}"
-        templateFile: "${{ runner.workspace }}/drop/main.json"
-        parameters: "${{ runner.workspace }}/drop/main.canary.parameters.json"
-    - uses: "./.github/actions/azdo_pipelines_templates_management_group_deployment"
-      with:
-        displayName: What-if deployment
-        deploymentName: management
-        command: what-if
-        azureConnection: "${{ env.azureConnection }}"
-        location: "${{ env.location }}"
-        managementGroupId: "${{ env.managementGroupId }}"
-        templateFile: "${{ runner.workspace }}/drop/main.json"
-        parameters: "${{ runner.workspace }}/drop/main.canary.parameters.json"
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Validate deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Validate
+      - name: What-if deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+
   validate-prod:
     name: Production
+    runs-on: ubuntu-latest
     needs:
-    - build-build
-    runs-on: ${{ env.vmImage }}
+      - build
     environment:
       name: Production
-    env:
-      azureConnection: root
-      location: swedencentral
-      logAnalyticsWorkspaceId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklz"
-      managedIdentityId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklz"
-      managementGroupId: lz
-      policyAssignmentFolders: lz, lz/landing-zones/corp, lz/landing-zones/online
-      vmImage: ubuntu-latest
-    if: github.RUN_NUMBER == 1
     steps:
-    - name: checkout
-      uses: actions/checkout@v4.1.0
-    - name: download artifact
-      uses: actions/download-artifact@v4.1.0
-    - uses: "./.github/actions/azdo_pipelines_templates_management_group_deployment"
-      with:
-        displayName: Validate deployment
-        deploymentName: management
-        command: validate
-        azureConnection: "${{ env.azureConnection }}"
-        location: "${{ env.location }}"
-        managementGroupId: "${{ env.managementGroupId }}"
-        templateFile: "${{ runner.workspace }}/drop/main.json"
-        parameters: "${{ runner.workspace }}/drop/main.prod.parameters.json"
-    - uses: "./.github/actions/azdo_pipelines_templates_management_group_deployment"
-      with:
-        displayName: What-if deployment
-        deploymentName: management
-        command: what-if
-        azureConnection: "${{ env.azureConnection }}"
-        location: "${{ env.location }}"
-        managementGroupId: "${{ env.managementGroupId }}"
-        templateFile: "${{ runner.workspace }}/drop/main.json"
-        parameters: "${{ runner.workspace }}/drop/main.prod.parameters.json"
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Validate deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Validate
+      - name: What-if deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+
   deploy-canary:
     name: Canary
+    runs-on: ubuntu-latest
     needs:
-    - validate-canary
-    - validate-prod
-    runs-on: ${{ env.vmImage }}
+      - validate-canary
     environment:
       name: Canary
-    env:
-      azureConnection: root
-      location: swedencentral
-      logAnalyticsWorkspaceId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklzcanary"
-      managedIdentityId: "/subscriptions/8228ddb9-d118-47b4-b4e7-1f1de7667d4d/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklzcanary"
-      managementGroupId: lz-canary
-      policyAssignmentFolders: lz-canary, lz-canary/landing-zones/corp, lz-canary/landing-zones/online
-      vmImage: ubuntu-latest
-    if: success() && github.RUN_NUMBER == 1
     steps:
-    - name: checkout
-      uses: actions/checkout@v4.1.0
-    - name: download artifact
-      uses: actions/download-artifact@v4.1.0
-    - uses: "./.github/actions/azdo_pipelines_templates_management_group_deployment"
-      with:
-        displayName: Deploy management resources
-        deploymentName: management
-        command: create
-        azureConnection: "${{ env.azureConnection }}"
-        location: "${{ env.location }}"
-        managementGroupId: "${{ env.managementGroupId }}"
-        templateFile: "${{ runner.workspace }}/drop/main.json"
-        parameters: "${{ runner.workspace }}/drop/main.canary.parameters.json"
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Deploy resources
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+
   deploy-prod:
     name: Production
+    runs-on: ubuntu-latest
     needs:
-    - validate-canary
-    - validate-prod
-    runs-on: ${{ env.vmImage }}
+      - validate-prod
+    if: success() && github.ref == 'refs/heads/main'
     environment:
       name: Production
-    env:
-      azureConnection: root
-      location: swedencentral
-      logAnalyticsWorkspaceId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.OperationalInsights/workspaces/ondfisklz"
-      managedIdentityId: "/subscriptions/e678d35b-125e-41ad-ae35-c04dfd4162e5/resourceGroups/Management/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ondfisklz"
-      managementGroupId: lz
-      policyAssignmentFolders: lz, lz/landing-zones/corp, lz/landing-zones/online
-      vmImage: ubuntu-latest
-    if: (success() && github.ref == 'refs/heads/main') && github.RUN_NUMBER == 1
     steps:
-    - name: checkout
-      uses: actions/checkout@v4.1.0
-    - name: download artifact
-      uses: actions/download-artifact@v4.1.0
-    - uses: "./.github/actions/azdo_pipelines_templates_management_group_deployment"
-      with:
-        displayName: Deploy management resources
-        deploymentName: management
-        command: create
-        azureConnection: "${{ env.azureConnection }}"
-        location: "${{ env.location }}"
-        managementGroupId: "${{ env.managementGroupId }}"
-        templateFile: "${{ runner.workspace }}/drop/main.json"
-        parameters: "${{ runner.workspace }}/drop/main.prod.parameters.json"
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Deploy resources
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+...
