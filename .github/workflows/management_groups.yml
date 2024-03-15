@@ -6,7 +6,7 @@ name: Management Groups
     branches:
       - main
     paths:
-      - ".github/workflows/management-groups.yml"
+      - .github/workflows/management-groups.yml
       - environments/canary/management-groups.bicepparam
       - environments/prod/management-groups.bicepparam
       - modules/management-groups/**
@@ -16,7 +16,7 @@ name: Management Groups
     branches:
       - main
     paths:
-      - ".github/workflows/management-groups.yml"
+      - .github/workflows/management-groups.yml
       - environments/canary/management-groups.bicepparam
       - environments/prod/management-groups.bicepparam
       - modules/management-groups/**

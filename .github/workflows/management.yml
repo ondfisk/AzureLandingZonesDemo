@@ -6,7 +6,7 @@ name: Management
     branches:
       - main
     paths:
-      - ".github/workflows/management.yml"
+      - .github/workflows/management.yml
       - environments/canary/management.bicepparam
       - environments/prod/management.bicepparam
       - modules/management/**
@@ -16,7 +16,7 @@ name: Management
     branches:
       - main
     paths:
-      - ".github/workflows/management.yml"
+      - .github/workflows/management.yml
       - environments/canary/management.bicepparam
       - environments/prod/management.bicepparam
       - modules/management/**
