@@ -33,7 +33,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
       - name: Build Template
         uses: azure/login@v2
@@ -71,22 +71,13 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate deployment
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: tenant
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
           parameters: drop/main.canary.parameters.json
           deploymentMode: Validate
-      - name: What-if deployment
-        uses: azure/arm-deploy@v1
-        with:
-          scope: tenant
-          region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.canary.parameters.json
-          deploymentMode: Incremental
-          additionalArguments: --what-if
 
   validate-prod:
     name: Validate Production
@@ -105,22 +96,13 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate deployment
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: tenant
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
           parameters: drop/main.prod.parameters.json
           deploymentMode: Validate
-      - name: What-if deployment
-        uses: azure/arm-deploy@v1
-        with:
-          scope: tenant
-          region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.prod.parameters.json
-          deploymentMode: Incremental
-          additionalArguments: --what-if
 
   deploy-canary:
     name: Deploy Canary
@@ -139,14 +121,14 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy resources
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
+          deploymentName: deploy-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
           parameters: drop/main.canary.parameters.json
           deploymentMode: Incremental
-          additionalArguments: --what-if
 
   deploy-prod:
     name: Deploy Production
@@ -166,12 +148,12 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy resources
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
+          deploymentName: deploy-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
           parameters: drop/main.prod.parameters.json
           deploymentMode: Incremental
-          additionalArguments: --what-if
 ...

@@ -71,7 +71,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate deployment
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -80,7 +80,7 @@ jobs:
           parameters: drop/main.canary.parameters.json
           deploymentMode: Validate
       - name: What-if deployment
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -107,7 +107,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate deployment
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -116,7 +116,7 @@ jobs:
           parameters: drop/main.prod.parameters.json
           deploymentMode: Validate
       - name: What-if deployment
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -143,15 +143,15 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy resources
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
+          deploymentName: deploy-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
           parameters: drop/main.canary.parameters.json
           deploymentMode: Incremental
-          additionalArguments: --what-if
 
   deploy-prod:
     name: Deploy Production
@@ -171,13 +171,13 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy resources
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
+          deploymentName: deploy-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
           parameters: drop/main.prod.parameters.json
           deploymentMode: Incremental
-          additionalArguments: --what-if
 ...
