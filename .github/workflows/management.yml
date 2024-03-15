@@ -1,0 +1,155 @@
+---
+name: Management
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - ".azdo/pipelines/management.yml"
+      - environments/canary/management.bicepparam
+      - environments/prod/management.bicepparam
+      - modules/management/**
+      - "!README.md"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".azdo/pipelines/management.yml"
+      - environments/canary/management.bicepparam
+      - environments/prod/management.bicepparam
+      - modules/management/**
+      - "!README.md"
+
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build Template
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az bicep build --file modules/management/main.bicep --outfile ${{ runner.temp }}/main.json
+            az bicep build-params --file environments/canary/management.bicepparam --outfile ${{ runner.temp }}/main.canary.parameters.json
+            az bicep build-params --file environments/prod/management.bicepparam --outfile ${{ runner.temp }}/main.prod.parameters.json
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: drop
+          path: "${{ runner.temp }}"
+
+  validate-canary:
+    name: Canary
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    environment:
+      name: Canary
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Validate deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Validate
+      - name: What-if deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+
+  validate-prod:
+    name: Production
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    environment:
+      name: Production
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Validate deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Validate
+      - name: What-if deployment
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+
+  deploy-canary:
+    name: Canary
+    runs-on: ubuntu-latest
+    needs:
+      - validate-canary
+    environment:
+      name: Canary
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Deploy resources
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+
+  deploy-prod:
+    name: Production
+    runs-on: ubuntu-latest
+    needs:
+      - validate-prod
+    if: success() && github.ref == 'refs/heads/main'
+    environment:
+      name: Production
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Deploy resources
+        uses: azure/arm-deploy@v1
+        with:
+          scope: managementGroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
+...
