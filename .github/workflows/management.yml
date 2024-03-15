@@ -1,5 +1,5 @@
 ---
-name: AzureLandingZonesDemo/Management
+name: Management
 
 "on":
   push:
@@ -22,7 +22,7 @@ name: AzureLandingZonesDemo/Management
       - modules/management/**
       - "!README.md"
 
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   build:
