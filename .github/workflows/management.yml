@@ -156,9 +156,9 @@ jobs:
   deploy-prod:
     name: Deploy Production
     runs-on: ubuntu-latest
+    if: success() && github.ref == 'refs/heads/main'
     needs:
       - validate-prod
-    if: success() && github.ref == 'refs/heads/main'
     environment:
       name: Production
     steps:
