@@ -137,7 +137,7 @@ stages:
                 - ${{ each folder in split(variables.policyAssignmentFolders, ', ') }}:
                     - template: templates/management-group-deployment.yml
                       parameters:
-                        displayName: Validate deployment in ${{ folder }}
+                        displayName: Validate Deployment in ${{ folder }}
                         deploymentName: assignments
                         command: validate
                         azureConnection: ${{ variables.azureConnection }}
@@ -147,7 +147,7 @@ stages:
 
                     - template: templates/management-group-deployment.yml
                       parameters:
-                        displayName: What-if deployment in ${{ folder }}
+                        displayName: What-if Deployment in ${{ folder }}
                         deploymentName: assignments
                         command: what-if
                         azureConnection: ${{ variables.azureConnection }}
@@ -182,7 +182,7 @@ stages:
                 - ${{ each folder in split(variables.policyAssignmentFolders, ', ') }}:
                     - template: templates/management-group-deployment.yml
                       parameters:
-                        displayName: Validate deployment in ${{ folder }}
+                        displayName: Validate Deployment in ${{ folder }}
                         deploymentName: assignments
                         command: validate
                         azureConnection: ${{ variables.azureConnection }}
@@ -192,7 +192,7 @@ stages:
 
                     - template: templates/management-group-deployment.yml
                       parameters:
-                        displayName: What-if deployment in ${{ folder }}
+                        displayName: What-if Deployment in ${{ folder }}
                         deploymentName: assignments
                         command: what-if
                         azureConnection: ${{ variables.azureConnection }}
