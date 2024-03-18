@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Build Template
+      - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -133,9 +133,9 @@ jobs:
   deploy-prod:
     name: Deploy Production
     runs-on: ubuntu-latest
+    if: success() && github.ref == 'refs/heads/main'
     needs:
       - validate-prod
-    if: success() && github.ref == 'refs/heads/main'
     environment:
       name: Production
     steps:
