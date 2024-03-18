@@ -64,30 +64,31 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Validate deployment
+      - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.canary.parameters.json
+          template: main.json
+          parameters: main.canary.parameters.json
           deploymentMode: Validate
-      - name: What-if deployment
+      - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.canary.parameters.json
-          deploymentMode: Incremental
+          template: main.json
+          parameters: main.canary.parameters.json
           additionalArguments: --what-if
 
   validate-prod:
@@ -100,30 +101,31 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Validate deployment
+      - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.prod.parameters.json
+          template: main.json
+          parameters: main.prod.parameters.json
           deploymentMode: Validate
-      - name: What-if deployment
+      - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.prod.parameters.json
-          deploymentMode: Incremental
+          template: main.json
+          parameters: main.prod.parameters.json
           additionalArguments: --what-if
 
   deploy-canary:
@@ -136,22 +138,23 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Deploy resources
+      - name: Deploy Resources
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: deploy-canary-${{ github.run_id }}-${{ github.job }}
+          deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.canary.parameters.json
-          deploymentMode: Incremental
+          template: main.json
+          parameters: main.canary.parameters.json
 
   deploy-prod:
     name: Deploy Production
@@ -164,20 +167,21 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Deploy resources
+      - name: Deploy Resources
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: deploy-production-${{ github.run_id }}-${{ github.job }}
+          deploymentName: management-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.prod.parameters.json
-          deploymentMode: Incremental
+          template: main.json
+          parameters: main.prod.parameters.json
 ...

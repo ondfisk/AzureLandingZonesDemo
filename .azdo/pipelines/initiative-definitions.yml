@@ -123,7 +123,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate deployment
+                    displayName: Validate Deployment
                     deploymentName: initiatives
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -133,7 +133,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-if deployment
+                    displayName: What-if Deployment
                     deploymentName: initiatives
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
@@ -155,7 +155,7 @@ stages:
                 - checkout: self
 
                 - task: AzurePowerShell@5
-                  displayName: Compare initiatives
+                  displayName: Compare Initiatives
                   inputs:
                     azureSubscription: ${{ variables.azureConnection }}
                     ScriptType: InlineScript
@@ -167,7 +167,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate deployment
+                    displayName: Validate Deployment
                     deploymentName: initiatives
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -177,7 +177,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-if deployment
+                    displayName: What-if Deployment
                     deploymentName: initiatives
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
@@ -203,7 +203,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Deploy initiatives
+                    displayName: Deploy Initiatives
                     deploymentName: initiatives
                     command: create
                     azureConnection: ${{ variables.azureConnection }}
@@ -225,7 +225,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Deploy initiatives
+                    displayName: Deploy Initiatives
                     deploymentName: initiatives
                     command: create
                     azureConnection: ${{ variables.azureConnection }}

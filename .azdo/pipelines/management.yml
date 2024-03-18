@@ -60,7 +60,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate deployment
+                    displayName: Validate Deployment
                     deploymentName: management
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -71,7 +71,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-if deployment
+                    displayName: What-if Deployment
                     deploymentName: management
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
@@ -93,7 +93,7 @@ stages:
               steps:
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate deployment
+                    displayName: Validate Deployment
                     deploymentName: management
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -104,7 +104,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-if deployment
+                    displayName: What-if Deployment
                     deploymentName: management
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}

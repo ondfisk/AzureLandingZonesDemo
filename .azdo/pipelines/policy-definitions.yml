@@ -85,7 +85,7 @@ stages:
                 - checkout: self
 
                 - task: AzurePowerShell@5
-                  displayName: Compare policies
+                  displayName: Compare Policies
                   inputs:
                     azureSubscription: ${{ variables.azureConnection }}
                     ScriptType: InlineScript
@@ -96,7 +96,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate deployment
+                    displayName: Validate Deployment
                     deploymentName: policies
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -106,7 +106,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-if deployment
+                    displayName: What-if Deployment
                     deploymentName: policies
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
@@ -128,7 +128,7 @@ stages:
                 - checkout: self
 
                 - task: AzurePowerShell@5
-                  displayName: Compare policies
+                  displayName: Compare Policies
                   inputs:
                     azureSubscription: ${{ variables.azureConnection }}
                     ScriptType: InlineScript
@@ -140,7 +140,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: Validate deployment
+                    displayName: Validate Deployment
                     deploymentName: policies
                     command: validate
                     azureConnection: ${{ variables.azureConnection }}
@@ -150,7 +150,7 @@ stages:
 
                 - template: templates/management-group-deployment.yml
                   parameters:
-                    displayName: What-if deployment
+                    displayName: What-if Deployment
                     deploymentName: policies
                     command: what-if
                     azureConnection: ${{ variables.azureConnection }}
