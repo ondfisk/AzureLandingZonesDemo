@@ -22,7 +22,7 @@ name: Management Groups
       - modules/management-groups/**
       - "!README.md"
 
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 permissions:
   id-token: write

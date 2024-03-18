@@ -16,6 +16,12 @@ name: Policy Definitions
       - modules/policy-definitions/**
       - "!README.md"
 
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build:
     name: Build
@@ -60,6 +66,8 @@ jobs:
     environment:
       name: Canary
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Download Artifacts
         uses: actions/download-artifact@v4
       - name: Login to Azure
@@ -72,7 +80,7 @@ jobs:
       - name: Compare policies
         uses: azure/powershell@v1
         with:
-          inlineScript: "./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ vars.MANAGEMENT_GROUP_ID }}"
+          inlineScript: ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ vars.MANAGEMENT_GROUP_ID }}
           azPSVersion: latest
       - name: Validate deployment
         uses: azure/arm-deploy@v2
@@ -101,6 +109,8 @@ jobs:
     environment:
       name: Production
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Download Artifacts
         uses: actions/download-artifact@v4
       - name: Login to Azure
@@ -115,7 +125,7 @@ jobs:
         with:
           inlineScript: |
             $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
-            ${{ github.workspace }}/modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ env.managementGroupId }}
+            ${{ github.workspace }}/modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ vars.MANAGEMENT_GROUP_ID }}
           azPSVersion: latest
       - name: Validate deployment
         uses: azure/arm-deploy@v2
@@ -146,6 +156,12 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy resources
         uses: azure/arm-deploy@v2
         with:
@@ -154,7 +170,6 @@ jobs:
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
-          parameters: drop/main.canary.parameters.json
           deploymentMode: Incremental
 
   deploy-prod:
@@ -169,6 +184,12 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy resources
         uses: azure/arm-deploy@v2
         with:
@@ -177,6 +198,5 @@ jobs:
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: drop/main.json
-          parameters: drop/main.canary.parameters.json
           deploymentMode: Incremental
 ...
