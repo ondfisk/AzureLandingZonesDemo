@@ -85,7 +85,7 @@ stages:
                 - checkout: self
 
                 - task: AzurePowerShell@5
-                  displayName: Compare policies
+                  displayName: Compare Policies
                   inputs:
                     azureSubscription: ${{ variables.azureConnection }}
                     ScriptType: InlineScript
@@ -128,7 +128,7 @@ stages:
                 - checkout: self
 
                 - task: AzurePowerShell@5
-                  displayName: Compare policies
+                  displayName: Compare Policies
                   inputs:
                     azureSubscription: ${{ variables.azureConnection }}
                     ScriptType: InlineScript

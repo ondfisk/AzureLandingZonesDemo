@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   build-canary:
-    name: Build (Canary)
+    name: Build Canary
     runs-on: ubuntu-latest
     environment:
       name: Canary
@@ -51,7 +51,7 @@ jobs:
           path: "${{ runner.temp }}"
 
   build-prod:
-    name: Build (Production)
+    name: Build Production
     runs-on: ubuntu-latest
     environment:
       name: Production
@@ -88,7 +88,7 @@ jobs:
         shell: pwsh
 
   validate-canary:
-    name: Canary
+    name: Validate Canary
     needs:
       - build-canary
       - test
@@ -133,7 +133,7 @@ jobs:
           additionalArguments: --what-if
 
   validate-prod:
-    name: Production
+    name: Validate Production
     needs:
       - build-prod
       - test
@@ -180,7 +180,7 @@ jobs:
           additionalArguments: --what-if
 
   deploy-canary:
-    name: Canary
+    name: Deploy Canary
     needs:
       - validate-canary
     runs-on: ubuntu-latest
@@ -191,10 +191,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: canary
-      - name: What-if Deployment
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Deploy Resources
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
+          deploymentName: initiative-definitions-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
@@ -202,7 +209,7 @@ jobs:
           deploymentMode: Incremental
 
   deploy-prod:
-    name: Production
+    name: Deploy Production
     needs:
       - validate-prod
     runs-on: ubuntu-latest
@@ -214,10 +221,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: prod
-      - name: What-if Deployment
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy Resources
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
+          deploymentName: initiative-definitions-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
