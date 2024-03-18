@@ -1,0 +1,159 @@
+---
+name: Management Groups
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/management-groups.yml
+      - environments/canary/management-groups.bicepparam
+      - environments/prod/management-groups.bicepparam
+      - modules/management-groups/**
+      - "!README.md"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/management-groups.yml
+      - environments/canary/management-groups.bicepparam
+      - environments/prod/management-groups.bicepparam
+      - modules/management-groups/**
+      - "!README.md"
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build Template
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az bicep build --file modules/management-groups/main.bicep --outfile ${{ runner.temp }}/main.json
+            az bicep build-params --file environments/canary/management-groups.bicepparam --outfile ${{ runner.temp }}/main.canary.parameters.json
+            az bicep build-params --file environments/prod/management-groups.bicepparam --outfile ${{ runner.temp }}/main.prod.parameters.json
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: drop
+          path: "${{ runner.temp }}"
+
+  validate-canary:
+    name: Validate Canary
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    environment:
+      name: Canary
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Validate deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: tenant
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Validate
+
+  validate-prod:
+    name: Validate Production
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    environment:
+      name: Production
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Validate deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: tenant
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Validate
+
+  deploy-canary:
+    name: Deploy Canary
+    runs-on: ubuntu-latest
+    needs:
+      - validate-canary
+    environment:
+      name: Canary
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy resources
+        uses: azure/arm-deploy@v2
+        with:
+          deploymentName: deploy-canary-${{ github.run_id }}-${{ github.job }}
+          scope: tenant
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.canary.parameters.json
+          deploymentMode: Incremental
+
+  deploy-prod:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    if: success() && github.ref == 'refs/heads/main'
+    needs:
+      - validate-prod
+    environment:
+      name: Production
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy resources
+        uses: azure/arm-deploy@v2
+        with:
+          deploymentName: deploy-production-${{ github.run_id }}-${{ github.job }}
+          scope: tenant
+          region: "${{ vars.LOCATION }}"
+          template: drop/main.json
+          parameters: drop/main.prod.parameters.json
+          deploymentMode: Incremental
+...
