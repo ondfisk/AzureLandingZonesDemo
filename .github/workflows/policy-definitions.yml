@@ -99,7 +99,6 @@ jobs:
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: main.json
-          deploymentMode: Incremental
           additionalArguments: --what-if
 
   validate-prod:
@@ -146,7 +145,6 @@ jobs:
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: main.json
-          deploymentMode: Incremental
           additionalArguments: --what-if
 
   deploy-canary:
@@ -175,7 +173,6 @@ jobs:
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: main.json
-          deploymentMode: Incremental
 
   deploy-prod:
     name: Deploy Production
@@ -204,5 +201,4 @@ jobs:
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: main.json
-          deploymentMode: Incremental
 ...

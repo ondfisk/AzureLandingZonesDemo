@@ -89,7 +89,6 @@ jobs:
           region: "${{ vars.LOCATION }}"
           template: main.json
           parameters: main.canary.parameters.json
-          deploymentMode: Incremental
           additionalArguments: --what-if
 
   validate-prod:
@@ -127,7 +126,6 @@ jobs:
           region: "${{ vars.LOCATION }}"
           template: main.json
           parameters: main.prod.parameters.json
-          deploymentMode: Incremental
           additionalArguments: --what-if
 
   deploy-canary:
@@ -157,7 +155,6 @@ jobs:
           region: "${{ vars.LOCATION }}"
           template: main.json
           parameters: main.canary.parameters.json
-          deploymentMode: Incremental
 
   deploy-prod:
     name: Deploy Production
@@ -187,5 +184,4 @@ jobs:
           region: "${{ vars.LOCATION }}"
           template: main.json
           parameters: main.prod.parameters.json
-          deploymentMode: Incremental
 ...
