@@ -80,6 +80,15 @@ jobs:
           template: main.json
           parameters: main.canary.parameters.json
           deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: tenant
+          region: "${{ vars.LOCATION }}"
+          template: main.json
+          parameters: main.canary.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
 
   validate-prod:
     name: Validate Production
@@ -107,6 +116,15 @@ jobs:
           template: main.json
           parameters: main.prod.parameters.json
           deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: tenant
+          region: "${{ vars.LOCATION }}"
+          template: main.json
+          parameters: main.prod.parameters.json
+          deploymentMode: Incremental
+          additionalArguments: --what-if
 
   deploy-canary:
     name: Deploy Canary

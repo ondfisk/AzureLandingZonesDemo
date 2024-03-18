@@ -3,6 +3,8 @@ name: Policy Definitions
 
 "on":
   push:
+    branches:
+      - main
     paths:
       - .github/workflows/policy-definitions.yml
       - modules/policies/policies/**

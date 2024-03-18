@@ -3,6 +3,8 @@ name: Initiative Definitions
 
 "on":
   push:
+    branches:
+      - main
     paths:
       - .github/workflows/initiative-definitions.yml
       - modules/policies/initiatives/**
@@ -79,7 +81,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
       - name: Run Pester Tests
         run: Invoke-Pester -Path modules/policies/scripts/Test-Initiative.Tests.ps1 -CI
@@ -94,13 +96,12 @@ jobs:
     environment:
       name: Canary
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: download artifact
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
           name: canary
-      - uses: actions/checkout@v4
       - name: Login to Azure
         uses: azure/login@v2
         with:
