@@ -64,6 +64,8 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -76,8 +78,8 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.canary.parameters.json
+          template: main.json
+          parameters: main.canary.parameters.json
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -85,8 +87,8 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.canary.parameters.json
+          template: main.json
+          parameters: main.canary.parameters.json
           deploymentMode: Incremental
           additionalArguments: --what-if
 
@@ -100,6 +102,8 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -112,8 +116,8 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.prod.parameters.json
+          template: main.json
+          parameters: main.prod.parameters.json
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -121,8 +125,8 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.prod.parameters.json
+          template: main.json
+          parameters: main.prod.parameters.json
           deploymentMode: Incremental
           additionalArguments: --what-if
 
@@ -136,6 +140,8 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -145,12 +151,12 @@ jobs:
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: deploy-canary-${{ github.run_id }}-${{ github.job }}
+          deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.canary.parameters.json
+          template: main.json
+          parameters: main.canary.parameters.json
           deploymentMode: Incremental
 
   deploy-prod:
@@ -164,6 +170,8 @@ jobs:
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+        with:
+          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -173,11 +181,11 @@ jobs:
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: deploy-production-${{ github.run_id }}-${{ github.job }}
+          deploymentName: management-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: drop/main.json
-          parameters: drop/main.prod.parameters.json
+          template: main.json
+          parameters: main.prod.parameters.json
           deploymentMode: Incremental
 ...

@@ -119,7 +119,7 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: canary/main.json
+          template: main.json
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -127,7 +127,7 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: canary/main.json
+          template: main.json
           deploymentMode: Incremental
           additionalArguments: --what-if
 
@@ -166,7 +166,7 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: prod/main.json
+          template: main.json
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -174,7 +174,7 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: prod/main.json
+          template: main.json
           deploymentMode: Incremental
           additionalArguments: --what-if
 
@@ -193,10 +193,11 @@ jobs:
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: prod/main.json
+          template: main.json
           deploymentMode: Incremental
 
   deploy-prod:
@@ -215,9 +216,10 @@ jobs:
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: prod/main.json
+          template: main.json
           deploymentMode: Incremental
 ...
