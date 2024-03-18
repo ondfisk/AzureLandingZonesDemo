@@ -110,7 +110,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare initiatives
-        uses: azure/powershell@v1.4.0
+        uses: azure/powershell@v1
         with:
           inlineScript: "./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId ${{ vars.MANAGEMENT_GROUP_ID }}"
           azPSVersion: latest
