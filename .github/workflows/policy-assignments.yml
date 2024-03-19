@@ -44,9 +44,13 @@ jobs:
       matrix:
         assignment:
           - managementGroupId: lz-canary
-            folder: modules/policies/assignments
-          - managementGroupId: lz-landing-zones
-            folder: modules/policies/assignments/landing-zones
+            folder:
+          - managementGroupId: lz-canary-landing-zones
+            folder: landing-zones
+          - managementGroupId: lz-canary-landing-zones-corp
+            folder: landing-zones/corp
+          - managementGroupId: lz-canary-landing-zones-online
+            folder: landing-zones/online
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,14 +66,14 @@ jobs:
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
-            $folder = "${{ matrix.assignment.folder }}"
+            $folder = "modules/policies/assignments/${{ matrix.assignment.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
       - name: Build Template
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $folder = "${{ matrix.assignment.folder }}"
+            $folder = "modules/policies/assignments/${{ matrix.assignment.folder }}"
             $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
             $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
             $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
