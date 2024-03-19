@@ -2,65 +2,36 @@
 param (
     [Parameter(Mandatory = $true)]
     [String]
-    $Prefix
+    $ManagementGroupId,
+
+    [Parameter(Mandatory = $true)]
+    [String]
+    $Folder
 )
 
-function Write-Compare ([Parameter(Mandatory = $true)][String]$Label, $Object, $SideIndicator, $Prefix) {
-    $compare = $Object | Where-Object SideIndicator -eq $SideIndicator | ForEach-Object { "$Prefix $($PSItem.InputObject)" }
-    if ($compare) {
+function Write-Compare($Object, $SideIndicator, $Label, $Prefix, $ErrorMessage) {
+    $output = $Object | Where-Object SideIndicator -eq $SideIndicator | ForEach-Object { "$Prefix $($PSItem.InputObject)" }
+
+    if ($output) {
         Write-Output $Label
-        Write-Output $compare
-    }
-}
+        Write-Output $output
+        Write-Output ""
 
-function Get-ResourceNameFromTemplate ($Path, $Pattern) {
-    Get-ChildItem -Path "$Path/*.bicep" -Filter "*.bicep" | Where-Object Name -NE ".deploy.bicep" | ForEach-Object {
-        $name = $PSItem | Get-Content -Raw | Select-String -Pattern $Pattern
-        $name.Matches.Groups[1].Value
-    }
-}
-
-function Compare-Item ($Source, $Cloud, $ManagementGroupId) {
-    Write-Output "Comparing assignments under '$ManagementGroupId'..."
-    $compare = Compare-Object -ReferenceObject ($Cloud ?? @()) -DifferenceObject ($Source ?? @()) -IncludeEqual
-    Write-Compare -Label "Assignments to be created:" -Object $compare -SideIndicator "=>" -Prefix "+"
-    Write-Compare -Label "Assignments to be updated:" -Object $compare -SideIndicator "==" -Prefix "*"
-    Write-Compare -Label "Assignments to be deleted:" -Object $compare -SideIndicator "<=" -Prefix "-"
-
-    if ($compare | Where-Object SideIndicator -EQ "<=") {
-        Write-Error "Delete detected. Manual intervention required."
-    }
-}
-
-function Get-AssignmentGroup {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSReviewUnusedParameter", "", Justification = "False positive (Prefix)")]
-    param (
-        [Parameter(Mandatory = $true)]
-        [String]
-        $Path,
-
-        [Parameter(Mandatory = $true)]
-        [String]
-        $Prefix
-    )
-
-    $assignments = Get-ChildItem -Path $Path -Directory -Recurse | Sort-Object -Property FullName
-    $root = Get-Item -Path $Path
-    $assignments += $root
-    $assignments | Sort-Object FullName | ForEach-Object {
-        $managementGroupId = ($PSItem.FullName.Substring($root.FullName.Length) -replace "[\\/]", " ").Trim() -replace " ", "-"
-        @{
-            Path              = $PSItem.FullName
-            ManagementGroupId = $managementGroupId ? "$Prefix-$managementGroupId" : $Prefix
+        if ($ErrorMessage) {
+            Write-Error $ErrorMessage
         }
     }
 }
 
-Get-AssignmentGroup -Path "$PSScriptRoot/../assignments" -Prefix $Prefix | ForEach-Object {
-    $path = $PSItem.Path
-    $managementGroupId = $PSItem.ManagementGroupId
-    $managementGroup = Get-AzManagementGroup -GroupName $managementGroupId
-    $cloud = Get-AzPolicyAssignment -Scope $managementGroup.Id | Where-Object { $PSItem.Properties.Scope -eq $managementGroup.Id } | Select-Object -ExpandProperty Name
-    $source = Get-ResourceNameFromTemplate -Path $path -Pattern "policyAssignmentName: '(.+)'"
-    Compare-Item -Source $source -Cloud $cloud -ManagementGroupId $managementGroupId
+$cloud = Get-AzPolicyAssignment -Scope "/providers/Microsoft.Management/managementGroups/$ManagementGroupId" | Select-Object -ExpandProperty Name
+
+$source = Get-ChildItem -Path $Folder -Filter "*.bicep" | ForEach-Object {
+    $name = $PSItem | Get-Content -Raw | Select-String -Pattern "policyAssignmentName: '(.+)'"
+    $name.Matches.Groups[1].Value
 }
+
+$compare = Compare-Object -ReferenceObject ($cloud ?? @()) -DifferenceObject ($source ?? @()) -IncludeEqual
+
+Write-Compare -Object $compare -SideIndicator "=>" -Label "Assignments to be created:" -Prefix "+"
+Write-Compare -Object $compare -SideIndicator "==" -Label "Assignments to be updated:" -Prefix "*"
+Write-Compare -Object $compare -SideIndicator "<=" -Label "Assignments to be deleted:" -Prefix "-" -ErrorMessage "Delete detected. Manual intervention required."

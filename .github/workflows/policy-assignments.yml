@@ -1,0 +1,245 @@
+---
+name: Policy Assignments
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policy-assignments.yml
+      - modules/policies/assignments/**
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policy-assignments.yml
+      - modules/policies/assignments/**
+
+  workflow_dispatch:
+
+jobs:
+  build-canary:
+    name: Build Canary
+    runs-on: ubuntu-latest
+    environment:
+      name: Canary
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build Template
+        run: |
+          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          $assignmentsDirectory = "${{ github.workspace }}[\\/]modules[\\/]policies[\\/]assignments"
+          $stagingDirectory = "${{ runner.temp }}/$managementGroupId"
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -ManagedIdentityId $managedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+          Get-ChildItem modules/policies/assignments -Filter main.bicep -Recurse | ForEach-Object {
+              $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+              New-Item -Path $path -ItemType Directory -Force | Out-Null
+              az bicep build --file $PSItem.FullName --outfile "$path/main.json"
+          }
+        shell: pwsh
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4.1.0
+        with:
+          name: canary
+          path: "${{ runner.temp }}"
+
+  build-prod:
+    name: Build Production
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build Template
+        run: |
+          $ErrorActionPreference = "Stop"
+          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          $assignmentsDirectory = "${{ github.workspace }}[\\/]modules[\\/]policies[\\/]assignments"
+          $stagingDirectory = "${{ runner.temp }}/$managementGroupId"
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -ManagementGroupId $managementGroupId -ManagedIdentityId $managedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+          Get-ChildItem modules/policies/assignments -Filter main.bicep -Recurse | ForEach-Object {
+              $path = $PSItem.Directory.FullName -replace $assignmentsDirectory, $stagingDirectory
+              New-Item -Path $path -ItemType Directory -Force | Out-Null
+              az bicep build --file $PSItem.FullName --outfile "$path/main.json"
+          }
+        shell: pwsh
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod
+          path: "${{ runner.temp }}"
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Pester Tests
+        run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1, modules/policies/scripts/Test-AssignmentVars.Tests.ps1 -CI
+        shell: pwsh
+
+  validate-canary:
+    name: Canary
+    runs-on: ubuntu-latest
+    needs:
+      - build-canary
+      - test
+    environment:
+      name: Canary
+    strategy:
+      matrix:
+        group:
+          - managementGroupId: lz-canary
+            folder: modules/policies/assignments
+          - managementGroupId: lz-landing-zones
+            folder: modules/policies/assignments/landing-zones
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: canary
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare assignments
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId ${{ matrix.group.managementGroupId }} -Folder ${{ matrix.group.folder }}"
+          azPSVersion: latest
+
+  #     # section was not transformed because it contains unsupported usage of the `each` syntax
+  #     - path: templates/management-group-deployment.yml
+  #       parameters:
+  #         displayName: Validate deployment in ${{ folder }}
+  #         deploymentName: assignments
+  #         command: validate
+  #         azureConnection: "${{ env.azureConnection }}"
+  #         location: "${{ env.location }}"
+  #         managementGroupId: "${{ replace(folder, '/', '-') }}"
+  #         templateFile: "${{ folder }}/main.json"
+  #       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
+
+#   validate-prod:
+#     name: Production
+#     runs-on: ubuntu-latest
+#     needs:
+#       - build-prod
+#       - test
+#     environment:
+#       name: Production
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#       - name: Download Artifacts
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: prod
+#       - name: Compare assignments
+#         uses: azure/login@v2
+#         with:
+#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#           enable-AzPSSession: true
+#       - name: Compare assignments
+#         uses: azure/powershell@v1
+#         with:
+#           inlineScript: |
+#             $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
+#             ./modules/policies/scripts/Compare-Assignment.ps1 -Prefix ${{ vars.MANAGEMENT_GROUP_ID }}
+#           errorActionPreference: Stop
+#           failOnStandardError: false
+#           azPSVersion: latest
+#   #     # section was not transformed because it contains unsupported usage of the `each` syntax
+#   #     - path: templates/management-group-deployment.yml
+#   #       parameters:
+#   #         displayName: Validate deployment in ${{ folder }}
+#   #         deploymentName: assignments
+#   #         command: validate
+#   #         azureConnection: "${{ env.azureConnection }}"
+#   #         location: "${{ env.location }}"
+#   #         managementGroupId: "${{ replace(folder, '/', '-') }}"
+#   #         templateFile: "${{ folder }}/main.json"
+#   #       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
+
+#   deploy-canary:
+#     name: Canary
+#     runs-on: ubuntu-latest
+#     needs:
+#       - validate-canary
+#     environment:
+#       name: Canary
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#       - name: Download Artifacts
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: canary
+#   #     # section was not transformed because it contains unsupported usage of the `each` syntax
+#   #     - path: templates/management-group-deployment.yml
+#   #       parameters:
+#   #         displayName: Deploy assignments in ${{ folder }}
+#   #         deploymentName: assignments
+#   #         command: create
+#   #         azureConnection: "${{ env.azureConnection }}"
+#   #         location: "${{ env.location }}"
+#   #         managementGroupId: "${{ replace(folder, '/', '-') }}"
+#   #         templateFile: "${{ folder }}/main.json"
+#   #       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
+
+#   deploy-prod:
+#     name: Production
+#     runs-on: ubuntu-latest
+#     if: success() && github.ref == 'refs/heads/main'
+#     needs:
+#       - validate-canary
+#       - validate-prod
+#     environment:
+#       name: Production
+#     strategy:
+#       matrix:
+#         FOLDER: ${{ vars.POLICY_ASSIGNMENT_FOLDERS }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#       - name: Download Artifacts
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: prod
+# #     # section was not transformed because it contains unsupported usage of the `each` syntax
+# #     - path: templates/management-group-deployment.yml
+# #       parameters:
+# #         displayName: Deploy assignments in ${{ folder }}
+# #         deploymentName: assignments
+# #         command: create
+# #         azureConnection: "${{ env.azureConnection }}"
+# #         location: "${{ env.location }}"
+# #         managementGroupId: "${{ replace(folder, '/', '-') }}"
+# #         templateFile: "${{ folder }}/main.json"
+# #       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
