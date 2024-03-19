@@ -39,7 +39,7 @@ jobs:
       - name: Lint Bicep Files
         shell: pwsh
         run: |
-          Get-ChildItem -Filter "*.bicep*" -Recurse | ForEach-Object {
+          Get-ChildItem -Filter *.bicep* -Recurse | ForEach-Object {
             Write-Host "Linting $PSItem"
             az bicep lint --file $PSItem
           }

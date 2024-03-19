@@ -42,7 +42,7 @@ jobs:
       name: Canary
     strategy:
       matrix:
-        group:
+        assignment:
           - managementGroupId: lz-canary
             folder: modules/policies/assignments
           - managementGroupId: lz-landing-zones
@@ -61,22 +61,45 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.group.managementGroupId }}"
-            $folder = "${{ matrix.group.folder }}"
+            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
+            $folder = "${{ matrix.assignment.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
-
-  #     # section was not transformed because it contains unsupported usage of the `each` syntax
-  #     - path: templates/management-group-deployment.yml
-  #       parameters:
-  #         displayName: Validate deployment in ${{ folder }}
-  #         deploymentName: assignments
-  #         command: validate
-  #         azureConnection: "${{ env.azureConnection }}"
-  #         location: "${{ env.location }}"
-  #         managementGroupId: "${{ replace(folder, '/', '-') }}"
-  #         templateFile: "${{ folder }}/main.json"
-  #       expression: "${{ each folder in split(variables.policyAssignmentFolders, ', ') }}"
+      - name: Build Template
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $folder = "${{ matrix.assignment.folder }}"
+            $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+            $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+            $outputFile = "${{ github.workspace }}/main.bicep"
+            ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId | Out-File -FilePath $outputFile
+          azPSVersion: latest
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: main.bicep
+          additionalArguments: --what-if
+      - name: Deploy
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: main.bicep
+          additionalArguments: --what-if
 
 #   validate-prod:
 #     name: Production

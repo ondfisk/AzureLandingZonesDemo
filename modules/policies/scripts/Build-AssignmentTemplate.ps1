@@ -3,7 +3,12 @@ param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNull()]
     [String]
-    $ManagementGroupId,
+    $Folder,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNull()]
+    [String]
+    $PolicyDefinitionManagementGroupId,
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNull()]
@@ -28,7 +33,7 @@ function Join-Template {
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
         [String]
-        $ManagementGroupId,
+        $PolicyDefinitionManagementGroupId,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
@@ -45,14 +50,14 @@ function Join-Template {
         "targetScope = 'managementGroup'"
         $params = @()
 
-        $ManagementGroupId = $ManagementGroupId # Workaround for PSReviewUnusedParameter
+        $PolicyDefinitionManagementGroupId = $PolicyDefinitionManagementGroupId # Workaround for PSReviewUnusedParameter
         $ManagedIdentityId = $ManagedIdentityId # Workaround for PSReviewUnusedParameter
         $LogAnalyticsWorkspaceId = $LogAnalyticsWorkspaceId # Workaround for PSReviewUnusedParameter
     }
 
     process {
         $params += (Get-Content -Path $Assignment | Where-Object { $PSItem -match "^param " }) | ForEach-Object {
-            $PSItem -replace "^param managementGroupId string$", "param managementGroupId string = '$ManagementGroupId'" `
+            $PSItem -replace "^param managementGroupId string$", "param managementGroupId string = '$PolicyDefinitionManagementGroupId'" `
                 -replace "^param logAnalyticsWorkspaceId string$", "param logAnalyticsWorkspaceId string = '$LogAnalyticsWorkspaceId'" `
                 -replace "^param managedIdentityId string$", "param managedIdentityId string = '$ManagedIdentityId'"
         }
@@ -64,15 +69,8 @@ function Join-Template {
     }
 }
 
-$ManagementGroupId = $ManagementGroupId # Workaround for PSReviewUnusedParameter
+$PolicyDefinitionManagementGroupId = $PolicyDefinitionManagementGroupId # Workaround for PSReviewUnusedParameter
 $ManagedIdentityId = $ManagedIdentityId # Workaround for PSReviewUnusedParameter
 $LogAnalyticsWorkspaceId = $LogAnalyticsWorkspaceId # Workaround for PSReviewUnusedParameter
 
-Get-ChildItem -Path "$PSScriptRoot/.." -Directory -Recurse | Where-Object FullName -Match "[/\\]assignments" | ForEach-Object {
-    $templateFile = "$PSItem/main.bicep"
-
-    $assignments = Get-ChildItem -Path $PSItem -Filter *.bicep | Where-Object { $PSItem.Name -notin "main.bicep", "main.canary.bicep", "main.prod.bicep" }
-    if ($assignments) {
-        $assignments | Join-Template -ManagementGroupId $ManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId | Out-File -Path $templateFile
-    }
-}
+Get-ChildItem -Path $Folder -Filter *.bicep | Join-Template -PolicyDefinitionManagementGroupId $PolicyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId
