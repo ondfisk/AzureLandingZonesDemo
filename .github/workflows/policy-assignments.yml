@@ -61,7 +61,9 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId ${{ matrix.group.managementGroupId }} -Folder ${{ matrix.group.folder }}"
+            $managementGroupId = "${{ matrix.group.managementGroupId }}"
+            $folder = "${{ matrix.group.folder }}"
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
 
   #     # section was not transformed because it contains unsupported usage of the `each` syntax
