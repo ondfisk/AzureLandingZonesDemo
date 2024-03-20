@@ -45,8 +45,6 @@ jobs:
         assignment:
           - managementGroupId: lz-canary
             folder:
-          - managementGroupId: lz-canary-landing-zones
-            folder: landing-zones
           - managementGroupId: lz-canary-landing-zones-corp
             folder: landing-zones/corp
           - managementGroupId: lz-canary-landing-zones-online
@@ -77,7 +75,7 @@ jobs:
             $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
             $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
             $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
-            ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId | Out-File -FilePath $outputFile
+            ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
           azPSVersion: latest
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
@@ -115,8 +113,6 @@ jobs:
         assignment:
           - managementGroupId: lz
             folder:
-          - managementGroupId: lz-landing-zones
-            folder: landing-zones
           - managementGroupId: lz-landing-zones-corp
             folder: landing-zones/corp
           - managementGroupId: lz-landing-zones-online

@@ -57,7 +57,7 @@ function Join-Template {
 
     process {
         $params += (Get-Content -Path $Assignment | Where-Object { $PSItem -match "^param " }) | ForEach-Object {
-            $PSItem -replace "^param managementGroupId string$", "param managementGroupId string = '$PolicyDefinitionManagementGroupId'" `
+            $PSItem -replace "^param managementGroupId string$", "param policyDefinitionManagementGroupId string = '$PolicyDefinitionManagementGroupId'" `
                 -replace "^param logAnalyticsWorkspaceId string$", "param logAnalyticsWorkspaceId string = '$LogAnalyticsWorkspaceId'" `
                 -replace "^param managedIdentityId string$", "param managedIdentityId string = '$ManagedIdentityId'"
         }
@@ -71,4 +71,6 @@ function Join-Template {
 
 $outFile = Join-Path -Path $Folder -ChildPath "main.bicep"
 
-Get-ChildItem -Path $Folder -Filter *.bicep | Join-Template -PolicyDefinitionManagementGroupId $PolicyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId | Out-File -FilePath $outFile
+Get-ChildItem -Path $Folder -Filter *.bicep |
+Join-Template -PolicyDefinitionManagementGroupId $PolicyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId |
+Out-File -FilePath $outFile
