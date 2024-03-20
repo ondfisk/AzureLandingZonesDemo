@@ -4,7 +4,7 @@ param (
     [String]
     $ManagementGroupId,
 
-    [Parameter(Mandatory = $true)]
+    [ValidateNotNull()]
     [String]
     $Folder
 )
