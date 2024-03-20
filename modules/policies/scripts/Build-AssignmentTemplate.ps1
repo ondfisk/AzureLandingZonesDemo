@@ -69,8 +69,6 @@ function Join-Template {
     }
 }
 
-$PolicyDefinitionManagementGroupId = $PolicyDefinitionManagementGroupId # Workaround for PSReviewUnusedParameter
-$ManagedIdentityId = $ManagedIdentityId # Workaround for PSReviewUnusedParameter
-$LogAnalyticsWorkspaceId = $LogAnalyticsWorkspaceId # Workaround for PSReviewUnusedParameter
+$outFile = Join-Path -Path $Folder -ChildPath "main.bicep"
 
-Get-ChildItem -Path $Folder -Filter *.bicep | Join-Template -PolicyDefinitionManagementGroupId $PolicyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId
+Get-ChildItem -Path $Folder -Filter *.bicep | Join-Template -PolicyDefinitionManagementGroupId $PolicyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId | Out-File -FilePath $outFile
