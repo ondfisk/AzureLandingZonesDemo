@@ -4,7 +4,7 @@ param (
     [String]
     $ManagementGroupId,
 
-    [ValidateNotNull()]
+        [ValidateNotNull()]
     [String]
     $Folder
 )
@@ -23,7 +23,7 @@ function Write-Compare($Object, $SideIndicator, $Label, $Prefix, $ErrorMessage) 
     }
 }
 
-$cloud = Get-AzPolicyDefinition -ManagementGroupName $ManagementGroupId -Custom |
+$cloud = Get-AzPolicyAssignment -Scope "/providers/Microsoft.Management/managementGroups/$ManagementGroupId" |
 Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
 Select-Object -ExpandProperty Name
 
