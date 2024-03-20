@@ -68,15 +68,13 @@ jobs:
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
       - name: Build Template
-        uses: azure/powershell@v1
-        with:
-          inlineScript: |
-            $folder = "${{ matrix.assignment.folder }}"
-            $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
-            $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
-            ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
-          azPSVersion: latest
+        run: |
+          $folder = "${{ matrix.assignment.folder }}"
+          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+        shell: pwsh
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
@@ -132,6 +130,7 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
+            $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
             $folder = "${{ matrix.assignment.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
