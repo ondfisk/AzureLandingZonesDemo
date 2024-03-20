@@ -64,14 +64,14 @@ jobs:
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
-            $folder = "modules/policies/assignments/${{ matrix.assignment.folder }}"
+            $folder = "${{ matrix.assignment.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
       - name: Build Template
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $folder = "modules/policies/assignments/${{ matrix.assignment.folder }}"
+            $folder = "${{ matrix.assignment.folder }}"
             $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
             $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
             $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"

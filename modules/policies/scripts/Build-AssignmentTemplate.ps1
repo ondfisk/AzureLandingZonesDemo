@@ -57,7 +57,7 @@ function Join-Template {
 
     process {
         $params += (Get-Content -Path $Assignment | Where-Object { $PSItem -match "^param " }) | ForEach-Object {
-            $PSItem -replace "^param managementGroupId string$", "param policyDefinitionManagementGroupId string = '$PolicyDefinitionManagementGroupId'" `
+            $PSItem -replace "^param policyDefinitionManagementGroupId string$", "param policyDefinitionManagementGroupId string = '$PolicyDefinitionManagementGroupId'" `
                 -replace "^param logAnalyticsWorkspaceId string$", "param logAnalyticsWorkspaceId string = '$LogAnalyticsWorkspaceId'" `
                 -replace "^param managedIdentityId string$", "param managedIdentityId string = '$ManagedIdentityId'"
         }
@@ -69,8 +69,9 @@ function Join-Template {
     }
 }
 
-$outFile = Join-Path -Path $Folder -ChildPath "main.bicep"
+$assignmentsFolder = Join-Path -Path $PSScriptRoot -ChildPath "../assignments/$Folder"
+$outFile = Join-Path -Path $assignmentsFolder -ChildPath "main.bicep"
 
-Get-ChildItem -Path $Folder -Filter *.bicep |
+Get-ChildItem -Path $assignmentsFolder -Filter *.bicep |
 Join-Template -PolicyDefinitionManagementGroupId $PolicyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId |
 Out-File -FilePath $outFile
