@@ -44,7 +44,7 @@ jobs:
       matrix:
         assignment:
           - managementGroupId: lz-canary
-            folder: ../assignments
+            folder: .
           - managementGroupId: lz-canary-landing-zones-corp
             folder: landing-zones/corp
           - managementGroupId: lz-canary-landing-zones-online
@@ -113,7 +113,7 @@ jobs:
       matrix:
         assignment:
           - managementGroupId: lz
-            folder: ../assignments
+            folder: .
           - managementGroupId: lz-landing-zones-corp
             folder: landing-zones/corp
           - managementGroupId: lz-landing-zones-online
