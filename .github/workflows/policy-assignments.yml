@@ -1,0 +1,171 @@
+---
+name: Policy Assignments
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policy-assignments.yml
+      - modules/policies/assignments/**
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policy-assignments.yml
+      - modules/policies/assignments/**
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Pester Tests
+        run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1, modules/policies/scripts/Test-AssignmentVars.Tests.ps1 -CI
+        shell: pwsh
+
+  canary:
+    name: Canary
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    environment:
+      name: Canary
+    strategy:
+      matrix:
+        assignment:
+          - managementGroupId: lz-canary
+            folder: .
+          - managementGroupId: lz-canary-landing-zones-corp
+            folder: landing-zones/corp
+          - managementGroupId: lz-canary-landing-zones-online
+            folder: landing-zones/online
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare assignments
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
+            $folder = "${{ matrix.assignment.folder }}"
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
+      - name: Build Template
+        run: |
+          $folder = "${{ matrix.assignment.folder }}"
+          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy
+        uses: azure/arm-deploy@v2
+        with:
+          deploymentName: policy-assignments-${{ github.run_id }}
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+
+  prod:
+    name: Production
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    environment:
+      name: Production
+    strategy:
+      matrix:
+        assignment:
+          - managementGroupId: lz
+            folder: .
+          - managementGroupId: lz-landing-zones-corp
+            folder: landing-zones/corp
+          - managementGroupId: lz-landing-zones-online
+            folder: landing-zones/online
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare assignments
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
+            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
+            $folder = "${{ matrix.assignment.folder }}"
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
+      - name: Build Template
+        run: |
+          $folder = "${{ matrix.assignment.folder }}"
+          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy
+        uses: azure/arm-deploy@v2
+        if: success() && github.ref == 'refs/heads/main'
+        with:
+          deploymentName: policy-assignments-${{ github.run_id }}
+          scope: managementgroup
+          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+...

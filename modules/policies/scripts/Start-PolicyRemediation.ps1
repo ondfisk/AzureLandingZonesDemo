@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
     [String]
     $ManagementGroupId
 )
