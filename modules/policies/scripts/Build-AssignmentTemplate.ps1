@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param (
-    [ValidateNotNull()]
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
     [String]
     $Folder,
 

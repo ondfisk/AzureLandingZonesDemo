@@ -1,13 +1,14 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [String]
+    $Folder,
+
+    [Parameter(Mandatory = $true)]
     [String]
     [ValidateNotNullOrEmpty()]
-    $ManagementGroupId,
-
-    [ValidateNotNull()]
-    [String]
-    $Folder
+    $ManagementGroupId
 )
 
 function Write-Compare($Object, $SideIndicator, $Label, $Prefix, $ErrorMessage) {
@@ -24,16 +25,16 @@ function Write-Compare($Object, $SideIndicator, $Label, $Prefix, $ErrorMessage) 
     }
 }
 
-$cloud = Get-AzPolicyAssignment -Scope "/providers/Microsoft.Management/managementGroups/$ManagementGroupId" |
-Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
-Select-Object -ExpandProperty Name
-
 $assignmentsFolder = Join-Path -Path $PSScriptRoot -ChildPath "../assignments/$Folder"
 
 $source = Get-ChildItem -Path $assignmentsFolder -Filter "*.bicep" | ForEach-Object {
     $name = $PSItem | Get-Content -Raw | Select-String -Pattern "policyAssignmentName: '(.+)'"
     $name.Matches.Groups[1].Value
 }
+
+$cloud = Get-AzPolicyAssignment -Scope "/providers/Microsoft.Management/managementGroups/$ManagementGroupId" |
+Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
+Select-Object -ExpandProperty Name
 
 $compare = Compare-Object -ReferenceObject ($cloud ?? @()) -DifferenceObject ($source ?? @()) -IncludeEqual
 
