@@ -132,14 +132,15 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
-            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
-            $folder = "modules/policies/assignments/${{ matrix.assignment.folder }}"
-            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+            $folder = "${{ matrix.assignment.folder }}"
+            $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+            $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+            ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
           azPSVersion: latest
       - name: Build Template
         run: |
-          $folder = "modules/policies/assignments/${{ matrix.assignment.folder }}"
+          $folder = "${{ matrix.assignment.folder }}"
           $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
           $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
           $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"

@@ -72,5 +72,6 @@ $assignmentsFolder = Join-Path -Path $PSScriptRoot -ChildPath "../assignments/$F
 $outFile = Join-Path -Path $assignmentsFolder -ChildPath "main.bicep"
 
 Get-ChildItem -Path $assignmentsFolder -Filter *.bicep |
+Where-Object { $PSItem.Name -ne "main.bicep" } |
 Join-Template -PolicyDefinitionManagementGroupId $PolicyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $LogAnalyticsWorkspaceId |
 Out-File -FilePath $outFile
