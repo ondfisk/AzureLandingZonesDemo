@@ -1,22 +1,21 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $true)]
     [ValidateNotNull()]
     [String]
     $Folder,
 
     [Parameter(Mandatory = $true)]
-    [ValidateNotNull()]
+    [ValidateNotNullOrEmpty()]
     [String]
     $PolicyDefinitionManagementGroupId,
 
     [Parameter(Mandatory = $true)]
-    [ValidateNotNull()]
+    [ValidateNotNullOrEmpty()]
     [String]
     $ManagedIdentityId,
 
     [Parameter(Mandatory = $true)]
-    [ValidateNotNull()]
+    [ValidateNotNullOrEmpty()]
     [String]
     $LogAnalyticsWorkspaceId
 )

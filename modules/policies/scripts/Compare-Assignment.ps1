@@ -2,9 +2,10 @@
 param (
     [Parameter(Mandatory = $true)]
     [String]
+    [ValidateNotNullOrEmpty()]
     $ManagementGroupId,
 
-        [ValidateNotNull()]
+    [ValidateNotNull()]
     [String]
     $Folder
 )

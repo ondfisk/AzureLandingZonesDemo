@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $true)]
-    [ValidateNotNull()]
+    [ValidateNotNullOrEmpty()]
     [String]
     $ManagementGroupId
 )
@@ -11,12 +11,12 @@ function Join-Template {
     [OutputType([String])]
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [Object[]]
         $Definition,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [String]
         $ManagementGroupId
     )
