@@ -82,7 +82,9 @@ jobs:
       - name: Compare Policies
         uses: azure/powershell@v1
         with:
-          inlineScript: ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ vars.MANAGEMENT_GROUP_ID }}
+          inlineScript: |
+            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
@@ -127,9 +129,10 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
-            ${{ github.workspace }}/modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ vars.MANAGEMENT_GROUP_ID }}
+            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
+          errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:

@@ -130,11 +130,11 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            $ErrorActionPreference = ("${{ github.ref }}" -eq "refs/heads/main") ? "Stop" : "Continue"
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
             $folder = "${{ matrix.assignment.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
+          errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Build Template
         run: |
           $folder = "${{ matrix.assignment.folder }}"

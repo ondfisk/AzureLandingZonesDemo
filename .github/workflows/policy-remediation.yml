@@ -2,6 +2,12 @@
 name: Policy Remediation
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policy-remediation.yml
+
   workflow_dispatch:
     inputs:
       remediateCanary:
@@ -17,13 +23,17 @@ on:
         required: false
 
   schedule:
-  - cron: 0 0 * * *
+    - cron: 0 0 * * *
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   canary:
     name: Canary
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.remediateCanary || github.event_name == 'schedule' }}
+    if: ${{ github.event.inputs.remediateCanary || github.event_name == 'schedule' || github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     environment:
       name: Canary
     steps:
@@ -47,7 +57,7 @@ jobs:
   prod:
     name: Production
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.remediateProduction || github.event_name == 'schedule' }}
+    if: ${{ github.event.inputs.remediateProduction || github.event_name == 'schedule' || github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     environment:
       name: Production
     steps:
@@ -67,4 +77,3 @@ jobs:
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
             ./modules/policies/scripts/Start-PolicyRemediation.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
-...
