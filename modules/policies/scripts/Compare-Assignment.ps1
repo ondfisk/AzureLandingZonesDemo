@@ -23,7 +23,9 @@ function Write-Compare($Object, $SideIndicator, $Label, $Prefix, $ErrorMessage) 
     }
 }
 
-$cloud = Get-AzPolicyAssignment -Scope "/providers/Microsoft.Management/managementGroups/$ManagementGroupId" | Select-Object -ExpandProperty Name
+$cloud = Get-AzPolicyDefinition -ManagementGroupName $ManagementGroupId -Custom |
+Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
+Select-Object -ExpandProperty Name
 
 $source = Get-ChildItem -Path $Folder -Filter "*.bicep" | ForEach-Object {
     $name = $PSItem | Get-Content -Raw | Select-String -Pattern "policyAssignmentName: '(.+)'"
