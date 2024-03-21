@@ -32,4 +32,4 @@ The primary focus is on [Policy-driven governance](https://learn.microsoft.com/e
 
 ## Continuous Deployment
 
-Landing zones are deployed using [Azure Pipelines](https://dev.azure.com/ondfisk/AzureLandingZonesDemo).
+Landing zones are deployed using GitHub Actions or [Azure Pipelines](https://dev.azure.com/ondfisk/AzureLandingZonesDemo).
