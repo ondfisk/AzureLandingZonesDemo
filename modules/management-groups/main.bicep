@@ -1,3 +1,4 @@
+// Caution: Do not auto-format this file. Doing so will break the Checkov lint.
 targetScope = 'tenant'
 
 param displayName string = 'Azure Landing Zones'
@@ -10,11 +11,11 @@ param onlineSubscriptionIds array = []
 param sandboxSubscriptionIds array = []
 param decommissionedSubscriptionIds array = []
 
-resource tenantRoot 'Microsoft.Management/managementGroups@2021-04-01' existing = {
+resource tenantRoot 'Microsoft.Management/managementGroups@2023-04-01' existing = {
   name: tenant().tenantId
 }
 
-resource root 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource root 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: prefix
   properties: {
     displayName: displayName
@@ -26,7 +27,7 @@ resource root 'Microsoft.Management/managementGroups@2021-04-01' = {
   }
 }
 
-resource platform 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource platform 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-platform'
   properties: {
     displayName: 'Platform'
@@ -38,7 +39,7 @@ resource platform 'Microsoft.Management/managementGroups@2021-04-01' = {
   }
 }
 
-resource management 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource management 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-platform-management'
   properties: {
     displayName: 'Management'
@@ -48,13 +49,14 @@ resource management 'Microsoft.Management/managementGroups@2021-04-01' = {
       }
     }
   }
-
-  resource subscription 'subscriptions' = if (managementSubscriptionId != '00000000-0000-0000-0000-000000000000') {
-    name: managementSubscriptionId
-  }
 }
 
-resource connectivity 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource managementSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = if (managementSubscriptionId != '00000000-0000-0000-0000-000000000000') {
+  name: managementSubscriptionId
+  parent: management
+}
+
+resource connectivity 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-platform-connectivity'
   properties: {
     displayName: 'Connectivity'
@@ -64,13 +66,14 @@ resource connectivity 'Microsoft.Management/managementGroups@2021-04-01' = {
       }
     }
   }
-
-  resource subscription 'subscriptions' = if (connectivitySubscriptionId != '00000000-0000-0000-0000-000000000000') {
-    name: connectivitySubscriptionId
-  }
 }
 
-resource identity 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource connectivitySubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = if (connectivitySubscriptionId != '00000000-0000-0000-0000-000000000000') {
+  name: connectivitySubscriptionId
+  parent: connectivity
+}
+
+resource identity 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-platform-identity'
   properties: {
     displayName: 'Identity'
@@ -80,13 +83,14 @@ resource identity 'Microsoft.Management/managementGroups@2021-04-01' = {
       }
     }
   }
-
-  resource subscription 'subscriptions' = if (identitySubscriptionId != '00000000-0000-0000-0000-000000000000') {
-    name: identitySubscriptionId
-  }
 }
 
-resource landingZones 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource identitySubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = if (identitySubscriptionId != '00000000-0000-0000-0000-000000000000') {
+  name: identitySubscriptionId
+  parent: identity
+}
+
+resource landingZones 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-landing-zones'
   properties: {
     displayName: 'Landing Zones'
@@ -98,7 +102,7 @@ resource landingZones 'Microsoft.Management/managementGroups@2021-04-01' = {
   }
 }
 
-resource corp 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource corp 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-landing-zones-corp'
   properties: {
     displayName: 'Corp'
@@ -108,13 +112,14 @@ resource corp 'Microsoft.Management/managementGroups@2021-04-01' = {
       }
     }
   }
-
-  resource subscription 'subscriptions' = [for subscriptionId in corpSubscriptionIds: {
-    name: subscriptionId
-  }]
 }
 
-resource online 'Microsoft.Management/managementGroups@2021-04-01' = {
+resource corpSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in corpSubscriptionIds: {
+  name: subscriptionId
+  parent: corp
+}]
+
+resource online 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-landing-zones-online'
   properties: {
     displayName: 'Online'
@@ -124,14 +129,15 @@ resource online 'Microsoft.Management/managementGroups@2021-04-01' = {
       }
     }
   }
-
-  resource subscription 'subscriptions' = [for subscriptionId in onlineSubscriptionIds: {
-    name: subscriptionId
-  }]
 }
 
-resource sandbox 'Microsoft.Management/managementGroups@2021-04-01' = {
-  name: '${prefix}-sandbox'
+resource onlineSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in onlineSubscriptionIds: {
+  name: subscriptionId
+  parent: online
+}]
+
+resource sandbox 'Microsoft.Management/managementGroups@2023-04-01' = {
+  name: '${prefix}-landing-zones-sandbox'
   properties: {
     displayName: 'Sandbox'
     details: {
@@ -140,14 +146,15 @@ resource sandbox 'Microsoft.Management/managementGroups@2021-04-01' = {
       }
     }
   }
-
-  resource subscription 'subscriptions' = [for subscriptionId in sandboxSubscriptionIds: {
-    name: subscriptionId
-  }]
 }
 
-resource decommissioned 'Microsoft.Management/managementGroups@2021-04-01' = {
-  name: '${prefix}-decommissioned'
+resource sandboxSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in sandboxSubscriptionIds: {
+  name: subscriptionId
+  parent: sandbox
+}]
+
+resource decommissioned 'Microsoft.Management/managementGroups@2023-04-01' = {
+  name: '${prefix}-landing-zones-decommissioned'
   properties: {
     displayName: 'Decommissioned'
     details: {
@@ -156,8 +163,9 @@ resource decommissioned 'Microsoft.Management/managementGroups@2021-04-01' = {
       }
     }
   }
-
-  resource subscription 'subscriptions' = [for subscriptionId in decommissionedSubscriptionIds: {
-    name: subscriptionId
-  }]
 }
+
+resource decommissionedSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in decommissionedSubscriptionIds: {
+  name: subscriptionId
+  parent: decommissioned
+}]
