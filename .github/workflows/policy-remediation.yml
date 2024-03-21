@@ -9,18 +9,6 @@ on:
       - .github/workflows/policy-remediation.yml
 
   workflow_dispatch:
-    inputs:
-      remediateCanary:
-        description: Remediate Canary
-        default: true
-        type: boolean
-        required: false
-
-      remediateProduction:
-        description: Remediate Production
-        default: true
-        type: boolean
-        required: false
 
   schedule:
     - cron: 0 0 * * *
@@ -33,7 +21,6 @@ jobs:
   canary:
     name: Canary
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.remediateCanary || github.event_name == 'schedule' || github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     environment:
       name: Canary
     steps:
@@ -57,7 +44,6 @@ jobs:
   prod:
     name: Production
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.remediateProduction || github.event_name == 'schedule' || github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     environment:
       name: Production
     steps:
