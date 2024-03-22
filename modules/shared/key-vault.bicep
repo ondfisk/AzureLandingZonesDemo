@@ -13,9 +13,9 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
       name: 'standard'
     }
     accessPolicies: []
-    enabledForDeployment:enabledForDeployment
-    enabledForDiskEncryption:enabledForDiskEncryption
-    enabledForTemplateDeployment:enabledForTemplateDeployment
+    enabledForDeployment: enabledForDeployment
+    enabledForDiskEncryption: enabledForDiskEncryption
+    enabledForTemplateDeployment: enabledForTemplateDeployment
     tenantId: tenant().tenantId
     softDeleteRetentionInDays: 90
     enableSoftDelete: true
