@@ -50,12 +50,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
-      - name: Build Template
-        run: |
-          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-          $stagingDirectory = "${{ runner.temp }}"
-          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
-        shell: pwsh
       - name: Compare Initiatives
         uses: azure/powershell@v1
         with:
@@ -63,6 +57,12 @@ jobs:
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
             ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
+      - name: Build Template
+        run: |
+          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $stagingDirectory = "${{ runner.temp }}"
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+        shell: pwsh
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
@@ -105,12 +105,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
-      - name: Build Template
-        run: |
-          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-          $stagingDirectory = "${{ runner.temp }}"
-          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
-        shell: pwsh
       - name: Compare Initiatives
         uses: azure/powershell@v1
         with:
@@ -119,6 +113,12 @@ jobs:
             ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+      - name: Build Template
+        run: |
+          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $stagingDirectory = "${{ runner.temp }}"
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+        shell: pwsh
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
