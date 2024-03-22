@@ -25,7 +25,7 @@ function Join-Template {
         @"
 targetScope = 'managementGroup'
 
-var definitions = [
+var initiatives = [
 "@
     }
 
@@ -41,15 +41,15 @@ var definitions = [
         @"
 ]
 
-resource policySetDefinitionResources 'Microsoft.Authorization/policySetDefinitions@2023-04-01' = [for definition in definitions: {
-  name: definition.name
-  properties: definition.properties
+resource policySetDefinitionResources 'Microsoft.Authorization/policySetDefinitions@2023-04-01' = [for initiative in initiatives: {
+  name: initiative.name
+  properties: initiative.properties
 }]
 "@
     }
 }
 
-$initiativesFolder = Join-Path -Path $PSScriptRoot -ChildPath "../definitions"
+$initiativesFolder = Join-Path -Path $PSScriptRoot -ChildPath "../initiatives"
 $outFile = Join-Path -Path $initiativesFolder -ChildPath "main.bicep"
 
 New-Item -Path "$initiativesFolder/temp" -ItemType Directory -Force
