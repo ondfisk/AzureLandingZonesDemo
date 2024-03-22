@@ -60,13 +60,14 @@ jobs:
       - name: Build Template
         run: |
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
+        shell: pwsh
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -74,7 +75,7 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
@@ -83,7 +84,7 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
 
   prod:
     name: Production
@@ -113,13 +114,14 @@ jobs:
       - name: Build Template
         run: |
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
+        shell: pwsh
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -127,7 +129,7 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         if: github.ref == 'refs/heads/main'
@@ -137,5 +139,5 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
 ...
