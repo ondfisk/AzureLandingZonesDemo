@@ -61,6 +61,7 @@ jobs:
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
+        if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
