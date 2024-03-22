@@ -6,7 +6,7 @@ Demonstration of various infrastructure as code and pipeline components to deplo
 
 ![Azure landing zone conceptual architecture](docs/azure-landing-zones.svg)
 
-The conceptual architecture is greatly simplified as we focus on empowering DevOps teams to build their own thing.
+The conceptual architecture is greatly simplified compared to the official one, as we empower DevOps teams to build and run their own thing.
 
 We do not want to manage network from a centralized perspective. All applications will be deployed as islands with no inter-network connectivity.
 
