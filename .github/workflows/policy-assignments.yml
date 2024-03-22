@@ -161,7 +161,7 @@ jobs:
           additionalArguments: --what-if
       - name: Deploy
         uses: azure/arm-deploy@v2
-        if: success() && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         with:
           deploymentName: policy-assignments-${{ github.run_id }}
           scope: managementgroup

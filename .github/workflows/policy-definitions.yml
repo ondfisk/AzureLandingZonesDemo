@@ -132,8 +132,8 @@ jobs:
           template: modules/policies/definitions/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        if: github.ref == 'refs/heads/main'
         uses: azure/arm-deploy@v2
+        if: github.ref == 'refs/heads/main'
         with:
           deploymentName: policy-definitions-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
