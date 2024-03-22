@@ -49,6 +49,9 @@ resource policySetDefinitionResources 'Microsoft.Authorization/policySetDefiniti
     }
 }
 
-New-Item -Path "$PSScriptRoot/../initiatives/temp" -ItemType Directory -Force
+$initiativesFolder = Join-Path -Path $PSScriptRoot -ChildPath "../definitions"
+$outFile = Join-Path -Path $initiativesFolder -ChildPath "main.bicep"
 
-Get-ChildItem -Path "$PSScriptRoot/../initiatives" -Filter *.json | Join-Template -ManagementGroupId $ManagementGroupId | Out-File -Path "$PSScriptRoot/../initiatives/main.bicep"
+New-Item -Path "$initiativesFolder/temp" -ItemType Directory -Force
+
+Get-ChildItem -Path $initiativesFolder -Filter *.json | Join-Template -ManagementGroupId $ManagementGroupId | Out-File -FilePath $outFile

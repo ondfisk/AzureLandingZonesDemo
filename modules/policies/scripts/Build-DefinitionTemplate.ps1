@@ -37,4 +37,7 @@ resource policyDefinitionResources 'Microsoft.Authorization/policyDefinitions@20
     }
 }
 
-Get-ChildItem -Path "$PSScriptRoot/../policies" -Filter *.json | Join-Template | Out-File -Path "$PSScriptRoot/../policies/main.bicep"
+$definitionsFolder = Join-Path -Path $PSScriptRoot -ChildPath "../definitions"
+$outFile = Join-Path -Path $definitionsFolder -ChildPath "main.bicep"
+
+Get-ChildItem -Path $definitionsFolder -Filter *.json | Join-Template | Out-File -FilePath $outFile

@@ -7,14 +7,14 @@ name: Policy Definitions
       - main
     paths:
       - .github/workflows/policy-definitions.yml
-      - modules/policies/policies/**
+      - modules/policies/definitions/**
 
   pull_request:
     branches:
       - main
     paths:
       - .github/workflows/policy-definitions.yml
-      - modules/policies/policies/**
+      - modules/policies/definitions/**
 
   workflow_dispatch:
 
@@ -23,30 +23,6 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Build Template
-        run: |
-          $stagingDirectory = "${{ runner.temp }}"
-          ./modules/policies/scripts/Build-PolicyTemplate.ps1
-          az bicep build --file modules/policies/policies/main.bicep --outfile "$stagingDirectory/main.json"
-        shell: pwsh
-      - name: Publish Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: drop
-          path: "${{ runner.temp }}"
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -54,13 +30,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run Pester Tests
-        run: Invoke-Pester -Path modules/policies/scripts/Test-Policy.Tests.ps1 -CI
+        run: Invoke-Pester -Path modules/policies/scripts/Test-Definition.Tests.ps1 -CI
         shell: pwsh
 
-  validate-canary:
-    name: Validate Canary
+  canary:
+    name: Canary
     needs:
-      - build
       - test
     runs-on: ubuntu-latest
     environment:
@@ -68,10 +43,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -84,15 +55,19 @@ jobs:
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
+      - name: Build Template
+        run: |
+          ./modules/policies/scripts/Build-DefinitionTemplate.ps1
+        shell: pwsh
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -100,13 +75,20 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2
+        with:
+          deploymentName: policy-definitions-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/policies/definitions/main.bicep
 
-  validate-prod:
-    name: Validate Production
+  prod:
+    name: Production
     needs:
-      - build
       - test
     runs-on: ubuntu-latest
     environment:
@@ -114,10 +96,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -130,16 +108,20 @@ jobs:
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+      - name: Build Template
+        run: |
+          ./modules/policies/scripts/Build-DefinitionTemplate.ps1
+        shell: pwsh
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -147,61 +129,15 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
           additionalArguments: --what-if
-
-  deploy-canary:
-    name: Deploy Canary
-    runs-on: ubuntu-latest
-    needs:
-      - validate-canary
-    environment:
-      name: Canary
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy Resources
+        if: github.ref == 'refs/heads/main'
         uses: azure/arm-deploy@v2
         with:
           deploymentName: policy-definitions-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
-
-  deploy-prod:
-    name: Deploy Production
-    runs-on: ubuntu-latest
-    if: success() && github.ref == 'refs/heads/main'
-    needs:
-      - validate-prod
-    environment:
-      name: Production
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Deploy Resources
-        uses: azure/arm-deploy@v2
-        with:
-          deploymentName: policy-definitions-${{ github.run_id }}-${{ github.job }}
-          scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
-          template: main.json
+          template: modules/policies/definitions/main.bicep
 ...
