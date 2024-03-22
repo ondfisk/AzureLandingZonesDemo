@@ -1,5 +1,5 @@
 BeforeDiscovery {
-    $path = Resolve-Path "$PSScriptRoot/../policies"
+    $path = Resolve-Path "$PSScriptRoot/../definitions"
 
     $script:Policies = Get-ChildItem -Path "$path/*.json"
 }
