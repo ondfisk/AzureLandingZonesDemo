@@ -91,8 +91,9 @@ jobs:
           region: "${{ vars.LOCATION }}"
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
-      - name: Deploy
+      - name: Deploy Resources
         uses: azure/arm-deploy@v2
+        if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: policy-assignments-${{ github.run_id }}
           scope: managementgroup
@@ -159,7 +160,7 @@ jobs:
           region: "${{ vars.LOCATION }}"
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
-      - name: Deploy
+      - name: Deploy Resources
         uses: azure/arm-deploy@v2
         if: github.ref == 'refs/heads/main'
         with:

@@ -8,7 +8,7 @@ name: Management
     paths:
       - .github/workflows/management.yml
       - environments/canary/management.bicepparam
-      - environments/prod/management.bicepparam
+      - environments/canary/management.bicepparam
       - modules/management/**
       - "!README.md"
 
@@ -18,7 +18,7 @@ name: Management
     paths:
       - .github/workflows/management.yml
       - environments/canary/management.bicepparam
-      - environments/prod/management.bicepparam
+      - environments/canary/management.bicepparam
       - modules/management/**
       - "!README.md"
 
@@ -29,9 +29,11 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build
+  canary:
+    name: Canary
     runs-on: ubuntu-latest
+    environment:
+      name: Canary
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,45 +43,14 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Build Template
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az bicep build --file modules/management/main.bicep --outfile ${{ runner.temp }}/main.json
-            az bicep build-params --file environments/canary/management.bicepparam --outfile ${{ runner.temp }}/main.canary.parameters.json
-            az bicep build-params --file environments/prod/management.bicepparam --outfile ${{ runner.temp }}/main.prod.parameters.json
-      - name: Publish Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: drop
-          path: "${{ runner.temp }}"
-
-  validate-canary:
-    name: Validate Canary
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    environment:
-      name: Canary
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
-          parameters: main.canary.parameters.json
+          template: modules/management/main.bicep
+          parameters: environments/canary/management.bicepparam
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
@@ -87,101 +58,60 @@ jobs:
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
-          parameters: main.canary.parameters.json
+          template: modules/management/main.bicep
+          parameters: environments/canary/management.bicepparam
           additionalArguments: --what-if
-
-  validate-prod:
-    name: Validate Production
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    environment:
-      name: Production
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Validate Deployment
-        uses: azure/arm-deploy@v2
-        with:
-          scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
-          template: main.json
-          parameters: main.prod.parameters.json
-          deploymentMode: Validate
-      - name: What-if Deployment
-        uses: azure/arm-deploy@v2
-        with:
-          scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
-          template: main.json
-          parameters: main.prod.parameters.json
-          additionalArguments: --what-if
-
-  deploy-canary:
-    name: Deploy Canary
-    runs-on: ubuntu-latest
-    needs:
-      - validate-canary
-    environment:
-      name: Canary
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
+        if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
-          parameters: main.canary.parameters.json
+          template: modules/management/main.bicep
+          parameters: environments/canary/management.bicepparam
 
-  deploy-prod:
-    name: Deploy Production
+  prod:
+    name: Production
     runs-on: ubuntu-latest
-    if: success() && github.ref == 'refs/heads/main'
-    needs:
-      - validate-prod
     environment:
       name: Production
     steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: drop
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: Deploy Resources
+      - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: management-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
-          template: main.json
-          parameters: main.prod.parameters.json
+          template: modules/management/main.bicep
+          parameters: environments/prod/management.bicepparam
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2
+        with:
+          scope: managementgroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/management/main.bicep
+          parameters: environments/prod/management.bicepparam
+          additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
+          region: "${{ vars.LOCATION }}"
+          template: modules/management/main.bicep
+          parameters: environments/prod/management.bicepparam
 ...
