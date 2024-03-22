@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run Pester Tests
-        run: Invoke-Pester -Path modules/policies/scripts/Test-Policy.Tests.ps1 -CI
+        run: Invoke-Pester -Path modules/policies/scripts/Test-Definition.Tests.ps1 -CI
         shell: pwsh
 
   canary:
@@ -55,11 +55,11 @@ jobs:
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
       - name: Build Template
         run: |
-          ./modules/policies/scripts/Build-PolicyTemplate.ps1
+          ./modules/policies/scripts/Build-DefinitionTemplate.ps1
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
@@ -107,12 +107,12 @@ jobs:
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Build Template
         run: |
-          ./modules/policies/scripts/Build-PolicyTemplate.ps1
+          ./modules/policies/scripts/Build-DefinitionTemplate.ps1
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:

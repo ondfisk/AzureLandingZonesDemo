@@ -32,7 +32,7 @@ stages:
               inlineScript: |
                 $stagingDirectory = "$(Build.ArtifactStagingDirectory)"
 
-                ./modules/policies/scripts/Build-PolicyTemplate.ps1
+                ./modules/policies/scripts/Build-DefinitionTemplate.ps1
                 az bicep build --file modules/policies/policies/main.bicep --outfile "$stagingDirectory/main.json"
               failOnStandardError: true
 
@@ -55,7 +55,7 @@ stages:
             inputs:
               targetType: inline
               script: |
-                Invoke-Pester -Path modules/policies/scripts/Test-Policy.Tests.ps1 -CI
+                Invoke-Pester -Path modules/policies/scripts/Test-Definition.Tests.ps1 -CI
               pwsh: true
 
           - task: PublishTestResults@2
@@ -90,7 +90,7 @@ stages:
                     azureSubscription: ${{ variables.azureConnection }}
                     ScriptType: InlineScript
                     Inline: |
-                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ variables.managementGroupId }}
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId ${{ variables.managementGroupId }}
                     azurePowerShellVersion: LatestVersion
                     pwsh: true
 
@@ -134,7 +134,7 @@ stages:
                     ScriptType: InlineScript
                     Inline: |
                       $ErrorActionPreference = ("$(Build.SourceBranch)" -eq "refs/heads/main") ? "Stop" : "Continue"
-                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Policy.ps1 -ManagementGroupId ${{ variables.managementGroupId }}
+                      $(Build.SourcesDirectory)/modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId ${{ variables.managementGroupId }}
                     azurePowerShellVersion: LatestVersion
                     pwsh: true
 
