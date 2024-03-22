@@ -1,6 +1,0 @@
----
-# Variables for Azure Pipelines
-variables:
-  azureConnection: root
-  vmImage: ubuntu-latest
-...
