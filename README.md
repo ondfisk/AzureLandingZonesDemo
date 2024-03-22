@@ -14,7 +14,7 @@ We do not want to manage network from a centralized perspective. All application
 
 These are the most important landing zones - all *newer* applications should be deployed here - even if data resides on-premises.
 
-Connection to on-premises resources should be managed used zero-trust based approaches with resources like:
+Connection to on-premises resources should be managed used zero-trust approaches with resources like:
 
 - [Azure Relay](https://learn.microsoft.com/en-us/azure/azure-relay/)
 - [Azure Service Bus](https://learn.microsoft.com/en-us/azure/service-bus-messaging/)

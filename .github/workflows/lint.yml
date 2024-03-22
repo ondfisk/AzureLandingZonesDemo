@@ -37,10 +37,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint Bicep Files
-        shell: pwsh
         run: |
-          Get-ChildItem -Filter *.bicep* -Recurse | ForEach-Object {
-            Write-Host "Linting $PSItem"
+          Get-ChildItem -Filter "*.bicep*" -Recurse | ForEach-Object {
+            Write-Output "Linting $PSItem"
             az bicep lint --file $PSItem
           }
+        shell: pwsh
 ...
