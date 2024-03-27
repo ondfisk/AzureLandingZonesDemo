@@ -34,7 +34,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Remediate
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -57,7 +57,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Remediate
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
