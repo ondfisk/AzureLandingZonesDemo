@@ -60,7 +60,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare assignments
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
@@ -128,7 +128,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare assignments
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
