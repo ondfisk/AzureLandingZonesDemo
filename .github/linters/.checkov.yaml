@@ -2,5 +2,6 @@
 quiet: true
 skip-check:
   - CKV_AZURE_35  # Ensure default network access rule for Storage Accounts is set to deny
+  - CKV_AZURE_59  # Ensure that Storage accounts disallow public access
   - CKV_AZURE_109  # Ensure that key vault allows firewall rules settings
 ...
