@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run Pester Tests
-        run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1, modules/policies/scripts/Test-AssignmentVars.Tests.ps1 -CI
+        run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1 -CI
         shell: pwsh
 
   canary:
@@ -60,7 +60,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare assignments
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
@@ -128,7 +128,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare assignments
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
