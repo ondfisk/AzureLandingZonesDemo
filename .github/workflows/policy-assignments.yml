@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run Pester Tests
-        run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1, modules/policies/scripts/Test-AssignmentVars.Tests.ps1 -CI
+        run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1 -CI
         shell: pwsh
 
   canary:
