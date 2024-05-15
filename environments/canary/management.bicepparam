@@ -11,3 +11,7 @@ param workspaceName = 'ondfisklzcanary'
 param storageAccountName = 'ondfisklzcanary'
 
 param keyVaultName = 'ondfisklzcanary'
+
+param eventHubNamespaceName = 'ondfisklzcanary'
+
+param eventHubName = 'entra-id-audit'

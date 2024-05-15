@@ -48,6 +48,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
       ipRules: []
       defaultAction: 'Allow'
     }
+    publicNetworkAccess: 'Enabled'
     supportsHttpsTrafficOnly: true
   }
 }
