@@ -4,11 +4,11 @@ param eventHubName string
 @maxValue(7)
 param messageRetentionInDays int = 1
 
-resource eventHubNamespace 'Microsoft.EventHub/namespaces@2023-01-01-preview' existing = {
+resource eventHubNamespace 'Microsoft.EventHub/namespaces@2024-01-01' existing = {
   name: eventHubNamespaceName
 }
 
-resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2023-01-01-preview' = {
+resource eventHub 'Microsoft.EventHub/namespaces/eventhubs@2024-01-01' = {
   name: eventHubName
   parent: eventHubNamespace
   properties: {

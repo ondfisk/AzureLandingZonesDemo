@@ -15,7 +15,7 @@ param enforcementMode string = 'Default'
 param parameters object = {}
 param notScopes array = []
 
-resource policyAssignment 'Microsoft.Authorization/policyAssignments@2023-04-01' = {
+resource policyAssignment 'Microsoft.Authorization/policyAssignments@2024-05-01' = {
   name: policyAssignmentName
   location: location
   identity: empty(userAssignedIdentity) ? { type: 'None' } : {
