@@ -1,7 +1,7 @@
 ---
 name: Management
 
-on:
+'on':
   push:
     branches:
       - main
@@ -20,7 +20,7 @@ on:
       - environments/canary/management.bicepparam
       - environments/canary/management.bicepparam
       - modules/management/**
-      - "!README.md"
+      - '!README.md'
 
   workflow_dispatch:
 
@@ -47,8 +47,8 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/management/main.bicep
           parameters: environments/canary/management.bicepparam
           deploymentMode: Validate
@@ -56,8 +56,8 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/management/main.bicep
           parameters: environments/canary/management.bicepparam
           additionalArguments: --what-if
@@ -67,8 +67,8 @@ jobs:
         with:
           deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/management/main.bicep
           parameters: environments/canary/management.bicepparam
 
@@ -90,8 +90,8 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/management/main.bicep
           parameters: environments/prod/management.bicepparam
           deploymentMode: Validate
@@ -99,8 +99,8 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/management/main.bicep
           parameters: environments/prod/management.bicepparam
           additionalArguments: --what-if
@@ -110,7 +110,7 @@ jobs:
         with:
           deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/management/main.bicep
           parameters: environments/prod/management.bicepparam

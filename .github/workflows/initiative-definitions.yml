@@ -1,7 +1,7 @@
 ---
 name: Initiative Definitions
 
-on:
+'on':
   push:
     branches:
       - main
@@ -67,16 +67,16 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
@@ -85,8 +85,8 @@ jobs:
         with:
           deploymentName: initiative-definitions-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
 
   prod:
@@ -124,16 +124,16 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
@@ -142,7 +142,6 @@ jobs:
         with:
           deploymentName: initiative-definitions-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
-...

@@ -1,7 +1,7 @@
 ---
 name: Management Groups
 
-on:
+'on':
   push:
     branches:
       - main
@@ -10,7 +10,7 @@ on:
       - environments/canary/management-groups.bicepparam
       - environments/prod/management-groups.bicepparam
       - modules/management-groups/**
-      - "!README.md"
+      - '!README.md'
 
   pull_request:
     branches:
@@ -20,7 +20,7 @@ on:
       - environments/canary/management-groups.bicepparam
       - environments/prod/management-groups.bicepparam
       - modules/management-groups/**
-      - "!README.md"
+      - '!README.md'
 
   workflow_dispatch:
 
@@ -47,7 +47,7 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: tenant
-          region: "${{ vars.LOCATION }}"
+          region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
           parameters: environments/canary/management-groups.bicepparam
           deploymentMode: Validate
@@ -55,7 +55,7 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: tenant
-          region: "${{ vars.LOCATION }}"
+          region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
           parameters: environments/canary/management-groups.bicepparam
           additionalArguments: --what-if
@@ -65,7 +65,7 @@ jobs:
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
-          region: "${{ vars.LOCATION }}"
+          region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
           parameters: environments/canary/management-groups.bicepparam
 
@@ -87,7 +87,7 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: tenant
-          region: "${{ vars.LOCATION }}"
+          region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
           parameters: environments/prod/management-groups.bicepparam
           deploymentMode: Validate
@@ -95,7 +95,7 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: tenant
-          region: "${{ vars.LOCATION }}"
+          region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
           parameters: environments/prod/management-groups.bicepparam
           additionalArguments: --what-if
@@ -105,6 +105,6 @@ jobs:
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
-          region: "${{ vars.LOCATION }}"
+          region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
           parameters: environments/prod/management-groups.bicepparam

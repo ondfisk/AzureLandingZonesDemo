@@ -1,7 +1,7 @@
 ---
 name: Policy Assignments
 
-on:
+'on':
   push:
     branches:
       - main
@@ -79,16 +79,16 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
@@ -97,8 +97,8 @@ jobs:
         with:
           deploymentName: policy-assignments-${{ github.run_id }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
 
   prod:
@@ -148,16 +148,16 @@ jobs:
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
@@ -166,6 +166,6 @@ jobs:
         with:
           deploymentName: policy-assignments-${{ github.run_id }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep

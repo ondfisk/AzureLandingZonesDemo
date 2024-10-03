@@ -54,3 +54,11 @@ The primary focus is on [Policy-driven governance](https://learn.microsoft.com/e
 ## Continuous Deployment
 
 Landing zones are deployed using GitHub Actions.
+
+## Notes
+
+To lint repo locally run:
+
+```bash
+docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -v .:/tmp/lint --rm ghcr.io/super-linter/super-linter:latest
+```
