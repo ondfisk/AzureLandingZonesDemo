@@ -18,9 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write
       statuses: write
-      actions: write
 
     steps:
       - name: Checkout Code
@@ -35,14 +33,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JSCPD: false
-          FIX_JSON_PRETTIER: true
-          FIX_MARKDOWN_PRETTIER: true
-          FIX_YAML_PRETTIER: true
-      - name: Commit and push linting fixes
-        if: github.event_name == 'pull_request'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
-          commit_message: "chore: fix linting issues"
-          commit_user_name: super-linter
-          commit_user_email: super-linter@super-linter.dev
