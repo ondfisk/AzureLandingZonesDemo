@@ -1,7 +1,7 @@
 ---
 name: Management Groups
 
-"on":
+on:
   push:
     branches:
       - main

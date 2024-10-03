@@ -1,7 +1,7 @@
 ---
 name: Policy Definitions
 
-"on":
+on:
   push:
     branches:
       - main

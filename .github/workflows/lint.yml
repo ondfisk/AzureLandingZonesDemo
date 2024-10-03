@@ -1,7 +1,7 @@
 ---
 name: Lint
 
-"on":
+on:
   push:
     branches:
       - main
@@ -10,7 +10,8 @@ name: Lint
       - main
   workflow_dispatch: { }
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   build:

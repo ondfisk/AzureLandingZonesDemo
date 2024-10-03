@@ -1,7 +1,7 @@
 ---
 name: Management
 
-"on":
+on:
   push:
     branches:
       - main
