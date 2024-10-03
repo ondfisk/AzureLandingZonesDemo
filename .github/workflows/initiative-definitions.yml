@@ -1,7 +1,7 @@
 ---
 name: Initiative Definitions
 
-'on':
+"on":
   push:
     branches:
       - main

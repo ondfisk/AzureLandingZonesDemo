@@ -11,10 +11,7 @@
     "parameters": {
       "effectType": {
         "type": "String",
-        "allowedValues": [
-          "Disabled",
-          "Modify"
-        ],
+        "allowedValues": ["Disabled", "Modify"],
         "defaultValue": "Modify"
       }
     },

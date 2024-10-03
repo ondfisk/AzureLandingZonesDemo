@@ -1,7 +1,7 @@
 ---
 name: Policy Assignments
 
-'on':
+"on":
   push:
     branches:
       - main

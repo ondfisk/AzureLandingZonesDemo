@@ -40,7 +40,7 @@ rules:
     level: error
   octal-values: disable
   quoted-strings:
-    quote-type: single
+    quote-type: double
     required: only-when-needed
   trailing-spaces:
     level: error

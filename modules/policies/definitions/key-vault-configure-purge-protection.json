@@ -4,17 +4,14 @@
     "policyType": "Custom",
     "mode": "Indexed",
     "description": "Configure Key Vault to enable purge protection",
-      "metadata": {
+    "metadata": {
       "version": "1.0.0",
       "category": "Key Vault"
     },
     "parameters": {
       "effectType": {
         "type": "String",
-        "allowedValues": [
-          "Disabled",
-          "Modify"
-        ],
+        "allowedValues": ["Disabled", "Modify"],
         "defaultValue": "Modify"
       }
     },

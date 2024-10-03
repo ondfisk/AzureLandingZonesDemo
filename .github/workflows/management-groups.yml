@@ -1,7 +1,7 @@
 ---
 name: Management Groups
 
-'on':
+"on":
   push:
     branches:
       - main
@@ -10,7 +10,7 @@ name: Management Groups
       - environments/canary/management-groups.bicepparam
       - environments/prod/management-groups.bicepparam
       - modules/management-groups/**
-      - '!README.md'
+      - "!README.md"
 
   pull_request:
     branches:
@@ -20,7 +20,7 @@ name: Management Groups
       - environments/canary/management-groups.bicepparam
       - environments/prod/management-groups.bicepparam
       - modules/management-groups/**
-      - '!README.md'
+      - "!README.md"
 
   workflow_dispatch:
 
