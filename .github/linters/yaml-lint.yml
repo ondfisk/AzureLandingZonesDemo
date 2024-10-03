@@ -15,7 +15,7 @@ rules:
   comments-indentation:
     level: error
   document-end:
-    present: true
+    present: false
     level: error
   document-start:
     present: true
