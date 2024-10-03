@@ -141,4 +141,3 @@ jobs:
           managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
           region: "${{ vars.LOCATION }}"
           template: modules/policies/definitions/main.bicep
-...

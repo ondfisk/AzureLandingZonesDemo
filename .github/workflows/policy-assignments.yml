@@ -169,4 +169,3 @@ jobs:
           managementGroupId: "${{ matrix.assignment.managementGroupId }}"
           region: "${{ vars.LOCATION }}"
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
-...

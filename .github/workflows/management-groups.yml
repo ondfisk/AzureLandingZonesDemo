@@ -108,4 +108,3 @@ jobs:
           region: "${{ vars.LOCATION }}"
           template: modules/management-groups/main.bicep
           parameters: environments/prod/management-groups.bicepparam
-...
