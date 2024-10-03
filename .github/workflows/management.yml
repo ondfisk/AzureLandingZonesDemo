@@ -46,6 +46,7 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
           region: ${{ vars.LOCATION }}
@@ -55,6 +56,7 @@ jobs:
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
           region: ${{ vars.LOCATION }}
@@ -89,6 +91,7 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
           region: ${{ vars.LOCATION }}
@@ -98,6 +101,7 @@ jobs:
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
           region: ${{ vars.LOCATION }}
@@ -108,7 +112,7 @@ jobs:
         uses: azure/arm-deploy@v2
         if: github.ref == 'refs/heads/main'
         with:
-          deploymentName: management-canary-${{ github.run_id }}-${{ github.job }}
+          deploymentName: management-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
           managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
           region: ${{ vars.LOCATION }}

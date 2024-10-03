@@ -11,6 +11,7 @@ rules:
   commas:
     level: error
   comments:
+    min-spaces-from-content: 1
     level: error
   comments-indentation:
     level: error

@@ -46,6 +46,7 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
           region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
@@ -54,6 +55,7 @@ jobs:
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
           region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
@@ -86,6 +88,7 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
           region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
@@ -94,6 +97,7 @@ jobs:
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
           region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
@@ -103,7 +107,7 @@ jobs:
         uses: azure/arm-deploy@v2
         if: github.ref == 'refs/heads/main'
         with:
-          deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
+          deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
           region: ${{ vars.LOCATION }}
           template: modules/management-groups/main.bicep
