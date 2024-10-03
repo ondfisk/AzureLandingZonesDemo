@@ -11,7 +11,7 @@ param isAutoInflateEnabled bool = false
 param kafkaEnabled bool = false
 param zoneRedundant bool = false
 
-resource eventHubNamespace 'Microsoft.EventHub/namespaces@2023-01-01-preview' = {
+resource eventHubNamespace 'Microsoft.EventHub/namespaces@2024-01-01' = {
   name: eventHubNamespaceName
   location: location
   sku: {

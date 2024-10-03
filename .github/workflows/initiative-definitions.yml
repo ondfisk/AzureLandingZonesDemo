@@ -66,27 +66,29 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
-          deploymentName: initiative-definitions-${{ github.run_id }}-${{ github.job }}
+          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
 
   prod:
@@ -123,26 +125,27 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
         if: github.ref == 'refs/heads/main'
         with:
-          deploymentName: initiative-definitions-${{ github.run_id }}-${{ github.job }}
+          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ vars.MANAGEMENT_GROUP_ID }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/initiatives/main.bicep
-...

@@ -12,7 +12,7 @@ We do not want to manage network from a centralized perspective. All application
 
 ## Online Landing Zones
 
-These are the most important landing zones - all *newer* applications should be deployed here - even if data resides on-premises.
+These are the most important landing zones - all _newer_ applications should be deployed here - even if data resides on-premises.
 
 Connection to on-premises resources should be managed using zero-trust approaches with resources like:
 
@@ -54,3 +54,11 @@ The primary focus is on [Policy-driven governance](https://learn.microsoft.com/e
 ## Continuous Deployment
 
 Landing zones are deployed using GitHub Actions.
+
+## Notes
+
+To lint repository locally run:
+
+```bash
+docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -e VALIDATE_JSCPD=false -e FIX_YAML_PRETTIER=true -e FIX_JSON_PRETTIER=true -e FIX_MARKDOWN_PRETTIER=true -v .:/tmp/lint --rm ghcr.io/super-linter/super-linter:latest
+```

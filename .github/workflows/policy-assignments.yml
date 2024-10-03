@@ -78,27 +78,29 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
-          deploymentName: policy-assignments-${{ github.run_id }}
+          deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
 
   prod:
@@ -147,26 +149,27 @@ jobs:
       - name: Validate Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2
         with:
+          deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2
         if: github.ref == 'refs/heads/main'
         with:
-          deploymentName: policy-assignments-${{ github.run_id }}
+          deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: "${{ matrix.assignment.managementGroupId }}"
-          region: "${{ vars.LOCATION }}"
+          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          region: ${{ vars.LOCATION }}
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
-...

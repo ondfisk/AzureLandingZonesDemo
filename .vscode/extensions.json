@@ -1,12 +1,12 @@
 {
-    "recommendations": [
-        "davidanson.vscode-markdownlint",
-        "github.vscode-github-actions",
-        "ms-azure-devops.azure-pipelines",
-        "ms-azuretools.vscode-bicep",
-        "ms-vscode.powershell",
-        "azurepolicy.azurepolicyextension",
-        "streetsidesoftware.code-spell-checker",
-        "redhat.vscode-yaml"
-    ]
+  "recommendations": [
+    "davidanson.vscode-markdownlint",
+    "github.vscode-github-actions",
+    "ms-azure-devops.azure-pipelines",
+    "ms-azuretools.vscode-bicep",
+    "ms-vscode.powershell",
+    "azurepolicy.azurepolicyextension",
+    "streetsidesoftware.code-spell-checker",
+    "redhat.vscode-yaml"
+  ]
 }

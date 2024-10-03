@@ -8,9 +8,10 @@ name: Lint
   pull_request:
     branches:
       - main
-  workflow_dispatch: { }
+  workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -18,9 +19,6 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
-      packages: read
-      # To report GitHub Actions status checks
       statuses: write
 
     steps:
@@ -32,16 +30,7 @@ jobs:
           fetch-depth: 0
 
       - name: Super-Linter
-        uses: super-linter/super-linter@v6.6.0
+        uses: super-linter/super-linter@v7.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JSCPD: false
-
-      - name: Lint Bicep Files
-        run: |
-          Get-ChildItem -Filter "*.bicep*" -Recurse | ForEach-Object {
-            Write-Output "Linting $PSItem"
-            az bicep lint --file $PSItem
-          }
-        shell: pwsh
-...
