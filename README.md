@@ -60,5 +60,5 @@ Landing zones are deployed using GitHub Actions.
 To lint repo locally run:
 
 ```bash
-docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -v .:/tmp/lint --rm ghcr.io/super-linter/super-linter:latest
+docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -e VALIDATE_JSCPD=false -v .:/tmp/lint --rm ghcr.io/super-linter/super-linter:latest
 ```
