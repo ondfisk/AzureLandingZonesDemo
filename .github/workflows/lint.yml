@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: write
       statuses: write
+      actions: write
 
     steps:
       - name: Checkout Code
