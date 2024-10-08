@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.1
       - name: Run Pester Tests
         run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1 -CI
         shell: pwsh
@@ -51,7 +51,7 @@ jobs:
             folder: landing-zones/online
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.1
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -121,7 +121,7 @@ jobs:
             folder: landing-zones/online
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.1
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
