@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Run Pester Tests
         run: Invoke-Pester -Path modules/policies/scripts/Test-Definition.Tests.ps1 -CI
         shell: pwsh
@@ -42,7 +42,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -98,7 +98,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
