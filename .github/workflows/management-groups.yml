@@ -36,7 +36,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -44,7 +44,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -53,7 +53,7 @@ jobs:
           parameters: environments/canary/management-groups.bicepparam
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -62,7 +62,7 @@ jobs:
           parameters: environments/canary/management-groups.bicepparam
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
@@ -78,7 +78,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -86,7 +86,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -95,7 +95,7 @@ jobs:
           parameters: environments/prod/management-groups.bicepparam
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -104,7 +104,7 @@ jobs:
           parameters: environments/prod/management-groups.bicepparam
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}

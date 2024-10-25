@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Run Pester Tests
         run: Invoke-Pester -Path modules/policies/scripts/Test-Initiative.Tests.ps1 -CI
         shell: pwsh
@@ -42,7 +42,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -51,7 +51,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Initiatives
-        uses: azure/powershell@v2
+        uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -64,7 +64,7 @@ jobs:
           ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
         shell: pwsh
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -73,7 +73,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -82,7 +82,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
@@ -100,7 +100,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -109,7 +109,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Initiatives
-        uses: azure/powershell@v2
+        uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -123,7 +123,7 @@ jobs:
           ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
         shell: pwsh
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -132,7 +132,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -141,7 +141,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
