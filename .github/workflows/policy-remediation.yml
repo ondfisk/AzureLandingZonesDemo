@@ -8,6 +8,12 @@ name: Policy Remediation
     paths:
       - .github/workflows/policy-remediation.yml
 
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policy-remediation.yml
+
   workflow_dispatch:
 
   schedule:
@@ -25,7 +31,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -34,7 +40,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Remediate
-        uses: azure/powershell@v2
+        uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
@@ -48,7 +54,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -57,7 +63,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Remediate
-        uses: azure/powershell@v2
+        uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"

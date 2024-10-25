@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Run Pester Tests
         run: Invoke-Pester -Path modules/policies/scripts/Test-Assignment.Tests.ps1 -CI
         shell: pwsh
@@ -51,7 +51,7 @@ jobs:
             folder: landing-zones/online
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -60,7 +60,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare assignments
-        uses: azure/powershell@v2
+        uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
@@ -76,7 +76,7 @@ jobs:
           ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
         shell: pwsh
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -85,7 +85,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -94,7 +94,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
@@ -121,7 +121,7 @@ jobs:
             folder: landing-zones/online
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.0
+        uses: actions/checkout@v4.2.2
       - name: Login to Azure
         uses: azure/login@v2.2.0
         with:
@@ -130,7 +130,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare assignments
-        uses: azure/powershell@v2
+        uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
@@ -147,7 +147,7 @@ jobs:
           ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
         shell: pwsh
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -156,7 +156,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -165,7 +165,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
