@@ -8,7 +8,7 @@ name: Management
     paths:
       - .github/workflows/management.yml
       - environments/canary/management.bicepparam
-      - environments/canary/management.bicepparam
+      - environments/prod/management.bicepparam
       - modules/management/**
       - "!README.md"
 
@@ -18,7 +18,7 @@ name: Management
     paths:
       - .github/workflows/management.yml
       - environments/canary/management.bicepparam
-      - environments/canary/management.bicepparam
+      - environments/prod/management.bicepparam
       - modules/management/**
       - "!README.md"
 

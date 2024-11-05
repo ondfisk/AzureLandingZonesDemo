@@ -1,4 +1,3 @@
-// Caution: Do not auto-format this file. Doing so will break the Checkov lint.
 targetScope = 'tenant'
 
 param displayName string = 'Azure Landing Zones'
@@ -114,10 +113,12 @@ resource corp 'Microsoft.Management/managementGroups@2023-04-01' = {
   }
 }
 
-resource corpSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in corpSubscriptionIds: {
-  name: subscriptionId
-  parent: corp
-}]
+resource corpSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [
+  for subscriptionId in corpSubscriptionIds: {
+    name: subscriptionId
+    parent: corp
+  }
+]
 
 resource online 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-landing-zones-online'
@@ -131,10 +132,12 @@ resource online 'Microsoft.Management/managementGroups@2023-04-01' = {
   }
 }
 
-resource onlineSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in onlineSubscriptionIds: {
-  name: subscriptionId
-  parent: online
-}]
+resource onlineSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [
+  for subscriptionId in onlineSubscriptionIds: {
+    name: subscriptionId
+    parent: online
+  }
+]
 
 resource sandbox 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-landing-zones-sandbox'
@@ -148,10 +151,12 @@ resource sandbox 'Microsoft.Management/managementGroups@2023-04-01' = {
   }
 }
 
-resource sandboxSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in sandboxSubscriptionIds: {
-  name: subscriptionId
-  parent: sandbox
-}]
+resource sandboxSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [
+  for subscriptionId in sandboxSubscriptionIds: {
+    name: subscriptionId
+    parent: sandbox
+  }
+]
 
 resource decommissioned 'Microsoft.Management/managementGroups@2023-04-01' = {
   name: '${prefix}-landing-zones-decommissioned'
@@ -165,7 +170,9 @@ resource decommissioned 'Microsoft.Management/managementGroups@2023-04-01' = {
   }
 }
 
-resource decommissionedSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [for subscriptionId in decommissionedSubscriptionIds: {
-  name: subscriptionId
-  parent: decommissioned
-}]
+resource decommissionedSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [
+  for subscriptionId in decommissionedSubscriptionIds: {
+    name: subscriptionId
+    parent: decommissioned
+  }
+]
