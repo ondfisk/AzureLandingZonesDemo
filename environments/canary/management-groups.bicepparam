@@ -4,11 +4,11 @@ param displayName = 'Azure Landing Zones - Canary'
 
 param prefix = 'lz-canary'
 
-param managementSubscriptionId = '8228ddb9-d118-47b4-b4e7-1f1de7667d4d'
+param managementSubscriptionId = '402a4061-2a43-4d20-a60d-957adae8f22e'
 
 param corpSubscriptionIds = []
 
-param onlineSubscriptionIds = []
+param onlineSubscriptionIds = ['8287fed1-c40b-4760-9d44-fd175745ed42']
 
 param sandboxSubscriptionIds = []
 

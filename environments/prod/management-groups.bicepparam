@@ -4,13 +4,11 @@ param displayName = 'Azure Landing Zones'
 
 param prefix = 'lz'
 
-param managementSubscriptionId = 'e678d35b-125e-41ad-ae35-c04dfd4162e5'
+param managementSubscriptionId = 'eaf860488-0876-485b-a1f1-da887f980cc6'
 
 param corpSubscriptionIds = []
 
-param onlineSubscriptionIds = [
-  'bd0c76c9-58a6-4c33-bda2-5dc48915446e'
-]
+param onlineSubscriptionIds = []
 
 param sandboxSubscriptionIds = []
 
