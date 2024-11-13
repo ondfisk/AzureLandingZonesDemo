@@ -46,13 +46,13 @@ jobs:
           - managementGroupId: lz-canary
             folder: .
           - managementGroupId: lz-canary-platform
-            folder: landing-zones/platform
+            folder: platform
           - managementGroupId: lz-canary-landing-zones-corp
             folder: landing-zones/corp
           - managementGroupId: lz-canary-landing-zones-online
             folder: landing-zones/online
           - managementGroupId: lz-canary-sandbox
-            folder: landing-zones/sandbox
+            folder: sandbox
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
@@ -120,13 +120,13 @@ jobs:
           - managementGroupId: lz
             folder: .
           - managementGroupId: lz-platform
-            folder: landing-zones/platform
+            folder: platform
           - managementGroupId: lz-landing-zones-corp
             folder: landing-zones/corp
           - managementGroupId: lz-landing-zones-online
             folder: landing-zones/online
           - managementGroupId: lz-sandbox
-            folder: landing-zones/sandbox
+            folder: sandbox
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
