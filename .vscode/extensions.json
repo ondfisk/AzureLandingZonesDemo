@@ -2,7 +2,6 @@
   "recommendations": [
     "davidanson.vscode-markdownlint",
     "github.vscode-github-actions",
-    "ms-azure-devops.azure-pipelines",
     "ms-azuretools.vscode-bicep",
     "ms-vscode.powershell",
     "azurepolicy.azurepolicyextension",
