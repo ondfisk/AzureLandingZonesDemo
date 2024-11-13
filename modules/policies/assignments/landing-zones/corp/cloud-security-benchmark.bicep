@@ -2,7 +2,7 @@ targetScope = 'managementGroup'
 
 param location string = deployment().location
 
-module Cloud_Security_Benchmark '../../shared/policy-assignment.bicep' = {
+module Cloud_Security_Benchmark '../../../../shared/policy-assignment.bicep' = {
   name: 'cloud-security-benchmark-assignment'
   params: {
     location: location
