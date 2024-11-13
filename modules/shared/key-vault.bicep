@@ -12,15 +12,21 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
       family: 'A'
       name: 'standard'
     }
+    tenantId: tenant().tenantId
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+      ipRules: []
+      virtualNetworkRules: []
+    }
     accessPolicies: []
     enabledForDeployment: enabledForDeployment
     enabledForDiskEncryption: enabledForDiskEncryption
     enabledForTemplateDeployment: enabledForTemplateDeployment
-    tenantId: tenant().tenantId
-    softDeleteRetentionInDays: 90
     enableSoftDelete: true
-    enablePurgeProtection: true
+    softDeleteRetentionInDays: 90
     enableRbacAuthorization: true
+    enablePurgeProtection: true
     publicNetworkAccess: 'Enabled'
   }
 }
