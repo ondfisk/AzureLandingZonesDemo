@@ -15,9 +15,7 @@
   "files.trimTrailingWhitespace": true,
   "cSpell.language": "en",
   "cSpell.enabled": true,
-  "cSpell.enableFiletypes": [
-    "*"
-  ],
+  "cSpell.enableFiletypes": ["*"],
   "cSpell.ignoreWords": [
     "bicepparam",
     "outfile",
@@ -77,10 +75,5 @@
     "westindia",
     "westus"
   ],
-  "cSpell.words": [
-    "Lystrøm",
-    "peerings",
-    "Rasmus",
-    "vnet"
-  ]
+  "cSpell.words": ["Lystrøm", "peerings", "Rasmus", "vnet"]
 }
