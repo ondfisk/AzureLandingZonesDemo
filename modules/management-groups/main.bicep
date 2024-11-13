@@ -140,7 +140,7 @@ resource onlineSubscription 'Microsoft.Management/managementGroups/subscriptions
 ]
 
 resource sandbox 'Microsoft.Management/managementGroups@2023-04-01' = {
-  name: '${prefix}-landing-zones-sandbox'
+  name: '${prefix}-sandbox'
   properties: {
     displayName: 'Sandbox'
     details: {
@@ -159,7 +159,7 @@ resource sandboxSubscription 'Microsoft.Management/managementGroups/subscription
 ]
 
 resource decommissioned 'Microsoft.Management/managementGroups@2023-04-01' = {
-  name: '${prefix}-landing-zones-decommissioned'
+  name: '${prefix}-decommissioned'
   properties: {
     displayName: 'Decommissioned'
     details: {

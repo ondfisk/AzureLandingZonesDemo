@@ -7,8 +7,6 @@ param userAssignedIdentityName string
 param workspaceName string
 param storageAccountName string
 param keyVaultName string
-param eventHubNamespaceName string
-param eventHubName string
 
 module group '../shared/resource-group.bicep' = {
   scope: subscription(managementSubscriptionId)
@@ -97,31 +95,5 @@ module keyVault '../shared/key-vault.bicep' = {
   params: {
     location: location
     keyVaultName: keyVaultName
-  }
-}
-
-module eventHubNamespace '../shared/event-hub-namespace.bicep' = {
-  scope: resourceGroup(managementSubscriptionId, resourceGroupName)
-  name: 'event-hub-namespace-${uniqueString(resourceGroupName, eventHubNamespaceName)}'
-  dependsOn: [
-    group
-  ]
-  params: {
-    location: location
-    eventHubNamespaceName: eventHubNamespaceName
-    skuName: 'Basic'
-    disableLocalAuth: false
-  }
-}
-
-module eventHub '../shared/event-hub.bicep' = {
-  scope: resourceGroup(managementSubscriptionId, resourceGroupName)
-  name: 'event-hub-${uniqueString(resourceGroupName, eventHubName)}'
-  dependsOn: [
-    eventHubNamespace
-  ]
-  params: {
-    eventHubName: eventHubName
-    eventHubNamespaceName: eventHubNamespaceName
   }
 }
