@@ -17,17 +17,13 @@
   "cSpell.enabled": true,
   "cSpell.enableFiletypes": ["*"],
   "cSpell.ignoreWords": [
-    "azdo",
     "bicepparam",
     "outfile",
-    "pscore",
     "pwsh",
     "ondfisk",
     "ondfisklz",
     "ondfisklzcanary",
     "managementgroup",
-    "peerings",
-    "vnet",
     "RAGRS",
     "GZRS",
     "RAGZRS",
@@ -78,5 +74,11 @@
     "westeurope",
     "westindia",
     "westus"
+  ],
+  "cSpell.words": [
+    "Lystrøm",
+    "peerings",
+    "Rasmus",
+    "vnet"
   ]
 }
