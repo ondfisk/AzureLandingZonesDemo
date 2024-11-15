@@ -8,7 +8,10 @@ module Key_Vault_Config '../../shared/policy-assignment.bicep' = {
   params: {
     location: location
     policyAssignmentName: 'key-vault-config'
-    policyDefinitionId: managementGroupResourceId('Microsoft.Authorization/policySetDefinitions', 'configure-key-vault-security')
+    policyDefinitionId: managementGroupResourceId(
+      'Microsoft.Authorization/policySetDefinitions',
+      'configure-key-vault-security'
+    )
     userAssignedIdentity: managedIdentityId
     parameters: {}
   }

@@ -8,7 +8,10 @@ module Defender_For_Databases '../../shared/policy-assignment.bicep' = {
   params: {
     location: location
     policyAssignmentName: 'defender-for-databases'
-    policyDefinitionId: tenantResourceId('Microsoft.Authorization/policySetDefinitions', '9d46421d-1a48-4636-8d1a-5525ed29172d')
+    policyDefinitionId: tenantResourceId(
+      'Microsoft.Authorization/policySetDefinitions',
+      '9d46421d-1a48-4636-8d1a-5525ed29172d'
+    )
     userAssignedIdentity: managedIdentityId
     parameters: {}
   }

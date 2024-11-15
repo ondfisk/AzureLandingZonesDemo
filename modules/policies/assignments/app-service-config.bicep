@@ -8,7 +8,10 @@ module App_Service_Config '../../shared/policy-assignment.bicep' = {
   params: {
     location: location
     policyAssignmentName: 'app-service-config'
-    policyDefinitionId: managementGroupResourceId('Microsoft.Authorization/policySetDefinitions', 'configure-app-service-security')
+    policyDefinitionId: managementGroupResourceId(
+      'Microsoft.Authorization/policySetDefinitions',
+      'configure-app-service-security'
+    )
     userAssignedIdentity: managedIdentityId
     parameters: {}
   }

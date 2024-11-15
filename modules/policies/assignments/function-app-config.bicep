@@ -8,7 +8,10 @@ module Function_App_Config '../../shared/policy-assignment.bicep' = {
   params: {
     location: location
     policyAssignmentName: 'function-app-config'
-    policyDefinitionId: managementGroupResourceId('Microsoft.Authorization/policySetDefinitions', 'configure-function-app-security')
+    policyDefinitionId: managementGroupResourceId(
+      'Microsoft.Authorization/policySetDefinitions',
+      'configure-function-app-security'
+    )
     userAssignedIdentity: managedIdentityId
     parameters: {}
   }

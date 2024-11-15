@@ -13,6 +13,10 @@ module VNET_Deny_Peering '../../../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policyDefinitions',
       'vnet-deny-peering'
     )
-    parameters: {}
+    parameters: {
+      effect: {
+        value: 'Audit'
+      }
+    }
   }
 }
