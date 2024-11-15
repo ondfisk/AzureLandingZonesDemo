@@ -24,11 +24,7 @@
       {
         "policyDefinitionReferenceId": "configure-your-storage-account-public-access-to-be-disallowed",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/13502221-8df0-4414-9937-de9c5c4e396b",
-        "parameters": {
-          "effect": {
-            "value": "Deny"
-          }
-        },
+        "parameters": {},
         "groupNames": []
       },
       {
