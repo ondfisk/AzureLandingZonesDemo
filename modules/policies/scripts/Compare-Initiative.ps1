@@ -34,7 +34,7 @@ function Compare-Item ($Source, $Cloud, $Label, $ManagementGroupId) {
 }
 
 $cloud = Get-AzPolicySetDefinition -ManagementGroupName $ManagementGroupId -Custom |
-Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
+Where-Object Id -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/providers/Microsoft.Authorization/policySetDefinitions/" |
 Select-Object -ExpandProperty Name
 
 $source = Get-ResourceNameFromTemplate -Path "$PSScriptRoot/../initiatives" -Pattern "resource .+ 'Microsoft.Authorization/policySetDefinitions@.+' = \{\s+name: '(.+)'"
