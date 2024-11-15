@@ -63,6 +63,21 @@ module Cloud_Security_Benchmark '../../../../shared/policy-assignment.bicep' = {
       privateEndpointShouldBeEnabledForPostgresqlServersMonitoringEffect: {
         value: 'Disabled'
       }
+      publicNetworkAccessOnAzureSQLDatabaseShouldBeDisabledMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForCognitiveServicesAccountsMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForMariaDbServersMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForMySqlServersMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForPostgreSqlServersMonitoringEffect: {
+        value: 'Disabled'
+      }
       storageAccountShouldUseAPrivateLinkConnectionMonitoringEffect: {
         value: 'Disabled'
       }
