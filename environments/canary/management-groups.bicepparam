@@ -10,6 +10,8 @@ param corpSubscriptionIds = []
 
 param onlineSubscriptionIds = []
 
+param onlineOnboardingSubscriptionIds = []
+
 param sandboxSubscriptionIds = []
 
 param decommissionedSubscriptionIds = []

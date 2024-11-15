@@ -13,6 +13,8 @@ param onlineSubscriptionIds = [
   'bd0c76c9-58a6-4c33-bda2-5dc48915446e'
 ]
 
+param onlineOnboardingSubscriptionIds = []
+
 param sandboxSubscriptionIds = []
 
 param decommissionedSubscriptionIds = []

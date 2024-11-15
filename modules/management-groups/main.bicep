@@ -7,6 +7,7 @@ param connectivitySubscriptionId string = '00000000-0000-0000-0000-000000000000'
 param identitySubscriptionId string = '00000000-0000-0000-0000-000000000000'
 param corpSubscriptionIds array = []
 param onlineSubscriptionIds array = []
+param onlineOnboardingSubscriptionIds array = []
 param sandboxSubscriptionIds array = []
 param decommissionedSubscriptionIds array = []
 
@@ -134,6 +135,25 @@ resource online 'Microsoft.Management/managementGroups@2023-04-01' = {
 
 resource onlineSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [
   for subscriptionId in onlineSubscriptionIds: {
+    name: subscriptionId
+    parent: online
+  }
+]
+
+resource onlineOnboarding 'Microsoft.Management/managementGroups@2023-04-01' = {
+  name: '${prefix}-landing-zones-online-onboarding'
+  properties: {
+    displayName: 'Online Onboarding'
+    details: {
+      parent: {
+        id: landingZones.id
+      }
+    }
+  }
+}
+
+resource onlineOnboardingSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [
+  for subscriptionId in onlineOnboardingSubscriptionIds: {
     name: subscriptionId
     parent: online
   }
