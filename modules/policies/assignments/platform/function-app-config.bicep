@@ -3,7 +3,7 @@ targetScope = 'managementGroup'
 param location string = deployment().location
 param managedIdentityId string
 
-module Function_App_Config '../../shared/policy-assignment.bicep' = {
+module Function_App_Config '../../../shared/policy-assignment.bicep' = {
   name: 'function-app-config-assignment'
   params: {
     location: location
