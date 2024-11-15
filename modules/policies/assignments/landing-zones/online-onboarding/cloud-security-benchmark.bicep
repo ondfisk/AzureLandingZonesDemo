@@ -87,3 +87,27 @@ module Cloud_Security_Benchmark '../../../../shared/policy-assignment.bicep' = {
     }
   }
 }
+
+module Cloud_Security_Benchmark_Exemption '../../../../shared/policy-exemption.bicep' = {
+  name: 'cloud-security-benchmark-exemption'
+  dependsOn: [
+    Cloud_Security_Benchmark
+  ]
+  params: {
+    displayName: 'Exemption for cloud security benchmark'
+    description: 'We allow public network access and do not enforce the use of private link as all services will have Entra ID authentication and TLS encryption enforced instead.'
+    exemptionCategory: 'Mitigated'
+    policyExemptionName: 'cloud-security-benchmark-exemption'
+    policyAssignmentName: 'cloud-security-benchmark'
+    policyDefinitionReferenceIds: [
+      'azureSQLManagedInstancesShouldDisablePublicNetworkAccess'
+      'azureCosmosDBShouldDisablePublicNetworkAccess'
+      'aPIManagementServiceShouldDisableServiceConfigurationEndpoints'
+      'azureDatabricksWorkspacesShouldDisablePublicNetworkAccess'
+      'azureMachineLearningWorkspacesShouldDisablePublicNetworkAccess'
+      'cosmosDBAaccountsShouldUsePrivateLink'
+      'azureAIServicesResourcesShouldUseAzurePrivateLinkMonitoring'
+      'azureDatabricksWorkspacesShouldUsePrivateLink'
+    ]
+  }
+}

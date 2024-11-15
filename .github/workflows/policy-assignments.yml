@@ -71,6 +71,14 @@ jobs:
             $folder = "${{ matrix.assignment.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
+      - name: Compare exemptions
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
+            $folder = "${{ matrix.assignment.folder }}"
+            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
       - name: Build Template
         run: |
           $folder = "${{ matrix.assignment.folder }}"
@@ -144,6 +152,15 @@ jobs:
             $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
             $folder = "${{ matrix.assignment.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
+          errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+      - name: Compare exemptions
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
+            $folder = "${{ matrix.assignment.folder }}"
+            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Build Template
