@@ -1,3 +1,3 @@
 # Policies Module
 
-This module deploys the policy definitions, initiatives, and assignments.
+This module deploys the policy definitions, initiatives, and assignments including exemptions.
