@@ -15,10 +15,7 @@
           "displayName": "Effect",
           "description": "The effect determines what happens when the policy rule is evaluated to match"
         },
-        "allowedValues": [
-          "Modify",
-          "Disabled"
-        ],
+        "allowedValues": ["Modify", "Disabled"],
         "defaultValue": "Modify"
       }
     },

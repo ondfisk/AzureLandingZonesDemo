@@ -2,9 +2,11 @@
 quiet: true
 skip-check:
   - CKV_AZURE_35 # Ensure default network access rule for Storage Accounts is set to deny
+  - CKV_AZURE_42 # Ensure the key vault is recoverable (Configured through Azure Policy)
   - CKV_AZURE_43 # Ensure Storage Accounts adhere to the naming rules
   - CKV_AZURE_44 # Ensure Storage Account is using the latest version of TLS encryption (Configured through Azure Policy)
   - CKV_AZURE_59 # Ensure that Storage accounts disallow public access
   - CKV_AZURE_109 # Ensure that key vault allows firewall rules settings
+  - CKV_AZURE_110 # Ensure that key vault enables purge protection (Configured through Azure Policy)
   - CKV_AZURE_189 # Ensure that Azure Key Vault disables public network access
   - CKV_AZURE_206 # Ensure that Storage Accounts use replication
