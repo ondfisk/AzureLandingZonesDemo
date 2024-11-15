@@ -32,6 +32,30 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/fa3a6357-c6d6-4120-8429-855577ec0063",
         "parameters": {},
         "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-disable-ftp",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-disable-ftp",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-disable-ftp",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-disable-ftp",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-configure-latest-http-version",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/function-app-configure-latest-http-version",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-slots-configure-latest-http-version",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/function-app-slots-configure-latest-http-version",
+        "parameters": {},
+        "groupNames": []
       }
     ],
     "policyDefinitionGroups": []

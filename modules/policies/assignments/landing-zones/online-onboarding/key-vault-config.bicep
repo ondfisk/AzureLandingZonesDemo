@@ -15,7 +15,7 @@ module Key_Vault_Config '../../../../shared/policy-assignment.bicep' = {
     )
     parameters: {
       effectType: {
-        value: 'AuditIfNotExists'
+        value: 'Audit'
       }
     }
   }

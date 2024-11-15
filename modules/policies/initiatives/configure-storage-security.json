@@ -20,6 +20,16 @@
         "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/storage-configure-minimum-tls",
         "parameters": {},
         "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "storage-accounts-should-prevent-cross-tenant-object-replication",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/92a89a79-6c52-4a7e-a03f-61306fc49312",
+        "parameters": {
+          "effect": {
+            "value": "Deny"
+          }
+        },
+        "groupNames": []
       }
     ],
     "policyDefinitionGroups": []

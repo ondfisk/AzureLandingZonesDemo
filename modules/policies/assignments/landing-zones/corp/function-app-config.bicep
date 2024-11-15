@@ -3,14 +3,14 @@ targetScope = 'managementGroup'
 param location string = deployment().location
 param managedIdentityId string
 
-module App_Service_Config '../../shared/policy-assignment.bicep' = {
-  name: 'app-service-config-assignment'
+module Function_App_Config '../../../../shared/policy-assignment.bicep' = {
+  name: 'function-app-config-assignment'
   params: {
     location: location
-    policyAssignmentName: 'app-service-config'
+    policyAssignmentName: 'function-app-config'
     policyDefinitionId: managementGroupResourceId(
       'Microsoft.Authorization/policySetDefinitions',
-      'configure-app-service-security'
+      'configure-function-app-security'
     )
     userAssignedIdentity: managedIdentityId
     parameters: {}

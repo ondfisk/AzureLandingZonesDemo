@@ -13,16 +13,7 @@ param skuName string
   'Hot'
   'Cool'
 ])
-param accessTier string = 'Hot'
-param allowSharedKeyAccess bool = false
-param allowBlobPublicAccess bool = false
-param isHnsEnabled bool = false
-param isNfsV3Enabled bool = false
-@allowed([
-  'Disabled'
-  'Enabled'
-])
-param largeFileSharesState string = 'Disabled'
+param accessTier string = 'Cool'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
@@ -33,23 +24,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
   properties: {
     accessTier: accessTier
-    allowBlobPublicAccess: allowBlobPublicAccess
-    allowCrossTenantReplication: false
-    allowSharedKeyAccess: allowSharedKeyAccess
-    isHnsEnabled: isHnsEnabled
-    isLocalUserEnabled: false
-    isNfsV3Enabled: isNfsV3Enabled
-    isSftpEnabled: false
-    largeFileSharesState: largeFileSharesState
-    minimumTlsVersion: 'TLS1_2'
     networkAcls: {
       bypass: 'AzureServices'
-      virtualNetworkRules: []
+      defaultAction: 'Deny'
       ipRules: []
-      defaultAction: 'Allow'
+      virtualNetworkRules: []
     }
-    publicNetworkAccess: 'Enabled'
-    supportsHttpsTrafficOnly: true
   }
 }
 

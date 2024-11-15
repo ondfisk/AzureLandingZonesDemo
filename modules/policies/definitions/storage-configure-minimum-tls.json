@@ -29,7 +29,7 @@
           {
             "not": {
               "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "equals": "TLS1_2"
+              "equals": "TLS1_3"
             }
           }
         ]
@@ -45,7 +45,7 @@
             {
               "operation": "addOrReplace",
               "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "value": "TLS1_2"
+              "value": "TLS1_3"
             }
           ]
         }
