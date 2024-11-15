@@ -87,5 +87,5 @@
     }
   },
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "app-service-slots-disable-ftp"
+  "name": "app-service-slots-configure-ftp"
 }

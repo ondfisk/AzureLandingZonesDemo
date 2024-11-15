@@ -1,9 +1,9 @@
 {
   "properties": {
-    "displayName": "Configure App Service apps to disable FTP",
+    "displayName": "Configure Function Apps to disable FTP",
     "policyType": "Custom",
     "mode": "Indexed",
-    "description": "Configure App Service apps to disable FTP.",
+    "description": "Configure Function Apps to disable FTP.",
     "metadata": {
       "version": "1.0.0",
       "category": "App Service"
@@ -28,7 +28,11 @@
           },
           {
             "field": "kind",
-            "notContains": "functionapp"
+            "contains": "functionapp"
+          },
+          {
+            "field": "kind",
+            "notContains": "workflowapp"
           }
         ]
       },
@@ -80,5 +84,5 @@
     }
   },
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "app-service-disable-ftp"
+  "name": "function-app-configure-ftp"
 }

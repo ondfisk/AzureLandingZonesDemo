@@ -46,14 +46,14 @@
         "groupNames": []
       },
       {
-        "policyDefinitionReferenceId": "app-service-disable-ftp",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-disable-ftp",
+        "policyDefinitionReferenceId": "app-service-configure-ftp",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-configure-ftp",
         "parameters": {},
         "groupNames": []
       },
       {
-        "policyDefinitionReferenceId": "app-service-slots-disable-ftp",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-disable-ftp",
+        "policyDefinitionReferenceId": "app-service-slots-configure-ftp",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-configure-ftp",
         "parameters": {},
         "groupNames": []
       },

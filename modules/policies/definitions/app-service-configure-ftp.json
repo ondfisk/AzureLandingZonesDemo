@@ -1,14 +1,13 @@
 {
   "properties": {
-    "displayName": "Configure Function App slots to disable FTP",
+    "displayName": "Configure App Service apps to disable FTP",
     "policyType": "Custom",
     "mode": "Indexed",
-    "description": "Configure Function App slots to disable FTP.",
+    "description": "Configure App Service apps to disable FTP.",
     "metadata": {
       "version": "1.0.0",
       "category": "App Service"
     },
-    "version": "1.0.0",
     "parameters": {
       "effect": {
         "type": "String",
@@ -25,25 +24,21 @@
         "allOf": [
           {
             "field": "type",
-            "equals": "Microsoft.Web/sites/slots"
+            "equals": "Microsoft.Web/sites"
           },
           {
             "field": "kind",
-            "contains": "functionapp"
-          },
-          {
-            "field": "kind",
-            "notContains": "workflowapp"
+            "notContains": "functionapp"
           }
         ]
       },
       "then": {
         "effect": "[parameters('effect')]",
         "details": {
-          "type": "Microsoft.Web/sites/slots/config",
+          "type": "Microsoft.Web/sites/config",
           "name": "web",
           "existenceCondition": {
-            "field": "Microsoft.Web/sites/slots/config/ftpsState",
+            "field": "Microsoft.Web/sites/config/ftpsState",
             "equals": "Disabled"
           },
           "roleDefinitionIds": [
@@ -55,9 +50,6 @@
               "parameters": {
                 "siteName": {
                   "value": "[field('name')]"
-                },
-                "siteId": {
-                  "value": "[field('id')]"
                 }
               },
               "template": {
@@ -66,17 +58,14 @@
                 "parameters": {
                   "siteName": {
                     "type": "string"
-                  },
-                  "siteId": {
-                    "type": "string"
                   }
                 },
                 "variables": {},
                 "resources": [
                   {
-                    "type": "Microsoft.Web/sites/slots/config",
+                    "type": "Microsoft.Web/sites/config",
                     "apiVersion": "2021-02-01",
-                    "name": "[format('{0}/{1}/web', split(parameters('siteId'),'/')[8], parameters('siteName'))]",
+                    "name": "[concat(parameters('siteName'), '/web')]",
                     "properties": {
                       "ftpsState": "Disabled"
                     }
@@ -91,5 +80,5 @@
     }
   },
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "function-app-slots-disable-ftp"
+  "name": "app-service-configure-ftp"
 }

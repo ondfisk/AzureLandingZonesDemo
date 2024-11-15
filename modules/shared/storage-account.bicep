@@ -24,23 +24,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
   properties: {
     accessTier: accessTier
-    allowBlobPublicAccess: false
-    allowCrossTenantReplication: false
-    allowSharedKeyAccess: false
-    isHnsEnabled: false
-    isLocalUserEnabled: false
-    isNfsV3Enabled: false
-    isSftpEnabled: false
-    largeFileSharesState: 'Disabled'
-    minimumTlsVersion: 'TLS1_3'
     networkAcls: {
       bypass: 'AzureServices'
       defaultAction: 'Deny'
       ipRules: []
       virtualNetworkRules: []
     }
-    publicNetworkAccess: 'Enabled'
-    supportsHttpsTrafficOnly: true
   }
 }
 
