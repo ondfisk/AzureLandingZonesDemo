@@ -1,6 +1,7 @@
 targetScope = 'managementGroup'
 
 param location string = deployment().location
+param policyDefinitionManagementGroupId string
 param managedIdentityId string
 
 module Storage_Config '../../../../shared/policy-assignment.bicep' = {
@@ -9,6 +10,7 @@ module Storage_Config '../../../../shared/policy-assignment.bicep' = {
     location: location
     policyAssignmentName: 'storage-config'
     policyDefinitionId: managementGroupResourceId(
+      policyDefinitionManagementGroupId,
       'Microsoft.Authorization/policySetDefinitions',
       'configure-storage-security'
     )
