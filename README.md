@@ -57,7 +57,7 @@ Landing zones are deployed using GitHub Actions.
 
 ## Notes
 
-To lint repository locally run:
+To lint repository locally run (from WSL):
 
 ```bash
 docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -e VALIDATE_JSCPD=false -e FIX_YAML_PRETTIER=true -e FIX_JSON_PRETTIER=true -e FIX_MARKDOWN_PRETTIER=true -v .:/tmp/lint --rm ghcr.io/super-linter/super-linter:latest

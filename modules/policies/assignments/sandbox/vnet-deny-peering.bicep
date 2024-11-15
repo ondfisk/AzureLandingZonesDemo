@@ -3,7 +3,7 @@ targetScope = 'managementGroup'
 param location string = deployment().location
 param policyDefinitionManagementGroupId string
 
-module VNET_Deny_Peering '../../../../shared/policy-assignment.bicep' = {
+module VNET_Deny_Peering '../../../shared/policy-assignment.bicep' = {
   name: 'vnet-deny-peering-assignment'
   params: {
     location: location
@@ -13,10 +13,6 @@ module VNET_Deny_Peering '../../../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policyDefinitions',
       'vnet-deny-peering'
     )
-    parameters: {
-      effect: {
-        value: 'Audit'
-      }
-    }
+    parameters: {}
   }
 }
