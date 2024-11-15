@@ -21,7 +21,7 @@ ForEach-Object {
 }
 
 $cloud = Get-AzPolicyDefinition -ManagementGroupName $ManagementGroupId -Custom |
-Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
+Where-Object Id -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/providers/Microsoft.Authorization/policyDefinitions/" |
 Select-Object -ExpandProperty Name
 
 $compare = Compare-Object -ReferenceObject ($Cloud ?? @()) -DifferenceObject ($Source ?? @()) -IncludeEqual

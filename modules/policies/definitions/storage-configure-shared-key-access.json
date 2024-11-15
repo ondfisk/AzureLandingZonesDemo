@@ -1,9 +1,9 @@
 {
   "properties": {
-    "displayName": "Configure Storage Accounts to use the latest TLS version",
+    "displayName": "Configure your Storage account shared key access to be disallowed",
     "policyType": "Custom",
     "mode": "Indexed",
-    "description": "Configure Storage Accounts to use the latest TLS version",
+    "description": "Configure your Storage account shared key access to be disallowed.",
     "metadata": {
       "version": "1.0.0",
       "category": "Storage"
@@ -13,7 +13,7 @@
         "type": "String",
         "metadata": {
           "displayName": "Effect",
-          "description": "Enable or disable the execution of the policy"
+          "description": "The effect determines what happens when the policy rule is evaluated to match"
         },
         "allowedValues": ["Modify", "Disabled"],
         "defaultValue": "Modify"
@@ -28,8 +28,8 @@
           },
           {
             "not": {
-              "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "equals": "TLS1_3"
+              "field": "Microsoft.Storage/storageAccounts/allowSharedKeyAccess",
+              "equals": "false"
             }
           }
         ]
@@ -37,15 +37,16 @@
       "then": {
         "effect": "[parameters('effect')]",
         "details": {
+          "conflictEffect": "audit",
           "roleDefinitionIds": [
             "/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab"
           ],
-          "conflictEffect": "audit",
           "operations": [
             {
+              "condition": "[greaterOrEquals(requestContext().apiVersion, '2019-04-01')]",
               "operation": "addOrReplace",
-              "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "value": "TLS1_3"
+              "field": "Microsoft.Storage/storageAccounts/allowSharedKeyAccess",
+              "value": false
             }
           ]
         }
@@ -53,5 +54,5 @@
     }
   },
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "storage-configure-minimum-tls"
+  "name": "storage-configure-shared-key-access"
 }

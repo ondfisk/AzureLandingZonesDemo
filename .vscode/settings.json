@@ -33,6 +33,7 @@
     "centralindia",
     "centralus",
     "chsh",
+    "cspm",
     "davidanson",
     "devcontainers",
     "eastasia",
@@ -40,6 +41,7 @@
     "Entra",
     "francecentral",
     "francesouth",
+    "functionapp",
     "germanynorth",
     "germanywestcentral",
     "GZRS",
@@ -84,6 +86,7 @@
     "westcentralus",
     "westeurope",
     "westindia",
-    "westus"
+    "westus",
+    "workflowapp"
   ]
 }

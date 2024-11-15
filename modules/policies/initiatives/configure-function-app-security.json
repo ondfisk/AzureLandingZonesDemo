@@ -32,6 +32,30 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/fa3a6357-c6d6-4120-8429-855577ec0063",
         "parameters": {},
         "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-configure-ftp",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-configure-ftp",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-slots-configure-ftp",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-configure-ftp",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-configure-latest-http-version",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/function-app-configure-latest-http-version",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-slots-configure-latest-http-version",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/function-app-slots-configure-latest-http-version",
+        "parameters": {},
+        "groupNames": []
       }
     ],
     "policyDefinitionGroups": []
