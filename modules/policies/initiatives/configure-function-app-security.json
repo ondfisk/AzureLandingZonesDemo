@@ -40,7 +40,7 @@
         "groupNames": []
       },
       {
-        "policyDefinitionReferenceId": "function-app-disable-ftp",
+        "policyDefinitionReferenceId": "function-app-slots-disable-ftp",
         "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-disable-ftp",
         "parameters": {},
         "groupNames": []
