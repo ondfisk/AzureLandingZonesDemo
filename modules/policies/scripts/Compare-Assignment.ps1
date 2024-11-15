@@ -33,7 +33,7 @@ $source = Get-ChildItem -Path $assignmentsFolder -Filter "*.bicep" | ForEach-Obj
 }
 
 $cloud = Get-AzPolicyAssignment -Scope "/providers/Microsoft.Management/managementGroups/$ManagementGroupId" |
-Where-Object ResourceId -Match "^/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
+Where-Object Scope -EQ "/providers/Microsoft.Management/managementGroups/$ManagementGroupId" |
 Select-Object -ExpandProperty Name
 
 $compare = Compare-Object -ReferenceObject ($cloud ?? @()) -DifferenceObject ($source ?? @()) -IncludeEqual
