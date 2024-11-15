@@ -1,9 +1,9 @@
 {
   "properties": {
-    "displayName": "Configure your Storage account shared key access to be disallowed",
+    "displayName": "Configure Storage accounts to disallow shared key access",
     "policyType": "Custom",
     "mode": "Indexed",
-    "description": "Configure your Storage account shared key access to be disallowed.",
+    "description": "Configure Storage accounts to disallow shared key access.",
     "metadata": {
       "version": "1.0.0",
       "category": "Storage"
