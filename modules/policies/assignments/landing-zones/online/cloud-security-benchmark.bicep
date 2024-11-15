@@ -63,6 +63,21 @@ module Cloud_Security_Benchmark '../../../../shared/policy-assignment.bicep' = {
       privateEndpointShouldBeEnabledForPostgresqlServersMonitoringEffect: {
         value: 'Disabled'
       }
+      publicNetworkAccessOnAzureSQLDatabaseShouldBeDisabledMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForCognitiveServicesAccountsMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForMariaDbServersMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForMySqlServersMonitoringEffect: {
+        value: 'Disabled'
+      }
+      publicNetworkAccessShouldBeDisabledForPostgreSqlServersMonitoringEffect: {
+        value: 'Disabled'
+      }
       storageAccountShouldUseAPrivateLinkConnectionMonitoringEffect: {
         value: 'Disabled'
       }
@@ -70,5 +85,29 @@ module Cloud_Security_Benchmark '../../../../shared/policy-assignment.bicep' = {
         value: 'Disabled'
       }
     }
+  }
+}
+
+module Cloud_Security_Benchmark_Exemption '../../../../shared/policy-exemption.bicep' = {
+  name: 'cloud-security-benchmark-exemption'
+  dependsOn: [
+    Cloud_Security_Benchmark
+  ]
+  params: {
+    displayName: 'Exemption for cloud security benchmark'
+    description: 'We allow public network access and do not enforce the use of private link as all services will have Entra ID authentication and TLS encryption enforced instead.'
+    exemptionCategory: 'Mitigated'
+    policyExemptionName: 'cloud-security-benchmark-exemption'
+    policyAssignmentName: 'cloud-security-benchmark'
+    policyDefinitionReferenceIds: [
+      'azureSQLManagedInstancesShouldDisablePublicNetworkAccess'
+      'azureCosmosDBShouldDisablePublicNetworkAccess'
+      'aPIManagementServiceShouldDisableServiceConfigurationEndpoints'
+      'azureDatabricksWorkspacesShouldDisablePublicNetworkAccess'
+      'azureMachineLearningWorkspacesShouldDisablePublicNetworkAccess'
+      'cosmosDBAaccountsShouldUsePrivateLink'
+      'azureAIServicesResourcesShouldUseAzurePrivateLinkMonitoring'
+      'azureDatabricksWorkspacesShouldUsePrivateLink'
+    ]
   }
 }

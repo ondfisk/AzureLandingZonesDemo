@@ -10,6 +10,12 @@ The conceptual architecture is greatly simplified compared to the official one, 
 
 We do not want to manage network from a centralized perspective. All applications will be deployed as islands with no inter-network connectivity.
 
+We adopt a [Zero Trust](https://learn.microsoft.com/en-us/security/zero-trust/zero-trust-overview) approach where identity and encryption trumps and often replaced _Network Security_.
+
+We do not require nor encourage the use of [Azure Private Link](https://azure.microsoft.com/en-gb/products/private-link/).
+
+We allow most services to have _Public Network Access_: _Enabled_ because we rely on enforcing _Entra ID_ authentication and TLS encryption.
+
 ## Online Landing Zones
 
 These are the most important landing zones - all _newer_ applications should be deployed here - even if data resides on-premises.
