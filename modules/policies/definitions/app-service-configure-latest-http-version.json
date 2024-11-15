@@ -5,10 +5,9 @@
     "mode": "Indexed",
     "description": "Configure App Service apps to use latest 'HTTP Version'.",
     "metadata": {
-      "version": "1.1.0",
+      "version": "1.0.0",
       "category": "App Service"
     },
-    "version": "1.1.0",
     "parameters": {
       "effect": {
         "type": "String",
@@ -16,10 +15,7 @@
           "displayName": "Effect",
           "description": "Enable or disable the execution of the policy"
         },
-        "allowedValues": [
-          "DeployIfNotExists",
-          "Disabled"
-        ],
+        "allowedValues": ["DeployIfNotExists", "Disabled"],
         "defaultValue": "DeployIfNotExists"
       }
     },

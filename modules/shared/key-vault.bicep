@@ -1,5 +1,8 @@
 param location string = resourceGroup().location
 param keyVaultName string
+param enabledForDeployment bool = false
+param enabledForDiskEncryption bool = false
+param enabledForTemplateDeployment bool = false
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   name: keyVaultName
@@ -17,6 +20,13 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
       virtualNetworkRules: []
     }
     accessPolicies: []
+    enabledForDeployment: enabledForDeployment
+    enabledForDiskEncryption: enabledForDiskEncryption
+    enabledForTemplateDeployment: enabledForTemplateDeployment
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 90
+    enableRbacAuthorization: true
+    enablePurgeProtection: true
     publicNetworkAccess: 'Enabled'
   }
 }
