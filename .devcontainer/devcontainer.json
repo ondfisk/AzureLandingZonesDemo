@@ -1,0 +1,36 @@
+{
+  "name": "Azure Landing Zones",
+  "image": "mcr.microsoft.com/devcontainers/base:dev-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2.5.2": {
+      "installZsh": "true",
+      "username": "vscode",
+      "upgradePackages": "false",
+      "nonFreePackages": "true"
+    },
+    "ghcr.io/devcontainers/features/azure-cli:1.2.5": {
+      "installBicep": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/powershell:1.5.0": {
+      "modules": "Az,Microsoft.Graph"
+    }
+  },
+  "postCreateCommand": "sudo chsh vscode -s \"$(which pwsh)\"",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "pwsh"
+      },
+      "extensions": [
+        "davidanson.vscode-markdownlint",
+        "github.vscode-github-actions",
+        "ms-azuretools.vscode-bicep",
+        "ms-vscode.powershell",
+        "azurepolicy.azurepolicyextension",
+        "streetsidesoftware.code-spell-checker",
+        "redhat.vscode-yaml"
+      ]
+    }
+  }
+}

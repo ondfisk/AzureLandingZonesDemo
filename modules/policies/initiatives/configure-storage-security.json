@@ -16,7 +16,7 @@
         "groupNames": []
       },
       {
-        "policyDefinitionReferenceId": "ConfigureStorageAccountsToUseTheLatestTlsVersion",
+        "policyDefinitionReferenceId": "storage-configure-minimum-tls",
         "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/storage-configure-minimum-tls",
         "parameters": {},
         "groupNames": []

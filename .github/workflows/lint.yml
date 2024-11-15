@@ -5,9 +5,11 @@ name: Lint
   push:
     branches:
       - main
+
   pull_request:
     branches:
       - main
+
   workflow_dispatch:
 
 permissions:
@@ -19,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
+      contents: read
       statuses: write
 
     steps:

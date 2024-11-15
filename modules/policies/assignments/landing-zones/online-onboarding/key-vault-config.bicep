@@ -3,19 +3,19 @@ targetScope = 'managementGroup'
 param location string = deployment().location
 param policyDefinitionManagementGroupId string
 
-module VNET_Deny_Peering '../../../../shared/policy-assignment.bicep' = {
-  name: 'vnet-deny-peering-assignment'
+module Key_Vault_Config '../../../../shared/policy-assignment.bicep' = {
+  name: 'key-vault-config-assignment'
   params: {
     location: location
-    policyAssignmentName: 'vnet-deny-peering'
+    policyAssignmentName: 'key-vault-config'
     policyDefinitionId: managementGroupResourceId(
       policyDefinitionManagementGroupId,
       'Microsoft.Authorization/policyDefinitions',
-      'vnet-deny-peering'
+      'key-vault-configure-rbac-authorization'
     )
     parameters: {
-      effect: {
-        value: 'Audit'
+      effectType: {
+        value: 'AuditIfNotExists'
       }
     }
   }
