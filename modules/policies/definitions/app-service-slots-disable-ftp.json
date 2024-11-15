@@ -1,7 +1,7 @@
 {
   "properties": {
     "displayName": "Configure App Service slots to disable FTP",
-    "policyType": "BuiltIn",
+    "policyType": "Custom",
     "mode": "Indexed",
     "description": "Configure App Service slots to disable FTP.",
     "metadata": {
