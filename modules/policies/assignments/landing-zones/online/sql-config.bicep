@@ -15,7 +15,7 @@ module SQL_Config '../../../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policySetDefinitions',
       'configure-sql-security'
     )
-    userAssignedIdentity: managedIdentityId
+    managedIdentityId: managedIdentityId
     parameters: {
       logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId

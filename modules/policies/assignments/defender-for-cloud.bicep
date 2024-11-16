@@ -13,7 +13,7 @@ module Defender_For_Cloud '../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policySetDefinitions',
       'configure-defender-for-cloud'
     )
-    userAssignedIdentity: managedIdentityId
+    managedIdentityId: managedIdentityId
     parameters: {
       logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId

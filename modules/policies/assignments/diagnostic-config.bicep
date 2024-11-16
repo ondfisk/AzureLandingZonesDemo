@@ -13,7 +13,7 @@ module Diagnostic_Config '../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policySetDefinitions',
       'configure-diagnostic-settings'
     )
-    userAssignedIdentity: managedIdentityId
+    managedIdentityId: managedIdentityId
     parameters: {
       logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId

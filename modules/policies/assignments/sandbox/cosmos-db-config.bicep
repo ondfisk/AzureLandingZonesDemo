@@ -2,6 +2,7 @@ targetScope = 'managementGroup'
 
 param location string = deployment().location
 param policyDefinitionManagementGroupId string
+param logAnalyticsWorkspaceId string
 param managedIdentityId string
 
 module Cosmos_DB_Config '../../../shared/policy-assignment.bicep' = {
@@ -14,7 +15,11 @@ module Cosmos_DB_Config '../../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policySetDefinitions',
       'configure-cosmos-db-security'
     )
-    userAssignedIdentity: managedIdentityId
-    parameters: {}
+    managedIdentityId: managedIdentityId
+    parameters: {
+      logAnalyticsWorkspaceId: {
+        value: logAnalyticsWorkspaceId
+      }
+    }
   }
 }
