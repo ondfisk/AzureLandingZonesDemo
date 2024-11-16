@@ -42,11 +42,11 @@
         "policyDefinitionReferenceId": "configure-diagnostic-settings-for-sql-databases-to-log-analytics-workspace",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b79fa14e-238a-4c2d-b376-442ce508fc84",
         "parameters": {
+          "diagnosticsSettingNameToUse": {
+            "value": "set_by_policy_log_analytics"
+          },
           "logAnalytics": {
             "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "diagnosticSettingNameToUse": {
-            "value": "set_by_policy_log_analytics"
           }
         },
         "groupNames": []

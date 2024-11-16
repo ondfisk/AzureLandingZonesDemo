@@ -3,7 +3,7 @@ targetScope = 'managementGroup'
 param location string = deployment().location
 
 module Log_Analytics_Deny '../../../shared/policy-assignment.bicep' = {
-  name: 'log-analytics-deny'
+  name: 'log-analytics-deny-assignment'
   params: {
     location: location
     policyAssignmentName: 'log-analytics-deny'
