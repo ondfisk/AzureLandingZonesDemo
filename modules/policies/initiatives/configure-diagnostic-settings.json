@@ -13,6 +13,12 @@
         "metadata": {
           "strongType": "Microsoft.OperationalInsights/workspaces"
         }
+      },
+      "defenderForCloudExportResourceGroupName": {
+        "type": "String"
+      },
+      "defenderForCloudExportResourceGroupLocation": {
+        "type": "String"
       }
     },
     "policyDefinitions": [
@@ -41,6 +47,22 @@
           },
           "diagnosticSettingNameToUse": {
             "value": "set_by_policy_log_analytics"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "defender-for-cloud-export",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
+        "parameters": {
+          "resourceGroupName": {
+            "value": "[parameters('defenderForCloudExportResourceGroupName')]"
+          },
+          "resourceGroupLocation": {
+            "value": "[parameters('defenderForCloudExportResourceGroupLocation')]"
+          },
+          "workspaceResourceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           }
         },
         "groupNames": []

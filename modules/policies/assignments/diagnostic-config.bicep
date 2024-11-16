@@ -18,6 +18,12 @@ module Diagnostic_Config '../../shared/policy-assignment.bicep' = {
       logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId
       }
+      defenderForCloudExportResourceGroupName: {
+        value: 'Management'
+      }
+      defenderForCloudExportResourceGroupLocation: {
+        value: location
+      }
     }
   }
 }
