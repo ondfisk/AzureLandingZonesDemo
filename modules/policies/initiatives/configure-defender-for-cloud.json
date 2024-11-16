@@ -8,16 +8,16 @@
       "category": "Security Center"
     },
     "parameters": {
-      "logAnalytics": {
+      "logAnalyticsWorkspaceId": {
         "type": "String",
         "metadata": {
           "strongType": "Microsoft.OperationalInsights/workspaces"
         }
       },
-      "ascExportResourceGroupName": {
+      "defenderForCloudExportResourceGroupName": {
         "type": "String"
       },
-      "ascExportResourceGroupLocation": {
+      "defenderForCloudExportResourceGroupLocation": {
         "type": "String"
       }
     },
@@ -107,13 +107,13 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
         "parameters": {
           "resourceGroupName": {
-            "value": "[parameters('ascExportResourceGroupName')]"
+            "value": "[parameters('defenderForCloudExportResourceGroupName')]"
           },
           "resourceGroupLocation": {
-            "value": "[parameters('ascExportResourceGroupLocation')]"
+            "value": "[parameters('defenderForCloudExportResourceGroupLocation')]"
           },
           "workspaceResourceId": {
-            "value": "[parameters('logAnalytics')]"
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           }
         },
         "groupNames": []

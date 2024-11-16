@@ -8,7 +8,7 @@
       "category": "SQL"
     },
     "parameters": {
-      "logAnalytics": {
+      "logAnalyticsWorkspaceId": {
         "type": "String",
         "metadata": {
           "strongType": "Microsoft.OperationalInsights/workspaces"
@@ -21,7 +21,7 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb",
         "parameters": {
           "logAnalyticsWorkspaceId": {
-            "value": "[parameters('logAnalytics')]"
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           }
         },
         "groupNames": []

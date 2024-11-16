@@ -15,13 +15,13 @@ module Defender_For_Cloud '../../shared/policy-assignment.bicep' = {
     )
     userAssignedIdentity: managedIdentityId
     parameters: {
-      logAnalytics: {
+      logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId
       }
-      ascExportResourceGroupName: {
+      defenderForCloudExportResourceGroupName: {
         value: 'Management'
       }
-      ascExportResourceGroupLocation: {
+      defenderForCloudExportResourceGroupLocation: {
         value: location
       }
     }

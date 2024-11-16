@@ -8,7 +8,7 @@
       "category": "Monitoring"
     },
     "parameters": {
-      "logAnalytics": {
+      "logAnalyticsWorkspaceId": {
         "type": "String",
         "metadata": {
           "strongType": "Microsoft.OperationalInsights/workspaces"
@@ -21,7 +21,7 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/bef3f64c-5290-43b7-85b0-9b254eef4c47",
         "parameters": {
           "logAnalytics": {
-            "value": "[parameters('logAnalytics')]"
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           },
           "profileName": {
             "value": "set_by_policy_log_analytics"
@@ -37,9 +37,9 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b79fa14e-238a-4c2d-b376-442ce508fc84",
         "parameters": {
           "logAnalytics": {
-            "value": "[parameters('logAnalytics')]"
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           },
-          "profileName": {
+          "diagnosticSettingNameToUse": {
             "value": "set_by_policy_log_analytics"
           }
         },

@@ -7,14 +7,21 @@
       "version": "1.0.0",
       "category": "SQL"
     },
-    "parameters": {},
+    "parameters": {
+      "logAnalyticsWorkspaceId": {
+        "type": "String",
+        "metadata": {
+          "strongType": "Microsoft.OperationalInsights/workspaces"
+        }
+      }
+    },
     "policyDefinitions": [
       {
         "policyDefinitionReferenceId": "configure-sql-servers-to-have-auditing-enabled-to-log-analytics-workspace",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb",
         "parameters": {
           "logAnalyticsWorkspaceId": {
-            "value": "[parameters('logAnalytics')]"
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           }
         },
         "groupNames": []

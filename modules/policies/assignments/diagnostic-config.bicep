@@ -15,7 +15,7 @@ module Diagnostic_Config '../../shared/policy-assignment.bicep' = {
     )
     userAssignedIdentity: managedIdentityId
     parameters: {
-      logAnalytics: {
+      logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId
       }
     }
