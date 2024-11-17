@@ -7,7 +7,9 @@ param (
 )
 
 Get-AzPolicyState -ManagementGroupName $ManagementGroupId |
-Where-Object { $PSItem.ComplianceState -eq "NonCompliant" -and $PSItem.PolicyDefinitionAction -in "DeployIfNotExists", "Modify" } |
+Where-Object PolicyAssignmentId -Match "/providers/Microsoft.Management/managementGroups/$ManagementGroupId/" |
+Where-Object ComplianceState -Match "NonCompliant" |
+Where-Object PolicyDefinitionAction -In "DeployIfNotExists", "Modify" |
 Select-Object PolicyAssignmentId, PolicyDefinitionReferenceId -Unique |
 ForEach-Object {
     $policyAssignmentId = $PSItem.PolicyAssignmentId

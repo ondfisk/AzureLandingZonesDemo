@@ -42,7 +42,7 @@ jobs:
       name: Canary
     strategy:
       matrix:
-        assignment:
+        scopes:
           - managementGroupId: lz-canary
             folder: .
           - managementGroupId: lz-canary-platform
@@ -67,21 +67,21 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
-            $folder = "${{ matrix.assignment.folder }}"
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
       - name: Compare exemptions
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
-            $folder = "${{ matrix.assignment.folder }}"
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
             ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
       - name: Build Template
         run: |
-          $folder = "${{ matrix.assignment.folder }}"
+          $folder = "${{ matrix.scopes.folder }}"
           $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
           $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
           $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
@@ -92,18 +92,18 @@ jobs:
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
           region: ${{ vars.LOCATION }}
-          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
           region: ${{ vars.LOCATION }}
-          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2.0.0
@@ -111,9 +111,9 @@ jobs:
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
           region: ${{ vars.LOCATION }}
-          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
 
   prod:
     name: Production
@@ -124,7 +124,7 @@ jobs:
       name: Production
     strategy:
       matrix:
-        assignment:
+        scopes:
           - managementGroupId: lz
             folder: .
           - managementGroupId: lz-platform
@@ -149,8 +149,8 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
-            $folder = "${{ matrix.assignment.folder }}"
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
@@ -158,14 +158,14 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.assignment.managementGroupId }}"
-            $folder = "${{ matrix.assignment.folder }}"
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
             ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Build Template
         run: |
-          $folder = "${{ matrix.assignment.folder }}"
+          $folder = "${{ matrix.scopes.folder }}"
           $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
           $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
           $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
@@ -176,18 +176,18 @@ jobs:
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
           region: ${{ vars.LOCATION }}
-          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
           region: ${{ vars.LOCATION }}
-          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
         uses: azure/arm-deploy@v2.0.0
@@ -195,6 +195,6 @@ jobs:
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
-          managementGroupId: ${{ matrix.assignment.managementGroupId }}
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
           region: ${{ vars.LOCATION }}
-          template: modules/policies/assignments/${{ matrix.assignment.folder }}/main.bicep
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep

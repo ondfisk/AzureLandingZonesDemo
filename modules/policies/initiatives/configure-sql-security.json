@@ -7,25 +7,8 @@
       "version": "1.0.0",
       "category": "SQL"
     },
-    "parameters": {
-      "logAnalyticsWorkspaceId": {
-        "type": "String",
-        "metadata": {
-          "strongType": "Microsoft.OperationalInsights/workspaces"
-        }
-      }
-    },
+    "parameters": {},
     "policyDefinitions": [
-      {
-        "policyDefinitionReferenceId": "configure-sql-servers-to-have-auditing-enabled-to-log-analytics-workspace",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb",
-        "parameters": {
-          "logAnalyticsWorkspaceId": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          }
-        },
-        "groupNames": []
-      },
       {
         "policyDefinitionReferenceId": "configure-advanced-threat-protection-to-be-enabled-on-azure-database-for-postgresql-servers",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/db048e65-913c-49f9-bb5f-1084184671d3",
