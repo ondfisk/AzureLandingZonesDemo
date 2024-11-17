@@ -52,6 +52,16 @@
         "groupNames": []
       },
       {
+        "policyDefinitionReferenceId": "configure-sql-servers-to-have-auditing-enabled-to-log-analytics-workspace",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb",
+        "parameters": {
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "groupNames": []
+      },
+      {
         "policyDefinitionReferenceId": "defender-for-cloud-export",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
         "parameters": {
