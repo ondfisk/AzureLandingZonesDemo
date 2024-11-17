@@ -14,7 +14,7 @@ module Key_Vault_Config '../../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policySetDefinitions',
       'configure-key-vault-security'
     )
-    userAssignedIdentity: managedIdentityId
+    managedIdentityId: managedIdentityId
     parameters: {}
   }
 }

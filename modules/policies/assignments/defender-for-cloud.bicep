@@ -1,7 +1,6 @@
 targetScope = 'managementGroup'
 
 param location string = deployment().location
-param logAnalyticsWorkspaceId string
 param managedIdentityId string
 
 module Defender_For_Cloud '../../shared/policy-assignment.bicep' = {
@@ -9,21 +8,11 @@ module Defender_For_Cloud '../../shared/policy-assignment.bicep' = {
   params: {
     location: location
     policyAssignmentName: 'defender-for-cloud'
-    policyDefinitionId: managementGroupResourceId(
+    policyDefinitionId: tenantResourceId(
       'Microsoft.Authorization/policySetDefinitions',
-      'configure-defender-for-cloud'
+      'f08c57cd-dbd6-49a4-a85e-9ae77ac959b0'
     )
-    userAssignedIdentity: managedIdentityId
-    parameters: {
-      logAnalytics: {
-        value: logAnalyticsWorkspaceId
-      }
-      ascExportResourceGroupName: {
-        value: 'Management'
-      }
-      ascExportResourceGroupLocation: {
-        value: location
-      }
-    }
+    managedIdentityId: managedIdentityId
+    parameters: {}
   }
 }

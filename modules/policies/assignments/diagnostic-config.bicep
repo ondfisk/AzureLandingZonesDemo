@@ -13,10 +13,16 @@ module Diagnostic_Config '../../shared/policy-assignment.bicep' = {
       'Microsoft.Authorization/policySetDefinitions',
       'configure-diagnostic-settings'
     )
-    userAssignedIdentity: managedIdentityId
+    managedIdentityId: managedIdentityId
     parameters: {
-      logAnalytics: {
+      logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId
+      }
+      defenderForCloudExportResourceGroupName: {
+        value: 'Management'
+      }
+      defenderForCloudExportResourceGroupLocation: {
+        value: location
       }
     }
   }

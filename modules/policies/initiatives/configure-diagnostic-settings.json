@@ -8,11 +8,17 @@
       "category": "Monitoring"
     },
     "parameters": {
-      "logAnalytics": {
+      "logAnalyticsWorkspaceId": {
         "type": "String",
         "metadata": {
           "strongType": "Microsoft.OperationalInsights/workspaces"
         }
+      },
+      "defenderForCloudExportResourceGroupName": {
+        "type": "String"
+      },
+      "defenderForCloudExportResourceGroupLocation": {
+        "type": "String"
       }
     },
     "policyDefinitions": [
@@ -21,13 +27,42 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/bef3f64c-5290-43b7-85b0-9b254eef4c47",
         "parameters": {
           "logAnalytics": {
-            "value": "[parameters('logAnalytics')]"
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           },
           "profileName": {
             "value": "set_by_policy_log_analytics"
           },
           "matchWorkspace": {
             "value": true
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "configure-diagnostic-settings-for-sql-databases-to-log-analytics-workspace",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b79fa14e-238a-4c2d-b376-442ce508fc84",
+        "parameters": {
+          "diagnosticsSettingNameToUse": {
+            "value": "set_by_policy_log_analytics"
+          },
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "defender-for-cloud-export",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
+        "parameters": {
+          "resourceGroupName": {
+            "value": "[parameters('defenderForCloudExportResourceGroupName')]"
+          },
+          "resourceGroupLocation": {
+            "value": "[parameters('defenderForCloudExportResourceGroupLocation')]"
+          },
+          "workspaceResourceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           }
         },
         "groupNames": []

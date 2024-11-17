@@ -2,19 +2,24 @@ targetScope = 'managementGroup'
 
 param location string = deployment().location
 param policyDefinitionManagementGroupId string
+param logAnalyticsWorkspaceId string
 param managedIdentityId string
 
-module App_Service_Config '../../../../shared/policy-assignment.bicep' = {
-  name: 'app-service-config-assignment'
+module SQL_Config '../../../../shared/policy-assignment.bicep' = {
+  name: 'sql-config-assignment'
   params: {
     location: location
-    policyAssignmentName: 'app-service-config'
+    policyAssignmentName: 'sql-config'
     policyDefinitionId: managementGroupResourceId(
       policyDefinitionManagementGroupId,
       'Microsoft.Authorization/policySetDefinitions',
-      'configure-app-service-security'
+      'configure-sql-security'
     )
     managedIdentityId: managedIdentityId
-    parameters: {}
+    parameters: {
+      logAnalyticsWorkspaceId: {
+        value: logAnalyticsWorkspaceId
+      }
+    }
   }
 }
