@@ -16,10 +16,6 @@ module Cosmos_DB_Config '../../../shared/policy-assignment.bicep' = {
       'configure-cosmos-db-security'
     )
     managedIdentityId: managedIdentityId
-    parameters: {
-      logAnalyticsWorkspaceId: {
-        value: logAnalyticsWorkspaceId
-      }
-    }
+    parameters: {}
   }
 }
