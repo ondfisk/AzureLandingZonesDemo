@@ -2,7 +2,6 @@ targetScope = 'managementGroup'
 
 param location string = deployment().location
 param policyDefinitionManagementGroupId string
-param logAnalyticsWorkspaceId string
 param managedIdentityId string
 
 module Cosmos_DB_Config '../../../shared/policy-assignment.bicep' = {
