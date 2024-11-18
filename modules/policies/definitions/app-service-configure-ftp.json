@@ -25,10 +25,6 @@
           {
             "field": "type",
             "equals": "Microsoft.Web/sites"
-          },
-          {
-            "field": "kind",
-            "notContains": "functionapp"
           }
         ]
       },
