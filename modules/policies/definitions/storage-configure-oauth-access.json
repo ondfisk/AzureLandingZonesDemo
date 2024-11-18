@@ -29,7 +29,7 @@
           {
             "not": {
               "field": "Microsoft.Storage/storageAccounts/defaultToOAuthAuthentication",
-              "equals": "true"
+              "equals": true
             }
           }
         ]
@@ -45,7 +45,7 @@
             {
               "operation": "addOrReplace",
               "field": "Microsoft.Storage/storageAccounts/defaultToOAuthAuthentication",
-              "value": "true"
+              "value": true
             }
           ]
         }

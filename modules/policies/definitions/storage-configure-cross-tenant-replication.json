@@ -29,7 +29,7 @@
           {
             "not": {
               "field": "Microsoft.Storage/storageAccounts/allowCrossTenantReplication",
-              "equals": "false"
+              "equals": false
             }
           }
         ]
@@ -45,7 +45,7 @@
             {
               "operation": "addOrReplace",
               "field": "Microsoft.Storage/storageAccounts/allowCrossTenantReplication",
-              "value": "false"
+              "value": false
             }
           ]
         }

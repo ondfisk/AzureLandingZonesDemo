@@ -25,7 +25,7 @@
           {
             "not": {
               "field": "Microsoft.KeyVault/vaults/enableSoftDelete",
-              "equals": "true"
+              "equals": true
             }
           }
         ]
@@ -36,7 +36,7 @@
           "roleDefinitionIds": [
             "/providers/Microsoft.Authorization/roleDefinitions/f25e0fa2-a7c8-4377-a976-54943a77a395"
           ],
-          "conflictEffect": "deny",
+          "conflictEffect": "audit",
           "operations": [
             {
               "operation": "addOrReplace",
