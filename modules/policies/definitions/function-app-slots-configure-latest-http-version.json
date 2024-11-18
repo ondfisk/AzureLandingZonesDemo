@@ -44,7 +44,7 @@
           "name": "web",
           "existenceCondition": {
             "field": "Microsoft.Web/sites/slots/config/web.http20Enabled",
-            "equals": "Disabled"
+            "equals": true
           },
           "roleDefinitionIds": [
             "/providers/microsoft.authorization/roleDefinitions/de139f84-1756-47ae-9be6-808fbbe84772"

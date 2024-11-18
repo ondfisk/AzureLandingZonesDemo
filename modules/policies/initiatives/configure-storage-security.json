@@ -28,18 +28,20 @@
         "groupNames": []
       },
       {
-        "policyDefinitionReferenceId": "storage-accounts-should-prevent-cross-tenant-object-replication",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/92a89a79-6c52-4a7e-a03f-61306fc49312",
-        "parameters": {
-          "effect": {
-            "value": "Deny"
-          }
-        },
+        "policyDefinitionReferenceId": "configure-storage-accounts-to-disable-cross-tenant-replication",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/storage-configure-cross-tenant-replication",
+        "parameters": {},
         "groupNames": []
       },
       {
         "policyDefinitionReferenceId": "storage-configure-shared-key-access",
         "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/storage-configure-shared-key-access",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "configure-storage-accounts-to-default-to-microsoft-entra-authorization-in-the-azure-portal",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/storage-configure-oauth-access",
         "parameters": {},
         "groupNames": []
       }

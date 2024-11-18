@@ -5,7 +5,7 @@
     "description": "Configure Cosmos DB security",
     "metadata": {
       "version": "1.0.0",
-      "category": "SQL"
+      "category": "Cosmos DB"
     },
     "parameters": {
       "logAnalyticsWorkspaceId": {

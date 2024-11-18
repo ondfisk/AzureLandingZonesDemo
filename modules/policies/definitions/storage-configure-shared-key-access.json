@@ -29,7 +29,7 @@
           {
             "not": {
               "field": "Microsoft.Storage/storageAccounts/allowSharedKeyAccess",
-              "equals": "false"
+              "equals": false
             }
           }
         ]
