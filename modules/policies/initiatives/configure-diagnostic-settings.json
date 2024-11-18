@@ -39,7 +39,7 @@
         "groupNames": []
       },
       {
-        "policyDefinitionReferenceId": "configure-diagnostic-settings-for-sql-databases-to-log-analytics-workspace",
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-sql-databases",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b79fa14e-238a-4c2d-b376-442ce508fc84",
         "parameters": {
           "diagnosticsSettingNameToUse": {
@@ -52,11 +52,37 @@
         "groupNames": []
       },
       {
-        "policyDefinitionReferenceId": "configure-sql-servers-to-have-auditing-enabled-to-log-analytics-workspace",
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-sql-servers",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb",
         "parameters": {
           "logAnalyticsWorkspaceId": {
             "value": "[parameters('logAnalyticsWorkspaceId')]"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-web-apps",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c0d8e23a-47be-4032-961f-8b0ff3957061",
+        "parameters": {
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "diagnosticSettingName": {
+            "value": "set_by_policy_log_analytics"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-function-apps",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e9c22e0d-1f03-44da-a9d5-a9754ea53dc4",
+        "parameters": {
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "diagnosticSettingName": {
+            "value": "set_by_policy_log_analytics"
           }
         },
         "groupNames": []

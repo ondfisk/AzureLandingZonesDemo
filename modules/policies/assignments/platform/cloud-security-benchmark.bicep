@@ -81,6 +81,9 @@ module Cloud_Security_Benchmark '../../../shared/policy-assignment.bicep' = {
       storageAccountShouldUseAPrivateLinkConnectionMonitoringEffect: {
         value: 'Disabled'
       }
+      storageAccountsShouldRestrictNetworkAccessUsingVirtualNetworkRulesMonitoringEffect: {
+        value: 'Disabled'
+      }
       vmImageBuilderTemplatesShouldUsePrivateLinkMonitoringEffect: {
         value: 'Disabled'
       }

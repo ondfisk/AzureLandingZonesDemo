@@ -45,6 +45,30 @@
         "parameters": {},
         "groupNames": []
       },
+            {
+        "policyDefinitionReferenceId": "function-app-https",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f01f1c7-539c-49b5-9ef4-d4ffa37d22e0",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-slot-https",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/08cf2974-d178-48a0-b26d-f6b8e555748b",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-tls",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a096cbd0-4693-432f-9374-682f485f23f3",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "function-app-slot-tls",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/fa3a6357-c6d6-4120-8429-855577ec0063",
+        "parameters": {},
+        "groupNames": []
+      },
       {
         "policyDefinitionReferenceId": "app-service-configure-ftp",
         "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-configure-ftp",

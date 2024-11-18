@@ -1,6 +1,6 @@
 <#
 .DESCRIPTION
-Remove all policies in a management group hierarchy starting from prefix
+Remove all assignments and policies in a management group hierarchy starting from prefix
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param (
