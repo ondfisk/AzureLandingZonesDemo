@@ -1,9 +1,9 @@
 {
   "properties": {
-    "displayName": "Configure Storage Accounts to use the latest TLS version",
+    "displayName": "Configure Storage Accounts to default to Microsoft Entra authorization in the Azure portal",
     "policyType": "Custom",
     "mode": "Indexed",
-    "description": "Configure Storage Accounts to use the latest TLS version.",
+    "description": "Configure Storage Accounts to default to Microsoft Entra authorization in the Azure portal.",
     "metadata": {
       "version": "1.0.0",
       "category": "Storage"
@@ -28,8 +28,8 @@
           },
           {
             "not": {
-              "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "equals": "TLS1_2"
+              "field": "Microsoft.Storage/storageAccounts/defaultToOAuthAuthentication",
+              "equals": "true"
             }
           }
         ]
@@ -44,8 +44,8 @@
           "operations": [
             {
               "operation": "addOrReplace",
-              "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "value": "TLS1_2"
+              "field": "Microsoft.Storage/storageAccounts/defaultToOAuthAuthentication",
+              "value": "true"
             }
           ]
         }
@@ -53,5 +53,5 @@
     }
   },
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "storage-configure-minimum-tls"
+  "name": "storage-configure-oauth-access"
 }

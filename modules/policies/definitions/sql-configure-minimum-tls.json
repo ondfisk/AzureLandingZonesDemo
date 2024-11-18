@@ -1,9 +1,9 @@
 {
   "properties": {
-    "displayName": "Configure Storage Accounts to use the latest TLS version",
+    "displayName": "Configure Azure SQL Servers to use the latest TLS version",
     "policyType": "Custom",
     "mode": "Indexed",
-    "description": "Configure Storage Accounts to use the latest TLS version.",
+    "description": "Configure Azure SQL Servers to use the latest TLS version.",
     "metadata": {
       "version": "1.0.0",
       "category": "Storage"
@@ -24,12 +24,12 @@
         "allOf": [
           {
             "field": "type",
-            "equals": "Microsoft.Storage/storageAccounts"
+            "equals": "Microsoft.Sql/servers"
           },
           {
             "not": {
-              "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "equals": "TLS1_2"
+              "field": "Microsoft.Sql/servers/minimalTlsVersion",
+              "equals": "1.2"
             }
           }
         ]
@@ -38,14 +38,14 @@
         "effect": "[parameters('effect')]",
         "details": {
           "roleDefinitionIds": [
-            "/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab"
+            "/providers/Microsoft.Authorization/roleDefinitions/6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437"
           ],
           "conflictEffect": "audit",
           "operations": [
             {
               "operation": "addOrReplace",
-              "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
-              "value": "TLS1_2"
+              "field": "Microsoft.Sql/servers/minimalTlsVersion",
+              "value": "1.2"
             }
           ]
         }
@@ -53,5 +53,5 @@
     }
   },
   "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "storage-configure-minimum-tls"
+  "name": "sql-configure-minimum-tls"
 }

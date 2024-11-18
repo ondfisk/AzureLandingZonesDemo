@@ -26,6 +26,12 @@
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/6134c3db-786f-471e-87bc-8f479dc890f6",
         "parameters": {},
         "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "configure-azure-sql-servers-to-use-the-latest-tls-version",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/sql-configure-minimum-tls",
+        "parameters": {},
+        "groupNames": []
       }
     ],
     "policyDefinitionGroups": []
