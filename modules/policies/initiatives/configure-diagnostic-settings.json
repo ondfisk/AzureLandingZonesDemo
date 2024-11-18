@@ -65,7 +65,7 @@
         "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-web-apps",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c0d8e23a-47be-4032-961f-8b0ff3957061",
         "parameters": {
-          "logAnalyticsWorkspaceId": {
+          "logAnalytics": {
             "value": "[parameters('logAnalyticsWorkspaceId')]"
           },
           "diagnosticSettingName": {
@@ -78,7 +78,7 @@
         "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-function-apps",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e9c22e0d-1f03-44da-a9d5-a9754ea53dc4",
         "parameters": {
-          "logAnalyticsWorkspaceId": {
+          "logAnalytics": {
             "value": "[parameters('logAnalyticsWorkspaceId')]"
           },
           "diagnosticSettingName": {

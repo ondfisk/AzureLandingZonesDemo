@@ -45,7 +45,7 @@
         "parameters": {},
         "groupNames": []
       },
-            {
+      {
         "policyDefinitionReferenceId": "function-app-https",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f01f1c7-539c-49b5-9ef4-d4ffa37d22e0",
         "parameters": {},
