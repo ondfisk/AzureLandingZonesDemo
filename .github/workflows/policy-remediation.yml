@@ -36,6 +36,7 @@ jobs:
           - managementGroupId: lz-canary-platform
           - managementGroupId: lz-canary-landing-zones-corp
           - managementGroupId: lz-canary-landing-zones-online
+          - managementGroupId: lz-canary-landing-zones-online-onboarding
           - managementGroupId: lz-canary-sandbox
     steps:
       - name: Checkout
@@ -67,6 +68,7 @@ jobs:
           - managementGroupId: lz-platform
           - managementGroupId: lz-landing-zones-corp
           - managementGroupId: lz-landing-zones-online
+          - managementGroupId: lz-landing-zones-online-onboarding
           - managementGroupId: lz-sandbox
     steps:
       - name: Checkout

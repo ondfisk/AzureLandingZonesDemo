@@ -51,6 +51,8 @@ jobs:
             folder: landing-zones/corp
           - managementGroupId: lz-canary-landing-zones-online
             folder: landing-zones/online
+          - managementGroupId: lz-canary-landing-zones-online-onboarding
+            folder: landing-zones/online-onboarding
           - managementGroupId: lz-canary-sandbox
             folder: sandbox
     steps:
@@ -133,6 +135,8 @@ jobs:
             folder: landing-zones/corp
           - managementGroupId: lz-landing-zones-online
             folder: landing-zones/online
+          - managementGroupId: lz-landing-zones-online-onboarding
+            folder: landing-zones/online-onboarding
           - managementGroupId: lz-sandbox
             folder: sandbox
     steps:
