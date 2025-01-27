@@ -155,7 +155,7 @@ resource onlineOnboarding 'Microsoft.Management/managementGroups@2023-04-01' = {
 resource onlineOnboardingSubscription 'Microsoft.Management/managementGroups/subscriptions@2023-04-01' = [
   for subscriptionId in onlineOnboardingSubscriptionIds: {
     name: subscriptionId
-    parent: online
+    parent: onlineOnboarding
   }
 ]
 
