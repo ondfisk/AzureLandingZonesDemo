@@ -8,7 +8,7 @@
       "upgradePackages": "false",
       "nonFreePackages": "true"
     },
-    "ghcr.io/devcontainers/features/azure-cli:1.2.5": {
+    "ghcr.io/devcontainers/features/azure-cli:1.2.6": {
       "installBicep": true,
       "version": "latest"
     },
