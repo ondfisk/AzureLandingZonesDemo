@@ -13,7 +13,7 @@ param skuName string
   'Hot'
   'Cool'
 ])
-param accessTier string = 'Cool'
+param accessTier string = 'Hot'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
