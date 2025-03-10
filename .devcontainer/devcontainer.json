@@ -8,7 +8,7 @@
       "upgradePackages": "false",
       "nonFreePackages": "true"
     },
-    "ghcr.io/devcontainers/features/azure-cli:1.2.6": {
+    "ghcr.io/devcontainers/features/azure-cli:1.2.5": {
       "installBicep": true,
       "version": "latest"
     },
@@ -24,6 +24,9 @@
       },
       "extensions": [
         "davidanson.vscode-markdownlint",
+        "esbenp.prettier-vscode",
+        "github.copilot",
+        "github.copilot-chat",
         "github.vscode-github-actions",
         "ms-azuretools.vscode-bicep",
         "ms-vscode.powershell",
