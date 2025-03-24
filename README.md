@@ -2,6 +2,8 @@
 
 Demonstration of various infrastructure as code and pipeline components to deploy [Azure Landing Zones](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/).
 
+The rationale behind this can be found here [A simplified Azure Landing Zones alternative](https://ondfisk.dk/a-simplified-azure-landing-zones-alternative/).
+
 ## Azure landing zone conceptual architecture
 
 ![Azure landing zone conceptual architecture](docs/azure-landing-zones.svg)
