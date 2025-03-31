@@ -94,7 +94,7 @@
           "logAnalytics": {
             "value": "[parameters('logAnalyticsWorkspaceId')]"
           },
-          "diagnosticSettingName": {
+          "profileName": {
             "value": "set_by_policy_log_analytics"
           }
         }
