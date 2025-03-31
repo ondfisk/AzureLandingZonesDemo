@@ -3,8 +3,6 @@ targetScope = 'managementGroup'
 param roleDefinitionId string
 param principalId string
 @allowed([
-  'Device'
-  'ForeignGroup'
   'Group'
   'ServicePrincipal'
   'User'

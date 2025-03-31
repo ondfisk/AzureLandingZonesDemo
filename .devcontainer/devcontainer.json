@@ -24,7 +24,11 @@
       },
       "extensions": [
         "davidanson.vscode-markdownlint",
+        "esbenp.prettier-vscode",
+        "github.copilot",
+        "github.copilot-chat",
         "github.vscode-github-actions",
+        "ms-azuretools.vscode-azureresourcegroups",
         "ms-azuretools.vscode-bicep",
         "ms-vscode.powershell",
         "azurepolicy.azurepolicyextension",

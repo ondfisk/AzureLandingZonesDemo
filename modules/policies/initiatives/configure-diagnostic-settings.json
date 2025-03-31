@@ -88,6 +88,18 @@
         "groupNames": []
       },
       {
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-event-hub-to-log-analytics-workspace",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f6e93e8-6b31-41b1-83f6-36e449a42579",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "profileName": {
+            "value": "set_by_policy_log_analytics"
+          }
+        }
+      },
+      {
         "policyDefinitionReferenceId": "defender-for-cloud-export",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
         "parameters": {
