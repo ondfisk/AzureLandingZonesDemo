@@ -2,7 +2,7 @@
   "name": "Azure Landing Zones",
   "image": "mcr.microsoft.com/devcontainers/base:dev-bookworm",
   "features": {
-    "ghcr.io/devcontainers/features/common-utils:2.5.2": {
+    "ghcr.io/devcontainers/features/common-utils:2.5.3": {
       "installZsh": "true",
       "username": "vscode",
       "upgradePackages": "false",
