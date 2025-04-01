@@ -100,6 +100,30 @@
         }
       },
       {
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-logic-apps-to-log-analytics-workspace",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b889a06c-ec72-4b03-910a-cb169ee18721",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "profileName": {
+            "value": "set_by_policy_log_analytics"
+          }
+        }
+      },
+      {
+        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-service-bus-to-log-analytics-workspace",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/04d53d87-841c-4f23-8a5b-21564380b55e",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "profileName": {
+            "value": "set_by_policy_log_analytics"
+          }
+        }
+      },
+      {
         "policyDefinitionReferenceId": "defender-for-cloud-export",
         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
         "parameters": {

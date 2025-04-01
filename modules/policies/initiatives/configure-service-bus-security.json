@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "displayName": "Configure Service Bus security",
+    "policyType": "Custom",
+    "description": "Configure Service Bus security",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Service Bus"
+    },
+    "parameters": {},
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "all-authorization-rules-except-root-manage-shared-access-key-should-be-removed-from-service-bus-namespace",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a1817ec0-a368-432a-8057-8371e17ac6ee",
+        "parameters": {
+          "effect": {
+            "value": "Deny"
+          }
+        },
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "configure-service-bus-hub-namespaces-to-disable-local-authentication",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/910711a6-8aa2-4f15-ae62-1e5b2ed3ef9e",
+        "parameters": {},
+        "groupNames": []
+      }
+    ],
+    "policyDefinitionGroups": []
+  },
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "name": "configure-service-bus-security"
+}
