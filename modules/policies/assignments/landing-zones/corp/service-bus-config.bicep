@@ -4,7 +4,7 @@ param location string = deployment().location
 param policyDefinitionManagementGroupId string
 param managedIdentityId string
 
-module App_Service_Config '../../../../shared/policy-assignment.bicep' = {
+module Service_Bus_Config '../../../../shared/policy-assignment.bicep' = {
   name: 'service-bus-config-assignment'
   params: {
     location: location
