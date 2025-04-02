@@ -71,4 +71,4 @@ Landing zones are deployed using GitHub Actions.
    docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -eVALIDATE_JSCPD=false -e FIX_YAML_PRETTIER=true -e FIX_JSON=true -eFIX_JSON_PRETTIER=true -e FIX_JSONC=true -e FIX_JSONC_PRETTIER=true -eFIX_MARKDOWN=true -e FIX_MARKDOWN_PRETTIER=true -e FIX_POWERSHELL=true -eFIX_YAML_PRETTIER=true -v .:/tmp/lint --rm ghcr.io/super-lintersuper-linter:latest
    ```
 
-1. The _Azure Policy_ extension for VS Code is referencing the deprecated _Azure Account_ extension. Ignore for now.
+1. The installed _Azure Policy_ extension for Visual Studio Code is referencing the deprecated _Azure Account_ extension. Ignore for now.
