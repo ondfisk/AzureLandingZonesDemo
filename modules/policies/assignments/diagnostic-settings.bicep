@@ -5,7 +5,7 @@ param managedIdentityId string
 param logAnalyticsWorkspaceId string
 
 module Diagnostic_Settings '../../shared/policy-assignment.bicep' = {
-  name: 'diagnostic-assignment'
+  name: 'diagnostic-settings-assignment'
   params: {
     location: location
     policyAssignmentName: 'diagnostic-settings'
