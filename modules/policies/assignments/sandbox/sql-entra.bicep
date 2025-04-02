@@ -13,7 +13,7 @@ module SQL_Entra '../../../shared/policy-assignment.bicep' = {
     )
     parameters: {
       effect: {
-        value: 'Audit'
+        value: 'Deny'
       }
     }
   }

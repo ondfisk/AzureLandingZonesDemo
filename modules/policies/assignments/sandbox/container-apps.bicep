@@ -4,15 +4,15 @@ param location string = deployment().location
 param policyDefinitionManagementGroupId string
 param managedIdentityId string
 
-module Event_Hub '../../../../shared/policy-assignment.bicep' = {
-  name: 'event-hub-assignment'
+module Container_Apps '../../../shared/policy-assignment.bicep' = {
+  name: 'container-apps-assignment'
   params: {
     location: location
-    policyAssignmentName: 'event-hub'
+    policyAssignmentName: 'container-apps'
     policyDefinitionId: managementGroupResourceId(
       policyDefinitionManagementGroupId,
       'Microsoft.Authorization/policySetDefinitions',
-      'configure-event-hub-security'
+      'configure-container-apps-security'
     )
     managedIdentityId: managedIdentityId
     parameters: {}
