@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "displayName": "Configure Container Apps security",
+    "policyType": "Custom",
+    "description": "Configure Container Apps security",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Container Apps"
+    },
+    "parameters": {},
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "...",
+        "policyDefinitionId": "...",
+        "parameters": {},
+        "groupNames": []
+      }
+    ],
+    "policyDefinitionGroups": []
+  },
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "name": "configure-container-apps-security"
+}
