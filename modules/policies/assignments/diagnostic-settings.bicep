@@ -4,19 +4,22 @@ param location string = deployment().location
 param managedIdentityId string
 param logAnalyticsWorkspaceId string
 
-module Diagnostics '../../shared/policy-assignment.bicep' = {
-  name: 'diagnostics-assignment'
+module Diagnostic_Settings '../../shared/policy-assignment.bicep' = {
+  name: 'diagnostic-assignment'
   params: {
     location: location
-    policyAssignmentName: 'diagnostics'
+    policyAssignmentName: 'diagnostic-settings'
     policyDefinitionId: managementGroupResourceId(
       'Microsoft.Authorization/policySetDefinitions',
-      'configure-diagnostics'
+      'configure-diagnostic-settings'
     )
     managedIdentityId: managedIdentityId
     parameters: {
       logAnalyticsWorkspaceId: {
         value: logAnalyticsWorkspaceId
+      }
+      categoryGroup: {
+        value: 'audit'
       }
       defenderForCloudExportResourceGroupName: {
         value: 'Management'

@@ -14,6 +14,14 @@
           "strongType": "Microsoft.OperationalInsights/workspaces"
         }
       },
+      "categoryGroup": {
+        "type": "String",
+        "allowedValues": [
+          "audit",
+          "allLogs"
+        ],
+        "defaultValue": "audit"
+      },
       "defenderForCloudExportResourceGroupName": {
         "type": "String"
       },
@@ -134,7 +142,7 @@
             "value": "set_by_policy_log_analytics"
           },
           "categoryGroup": {
-            "value": "allLogs"
+            "value": "[parameters('categoryGroup')]"
           }
         }
       },
@@ -149,7 +157,7 @@
             "value": "set_by_policy_log_analytics"
           },
           "categoryGroup": {
-            "value": "allLogs"
+            "value": "[parameters('categoryGroup')]"
           }
         }
       },
@@ -164,7 +172,7 @@
             "value": "set_by_policy_log_analytics"
           },
           "categoryGroup": {
-            "value": "allLogs"
+            "value": "[parameters('categoryGroup')]"
           }
         }
       },
