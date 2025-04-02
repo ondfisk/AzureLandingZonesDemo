@@ -16,10 +16,7 @@
       },
       "categoryGroup": {
         "type": "String",
-        "allowedValues": [
-          "audit",
-          "allLogs"
-        ],
+        "allowedValues": ["audit", "allLogs"],
         "defaultValue": "audit"
       },
       "defenderForCloudExportResourceGroupName": {
