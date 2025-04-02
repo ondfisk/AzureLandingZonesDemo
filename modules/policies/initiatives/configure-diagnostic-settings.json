@@ -14,6 +14,11 @@
           "strongType": "Microsoft.OperationalInsights/workspaces"
         }
       },
+      "categoryGroup": {
+        "type": "String",
+        "allowedValues": ["audit", "allLogs"],
+        "defaultValue": "audit"
+      },
       "defenderForCloudExportResourceGroupName": {
         "type": "String"
       },
@@ -120,6 +125,60 @@
           },
           "profileName": {
             "value": "set_by_policy_log_analytics"
+          }
+        }
+      },
+      {
+        "policyDefinitionReferenceId": "enable-logging-by-category-group-for-container-apps-environments-to-log-analytics",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/6a664864-e2b5-413e-b930-f11caa132f16",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "diagnosticSettingName": {
+            "value": "set_by_policy_log_analytics"
+          },
+          "categoryGroup": {
+            "value": "[parameters('categoryGroup')]"
+          }
+        }
+      },
+      {
+        "policyDefinitionReferenceId": "enable-logging-by-category-group-for-container-registries-to-log-analytics",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/56288eb2-4350-461d-9ece-2bb242269dce",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "diagnosticSettingName": {
+            "value": "set_by_policy_log_analytics"
+          },
+          "categoryGroup": {
+            "value": "[parameters('categoryGroup')]"
+          }
+        }
+      },
+      {
+        "policyDefinitionReferenceId": "enable-logging-by-category-group-for-app-configuration-to-log-analytics",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/4b05de63-3ad2-4f6d-b421-da21f1328f3b",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "diagnosticSettingName": {
+            "value": "set_by_policy_log_analytics"
+          },
+          "categoryGroup": {
+            "value": "[parameters('categoryGroup')]"
+          }
+        }
+      },
+      {
+        "policyDefinitionReferenceId": "configure-azure-activity-logs-to-stream-to-specified-log-analytics-workspace",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2465583e-4e78-4c15-b6be-a36cbc7c8b0f",
+        "parameters": {
+          "logAnalytics": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
           }
         }
       },

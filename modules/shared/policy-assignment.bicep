@@ -1,7 +1,7 @@
 targetScope = 'managementGroup'
 
 param location string = deployment().location
-@maxLength(24)
+// @maxLength(24)
 param policyAssignmentName string
 param policyAssignmentDisplayName string = ''
 param policyAssignmentDescription string = ''

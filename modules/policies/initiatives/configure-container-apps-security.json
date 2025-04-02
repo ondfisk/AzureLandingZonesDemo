@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "displayName": "Configure Container Apps security",
+    "policyType": "Custom",
+    "description": "Configure Container Apps security",
+    "metadata": {
+      "version": "1.0.0",
+      "category": "Container Apps"
+    },
+    "parameters": {},
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "managed-identity-should-be-enabled-for-container-apps",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b874ab2d-72dd-47f1-8cb5-4a306478a4e7",
+        "parameters": {},
+        "groupNames": []
+      },
+      {
+        "policyDefinitionReferenceId": "container-apps-should-only-be-accessible-over-https",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0e80e269-43a4-4ae9-b5bc-178126b8a5cb",
+        "parameters": {
+          "effect": {
+            "value": "Deny"
+          }
+        },
+        "groupNames": []
+      }
+    ],
+    "policyDefinitionGroups": []
+  },
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "name": "configure-container-apps-security"
+}
