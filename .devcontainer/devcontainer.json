@@ -12,7 +12,7 @@
       "installBicep": true,
       "version": "latest"
     },
-    "ghcr.io/devcontainers/features/powershell:1.5.0": {
+    "ghcr.io/devcontainers/features/powershell:1.5.1": {
       "modules": "Az,Microsoft.Graph,Pester"
     }
   },
