@@ -31,9 +31,6 @@ module userAssignedIdentity '../shared/user-assigned-identity.bicep' = {
 
 module userAssignedIdentityRoleAssignment '../shared/management-group-role-assignment.bicep' = {
   name: 'management-group-role-assignment-${uniqueString(managementGroup().id, userAssignedIdentityName)}'
-  dependsOn: [
-    userAssignedIdentity
-  ]
   params: {
     principalId: userAssignedIdentity.outputs.principalId
     principalType: 'ServicePrincipal'
