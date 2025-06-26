@@ -66,7 +66,7 @@ jobs:
 
   canary-definitions:
     name: Canary Definitions
-    if: needs.detect-changes.outputs.definitions == 'true' || github.event == 'workflow_dispatch'
+    if: needs.detect-changes.outputs.definitions == 'true' || github.event_name == 'workflow_dispatch'
     needs:
       - detect-changes
       - test
@@ -124,7 +124,7 @@ jobs:
 
   canary-initiatives:
     name: Canary Initiatives
-    if: needs.detect-changes.outputs.initiatives == 'true' || github.event == 'workflow_dispatch'
+    if: needs.detect-changes.outputs.initiatives == 'true' || github.event_name == 'workflow_dispatch'
     needs:
       - detect-changes
       - test
@@ -186,7 +186,7 @@ jobs:
   canary-assignments:
     name: Canary Assignments
     runs-on: ubuntu-latest
-    if: needs.detect-changes.outputs.assignments == 'true' || github.event == 'workflow_dispatch'
+    if: needs.detect-changes.outputs.assignments == 'true' || github.event_name == 'workflow_dispatch'
     needs:
       - detect-changes
       - test
@@ -273,7 +273,7 @@ jobs:
 
   prod-definitions:
     name: Production Definitions
-    if: needs.detect-changes.outputs.definitions == 'true' || github.event == 'workflow_dispatch'
+    if: needs.detect-changes.outputs.definitions == 'true' || github.event_name == 'workflow_dispatch'
     needs:
       - detect-changes
       - test
@@ -332,7 +332,7 @@ jobs:
 
   prod-initiatives:
     name: Production Initiatives
-    if: needs.detect-changes.outputs.initiatives == 'true' || github.event == 'workflow_dispatch'
+    if: needs.detect-changes.outputs.initiatives == 'true' || github.event_name == 'workflow_dispatch'
     needs:
       - detect-changes
       - test
@@ -395,7 +395,7 @@ jobs:
   prod-assignments:
     name: Production Assignments
     runs-on: ubuntu-latest
-    if: needs.detect-changes.outputs.assignments == 'true' || github.event == 'workflow_dispatch'
+    if: needs.detect-changes.outputs.assignments == 'true' || github.event_name == 'workflow_dispatch'
     needs:
       - detect-changes
       - test
