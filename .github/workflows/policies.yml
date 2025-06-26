@@ -26,13 +26,14 @@ permissions:
 
 jobs:
   detect-changes:
+    name: Detect Changes
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
     outputs:
-      definitions: ${{ steps.filter.outputs.definitions }}
-      initiatives: ${{ steps.filter.outputs.initiatives }}
-      assignments: ${{ steps.filter.outputs.assignments }}
+      definitions: steps.filter.outputs.definitions
+      initiatives: steps.filter.outputs.initiatives
+      assignments: steps.filter.outputs.assignments
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
