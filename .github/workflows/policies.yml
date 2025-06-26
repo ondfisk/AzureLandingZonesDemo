@@ -23,6 +23,28 @@ permissions:
   contents: read
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      definitions: ${{ steps.filter.outputs.definitions }}
+      initiatives: ${{ steps.filter.outputs.initiatives }}
+      assignments: ${{ steps.filter.outputs.assignments }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            definitions:
+              - 'modules/policies/definitions/**'
+            initiatives:
+              - 'modules/policies/initiatives/**'
+            assignments:
+              - 'modules/policies/assignments/**'
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -36,7 +58,9 @@ jobs:
 
   canary-definitions:
     name: Canary Definitions
+    if: needs.detect-changes.outputs.definitions == 'true'
     needs:
+      - detect-changes
       - test
     runs-on: ubuntu-latest
     environment:
@@ -92,7 +116,9 @@ jobs:
 
   canary-initiatives:
     name: Canary Initiatives
+    if: needs.detect-changes.outputs.initiatives == 'true'
     needs:
+      - detect-changes
       - test
       - canary-definitions
     runs-on: ubuntu-latest
@@ -152,7 +178,9 @@ jobs:
   canary-assignments:
     name: Canary Assignments
     runs-on: ubuntu-latest
+    if: needs.detect-changes.outputs.assignments == 'true'
     needs:
+      - detect-changes
       - test
       - canary-definitions
       - canary-initiatives
@@ -237,7 +265,9 @@ jobs:
 
   prod-definitions:
     name: Production Definitions
+    if: needs.detect-changes.outputs.definitions == 'true'
     needs:
+      - detect-changes
       - test
     runs-on: ubuntu-latest
     environment:
@@ -294,7 +324,9 @@ jobs:
 
   prod-initiatives:
     name: Production Initiatives
+    if: needs.detect-changes.outputs.initiatives == 'true'
     needs:
+      - detect-changes
       - test
       - prod-definitions
     runs-on: ubuntu-latest
@@ -355,7 +387,9 @@ jobs:
   prod-assignments:
     name: Production Assignments
     runs-on: ubuntu-latest
+    if: needs.detect-changes.outputs.assignments == 'true'
     needs:
+      - detect-changes
       - test
       - prod-definitions
       - prod-initiatives
