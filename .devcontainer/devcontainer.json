@@ -11,16 +11,16 @@
     "ghcr.io/devcontainers/features/azure-cli:1.2.7": {
       "installBicep": true,
       "version": "latest"
-    }//,
-    // "ghcr.io/devcontainers/features/powershell:1.5.1": {
-    //   "modules": "Az,Microsoft.Graph,Pester"
-    // }
+    },
+    "ghcr.io/devcontainers/features/powershell:1.5.1": {
+      "modules": "Az,Microsoft.Graph,Pester"
+    }
   },
   "postCreateCommand": "sudo chsh vscode -s \"$(which pwsh)\"",
   "customizations": {
     "vscode": {
       "settings": {
-        // "terminal.integrated.defaultProfile.linux": "pwsh"
+        "terminal.integrated.defaultProfile.linux": "pwsh"
       },
       "extensions": [
         "davidanson.vscode-markdownlint",
@@ -31,7 +31,6 @@
         "ms-azuretools.vscode-azureresourcegroups",
         "ms-azuretools.vscode-bicep",
         "ms-vscode.powershell",
-        // "azurepolicy.azurepolicyextension",
         "streetsidesoftware.code-spell-checker",
         "redhat.vscode-yaml"
       ]
