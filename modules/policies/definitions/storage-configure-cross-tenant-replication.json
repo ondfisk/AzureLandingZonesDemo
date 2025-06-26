@@ -13,8 +13,7 @@
         "type": "String",
         "metadata": {
           "displayName": "Effect",
-          "description": "Enable or disable the execution of the policy",
-          "dummy-value": false
+          "description": "Enable or disable the execution of the policy"
         },
         "allowedValues": ["Modify", "Disabled"],
         "defaultValue": "Modify"
