@@ -6,8 +6,7 @@
     "description": "Configure App Service apps to disable FTP.",
     "metadata": {
       "version": "1.0.0",
-      "category": "App Service",
-      "description": "pango"
+      "category": "App Service"
     },
     "parameters": {
       "effect": {
