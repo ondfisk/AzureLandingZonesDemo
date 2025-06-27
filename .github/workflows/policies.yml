@@ -1,0 +1,483 @@
+---
+name: Policies
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policies.yml
+      - modules/policies/**
+      - "!README.md"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/policies.yml
+      - modules/policies/**
+      - "!README.md"
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      definitions: ${{ steps.filter.outputs.definitions }}
+      initiatives: ${{ steps.filter.outputs.initiatives }}
+      assignments: ${{ steps.filter.outputs.assignments }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            definitions:
+              - 'modules/policies/definitions/**'
+            initiatives:
+              - 'modules/policies/initiatives/**'
+            assignments:
+              - 'modules/policies/assignments/**'
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Run Pester Tests
+        run: Invoke-Pester -CI
+        shell: pwsh
+        working-directory: modules/policies
+
+  canary-definitions:
+    name: Canary Definitions
+    if: needs.detect-changes.outputs.definitions == 'true' || github.event_name == 'workflow_dispatch'
+    needs:
+      - detect-changes
+      - test
+    runs-on: ubuntu-latest
+    environment:
+      name: Canary
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Login to Azure
+        uses: azure/login@v2.2.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare Definitions
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
+          azPSVersion: latest
+      - name: Build Template
+        run: |
+          ./modules/policies/scripts/Build-DefinitionTemplate.ps1
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: definitions-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/definitions/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: definitions-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/definitions/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2.0.0
+        if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
+        with:
+          deploymentName: definitions-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/definitions/main.bicep
+
+  canary-initiatives:
+    name: Canary Initiatives
+    if: needs.detect-changes.outputs.initiatives == 'true' || github.event_name == 'workflow_dispatch'
+    needs:
+      - detect-changes
+      - test
+      - canary-definitions
+    runs-on: ubuntu-latest
+    environment:
+      name: Canary
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Login to Azure
+        uses: azure/login@v2.2.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare Initiatives
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
+          azPSVersion: latest
+      - name: Build Template
+        run: |
+          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $stagingDirectory = "${{ runner.temp }}"
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/initiatives/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/initiatives/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2.0.0
+        if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
+        with:
+          deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/initiatives/main.bicep
+
+  canary-assignments:
+    name: Canary Assignments
+    runs-on: ubuntu-latest
+    if: needs.detect-changes.outputs.assignments == 'true' || github.event_name == 'workflow_dispatch'
+    needs:
+      - detect-changes
+      - test
+      - canary-definitions
+      - canary-initiatives
+    environment:
+      name: Canary
+    strategy:
+      matrix:
+        scopes:
+          - managementGroupId: lz-canary
+            folder: .
+          - managementGroupId: lz-canary-platform
+            folder: platform
+          - managementGroupId: lz-canary-landing-zones-corp
+            folder: landing-zones/corp
+          - managementGroupId: lz-canary-landing-zones-online
+            folder: landing-zones/online
+          - managementGroupId: lz-canary-landing-zones-online-onboarding
+            folder: landing-zones/online-onboarding
+          - managementGroupId: lz-canary-sandbox
+            folder: sandbox
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Login to Azure
+        uses: azure/login@v2.2.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare Assignments
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
+      - name: Compare Exemptions
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
+            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
+      - name: Build Template
+        run: |
+          $folder = "${{ matrix.scopes.folder }}"
+          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2.0.0
+        if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
+        with:
+          deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
+
+  prod-definitions:
+    name: Production Definitions
+    if: needs.detect-changes.outputs.definitions == 'true' || github.event_name == 'workflow_dispatch'
+    needs:
+      - detect-changes
+      - test
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Login to Azure
+        uses: azure/login@v2.2.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare Definitions
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
+          azPSVersion: latest
+          errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+      - name: Build Template
+        run: |
+          ./modules/policies/scripts/Build-DefinitionTemplate.ps1
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: definitions-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/definitions/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: definitions-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/definitions/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2.0.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          deploymentName: definitions-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/definitions/main.bicep
+
+  prod-initiatives:
+    name: Production Initiatives
+    if: needs.detect-changes.outputs.initiatives == 'true' || github.event_name == 'workflow_dispatch'
+    needs:
+      - detect-changes
+      - test
+      - prod-definitions
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Login to Azure
+        uses: azure/login@v2.2.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare Initiatives
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
+          azPSVersion: latest
+          errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+      - name: Build Template
+        run: |
+          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $stagingDirectory = "${{ runner.temp }}"
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/initiatives/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/initiatives/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2.0.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ vars.MANAGEMENT_GROUP_ID }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/initiatives/main.bicep
+
+  prod-assignments:
+    name: Production Assignments
+    runs-on: ubuntu-latest
+    if: needs.detect-changes.outputs.assignments == 'true' || github.event_name == 'workflow_dispatch'
+    needs:
+      - detect-changes
+      - test
+      - prod-definitions
+      - prod-initiatives
+    environment:
+      name: Production
+    strategy:
+      matrix:
+        scopes:
+          - managementGroupId: lz
+            folder: .
+          - managementGroupId: lz-platform
+            folder: platform
+          - managementGroupId: lz-landing-zones-corp
+            folder: landing-zones/corp
+          - managementGroupId: lz-landing-zones-online
+            folder: landing-zones/online
+          - managementGroupId: lz-landing-zones-online-onboarding
+            folder: landing-zones/online-onboarding
+          - managementGroupId: lz-sandbox
+            folder: sandbox
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Login to Azure
+        uses: azure/login@v2.2.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: true
+      - name: Compare Assignments
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
+          errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+      - name: Compare Exemptions
+        uses: azure/powershell@v2.0.0
+        with:
+          inlineScript: |
+            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
+            $folder = "${{ matrix.scopes.folder }}"
+            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+          azPSVersion: latest
+          errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+      - name: Build Template
+        run: |
+          $folder = "${{ matrix.scopes.folder }}"
+          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
+          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+        shell: pwsh
+      - name: Validate Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
+          deploymentMode: Validate
+      - name: What-if Deployment
+        uses: azure/arm-deploy@v2.0.0
+        with:
+          deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
+          additionalArguments: --what-if
+      - name: Deploy Resources
+        uses: azure/arm-deploy@v2.0.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
+          scope: managementgroup
+          managementGroupId: ${{ matrix.scopes.managementGroupId }}
+          region: ${{ vars.LOCATION }}
+          template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep

@@ -31,7 +31,6 @@
         "ms-azuretools.vscode-azureresourcegroups",
         "ms-azuretools.vscode-bicep",
         "ms-vscode.powershell",
-        "azurepolicy.azurepolicyextension",
         "streetsidesoftware.code-spell-checker",
         "redhat.vscode-yaml"
       ]
