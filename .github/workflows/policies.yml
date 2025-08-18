@@ -40,7 +40,7 @@ jobs:
       assignments: ${{ steps.filter.outputs.assignments }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Detect changes
         uses: dorny/paths-filter@v3
         id: filter
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Run Pester Tests
         run: Invoke-Pester -CI
         shell: pwsh
@@ -75,7 +75,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -134,7 +134,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -211,7 +211,7 @@ jobs:
             folder: sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -282,7 +282,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -342,7 +342,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -420,7 +420,7 @@ jobs:
             folder: sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
