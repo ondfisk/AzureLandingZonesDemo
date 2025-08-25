@@ -44,7 +44,7 @@ jobs:
           - managementGroupId: lz-canary-sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -76,7 +76,7 @@ jobs:
           - managementGroupId: lz-sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
