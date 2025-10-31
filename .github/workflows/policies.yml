@@ -97,9 +97,10 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
@@ -161,17 +162,18 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
           $managementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
           $stagingDirectory = "${{ runner.temp }}"
-          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
         shell: pwsh
         env:
-          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -325,10 +327,11 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
