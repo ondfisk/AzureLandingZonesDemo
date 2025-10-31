@@ -40,4 +40,28 @@ jobs:
         uses: super-linter/super-linter@v8.2.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FIX_BIOME_FORMAT: true
+          FIX_BIOME_LINT: true
+          FIX_GITHUB_ACTIONS_ZIZMOR: true
+          FIX_JSON_PRETTIER: true
+          FIX_JSON: true
+          FIX_JSONC_PRETTIER: true
+          FIX_JSONC: true
+          FIX_MARKDOWN_PRETTIER: true
+          FIX_MARKDOWN: true
+          FIX_NATURAL_LANGUAGE: true
+          FIX_YAML_PRETTIER: true
+          VALIDATE_GIT_COMMITLINT: false
           VALIDATE_JSCPD: false
+
+      - name: Commit and push linting fixes
+        if: github.event_name == 'pull_request' && github.ref_name != github.event.repository.default_branch
+        uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0
+        with:
+          add_options: --update
+          branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
+          commit_message: Fix linting issues
+          commit_user_email: super-linter@super-linter.dev
+          commit_user_name: super-linter
+          status_options: --untracked-files=no
+          skip_dirty_check: false
