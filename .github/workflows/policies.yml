@@ -24,15 +24,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  id-token: write
-  contents: read
+permissions: {}
 
 jobs:
   detect-changes:
     name: Detect Changes
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
     outputs:
       definitions: ${{ steps.filter.outputs.definitions }}
@@ -41,6 +40,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Detect changes
         uses: dorny/paths-filter@v3
         id: filter
@@ -56,9 +57,13 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Run Pester Tests
         run: Invoke-Pester -CI
         shell: pwsh
@@ -71,11 +76,16 @@ jobs:
       - detect-changes
       - test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Canary
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -87,9 +97,10 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
@@ -130,11 +141,16 @@ jobs:
       - test
       - canary-definitions
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Canary
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -146,15 +162,17 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
-          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
           $stagingDirectory = "${{ runner.temp }}"
-          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
         shell: pwsh
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -192,6 +210,9 @@ jobs:
       - test
       - canary-definitions
       - canary-initiatives
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Canary
     strategy:
@@ -212,6 +233,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -231,18 +254,20 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
-            $folder = "${{ matrix.scopes.folder }}"
-            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
           azPSVersion: latest
+        env:
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
-          $folder = "${{ matrix.scopes.folder }}"
-          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
-          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
-          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $env:MANAGEMENT_GROUP_ID -ManagedIdentityId $env:MANAGED_IDENTITY_ID -LogAnalyticsWorkspaceId $env:LOG_ANALYTICS_WORKSPACE_ID
         shell: pwsh
+        env:
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
+          LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -278,11 +303,16 @@ jobs:
       - detect-changes
       - test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Production
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -294,10 +324,11 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
@@ -338,11 +369,16 @@ jobs:
       - test
       - prod-definitions
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Production
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -354,16 +390,17 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
-          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-          $stagingDirectory = "${{ runner.temp }}"
-          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
         shell: pwsh
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -401,6 +438,9 @@ jobs:
       - test
       - prod-definitions
       - prod-initiatives
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Production
     strategy:
@@ -421,6 +461,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -448,12 +490,13 @@ jobs:
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Build Template
         run: |
-          $folder = "${{ matrix.scopes.folder }}"
-          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
-          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
-          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $env:MANAGEMENT_GROUP_ID -ManagedIdentityId $env:MANAGED_IDENTITY_ID -LogAnalyticsWorkspaceId $env:LOG_ANALYTICS_WORKSPACE_ID
         shell: pwsh
+        env:
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
+          LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
