@@ -1,0 +1,9 @@
+---
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        actions/*: ref-pin
+        azure/*: ref-pin
+        stefanzweifel/git-auto-commit-action: ref-pin
+        super-linter/super-linter: ref-pin
