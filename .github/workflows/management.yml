@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -86,6 +88,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:

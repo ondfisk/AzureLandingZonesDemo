@@ -27,18 +27,20 @@ jobs:
     permissions:
       contents: read
       statuses: write
-      actions: write
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5.0.0
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Super-Linter
         uses: super-linter/super-linter@v8.2.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_GIT_COMMITLINT: false
+          VALIDATE_JSCPD: false
           FIX_BIOME_FORMAT: true
           FIX_BIOME_LINT: true
           FIX_GITHUB_ACTIONS_ZIZMOR: true
@@ -49,9 +51,8 @@ jobs:
           FIX_MARKDOWN_PRETTIER: true
           FIX_MARKDOWN: true
           FIX_NATURAL_LANGUAGE: true
+          FIX_POWERSHELL: true
           FIX_YAML_PRETTIER: true
-          VALIDATE_GIT_COMMITLINT: false
-          VALIDATE_JSCPD: false
 
       - name: Commit and push linting fixes
         if: github.event_name == 'pull_request' && github.ref_name != github.event.repository.default_branch

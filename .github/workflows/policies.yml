@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Detect changes
         uses: dorny/paths-filter@v3
         id: filter
@@ -59,6 +61,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Run Pester Tests
         run: Invoke-Pester -CI
         shell: pwsh
@@ -76,6 +80,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -135,6 +141,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -151,10 +159,12 @@ jobs:
           azPSVersion: latest
       - name: Build Template
         run: |
-          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
           $stagingDirectory = "${{ runner.temp }}"
           ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
         shell: pwsh
+        env:
+          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -212,6 +222,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -238,11 +250,15 @@ jobs:
       - name: Build Template
         run: |
           $folder = "${{ matrix.scopes.folder }}"
-          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
-          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          $policyDefinitionManagementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
+          $managedIdentityId = "$env:VARS_MANAGED_IDENTITY_ID"
+          $logAnalyticsWorkspaceId = "$env:VARS_LOG_ANALYTICS_WORKSPACE_ID"
           ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
         shell: pwsh
+        env:
+          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          VARS_MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
+          VARS_LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -283,6 +299,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -343,6 +361,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -360,10 +380,12 @@ jobs:
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Build Template
         run: |
-          $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
+          $managementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
           $stagingDirectory = "${{ runner.temp }}"
           ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
         shell: pwsh
+        env:
+          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -421,6 +443,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          persist-credentials: false
       - name: Login to Azure
         uses: azure/login@v2.3.0
         with:
@@ -449,11 +473,15 @@ jobs:
       - name: Build Template
         run: |
           $folder = "${{ matrix.scopes.folder }}"
-          $policyDefinitionManagementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-          $managedIdentityId = "${{ vars.MANAGED_IDENTITY_ID }}"
-          $logAnalyticsWorkspaceId = "${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}"
+          $policyDefinitionManagementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
+          $managedIdentityId = "$env:VARS_MANAGED_IDENTITY_ID"
+          $logAnalyticsWorkspaceId = "$env:VARS_LOG_ANALYTICS_WORKSPACE_ID"
           ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
         shell: pwsh
+        env:
+          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          VARS_MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
+          VARS_LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:

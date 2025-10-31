@@ -68,7 +68,7 @@ Landing zones are deployed using GitHub Actions.
 1. To lint repository locally (from WSL) run:
 
    ```bash
-   docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -e VALIDATE_GIT_COMMITLINT=false -e VALIDATE_JSCPD=false -e FIX_YAML_PRETTIER=true -e FIX_JSON=true -e FIX_JSON_PRETTIER=true -e FIX_JSONC=true -e FIX_JSONC_PRETTIER=true -e FIX_MARKDOWN=true -e FIX_MARKDOWN_PRETTIER=true -e FIX_POWERSHELL=true -e FIX_YAML_PRETTIER=true -v .:/tmp/lint --rm ghcr.io/super-linter/super-linter:latest
+   docker run -e DEFAULT_BRANCH=main -e RUN_LOCAL=true -e VALIDATE_GIT_COMMITLINT=false -e FIX_BIOME_FORMAT=true -e FIX_BIOME_LINT=true -e FIX_GITHUB_ACTIONS_ZIZMOR=true -e FIX_JSON_PRETTIER=true -e FIX_JSON=true -e FIX_JSONC_PRETTIER=true -e FIX_JSONC=true -e FIX_MARKDOWN_PRETTIER=true -e FIX_MARKDOWN=true -e FIX_NATURAL_LANGUAGE=true -e FIX_POWERSHELL=true -e FIX_YAML_PRETTIER=true -v .:/tmp/lint --rm ghcr.io/super-linter/super-linter:latest
    ```
 
 1. The installed _Azure Policy_ extension for Visual Studio Code is referencing the deprecated _Azure Account_ extension. Ignore for now.
