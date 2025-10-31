@@ -24,15 +24,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  id-token: write
-  contents: read
+permissions: {}
 
 jobs:
   detect-changes:
     name: Detect Changes
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
     outputs:
       definitions: ${{ steps.filter.outputs.definitions }}
@@ -58,6 +57,8 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
@@ -75,6 +76,9 @@ jobs:
       - detect-changes
       - test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Canary
     steps:
@@ -136,6 +140,9 @@ jobs:
       - test
       - canary-definitions
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Canary
     steps:
@@ -202,6 +209,9 @@ jobs:
       - test
       - canary-definitions
       - canary-initiatives
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Canary
     strategy:
@@ -294,6 +304,9 @@ jobs:
       - detect-changes
       - test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Production
     steps:
@@ -356,6 +369,9 @@ jobs:
       - test
       - prod-definitions
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Production
     steps:
@@ -423,6 +439,9 @@ jobs:
       - test
       - prod-definitions
       - prod-initiatives
+    permissions:
+      contents: read
+      id-token: write
     environment:
       name: Production
     strategy:
