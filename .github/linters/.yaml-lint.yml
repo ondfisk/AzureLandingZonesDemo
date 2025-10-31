@@ -1,7 +1,7 @@
 ---
 rules:
   braces:
-    forbid: true
+    forbid: non-empty
     level: error
   brackets:
     forbid: true

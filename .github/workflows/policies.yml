@@ -168,7 +168,6 @@ jobs:
           MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
-          $managementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
           $stagingDirectory = "${{ runner.temp }}"
           ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
         shell: pwsh
@@ -255,22 +254,20 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
-            $folder = "${{ matrix.scopes.folder }}"
-            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
           azPSVersion: latest
+        env:
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
-          $folder = "${{ matrix.scopes.folder }}"
-          $policyDefinitionManagementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
-          $managedIdentityId = "$env:VARS_MANAGED_IDENTITY_ID"
-          $logAnalyticsWorkspaceId = "$env:VARS_LOG_ANALYTICS_WORKSPACE_ID"
-          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $env:MANAGEMENT_GROUP_ID -ManagedIdentityId $env:MANAGED_IDENTITY_ID -LogAnalyticsWorkspaceId $env:LOG_ANALYTICS_WORKSPACE_ID
         shell: pwsh
         env:
-          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
-          VARS_MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
-          VARS_LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
+          LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -393,18 +390,17 @@ jobs:
         uses: azure/powershell@v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ vars.MANAGEMENT_GROUP_ID }}"
-            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
-          $managementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
-          $stagingDirectory = "${{ runner.temp }}"
-          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $managementGroupId
+          ./modules/policies/scripts/Build-InitiativeTemplate.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
         shell: pwsh
         env:
-          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
@@ -494,16 +490,13 @@ jobs:
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Build Template
         run: |
-          $folder = "${{ matrix.scopes.folder }}"
-          $policyDefinitionManagementGroupId = "$env:VARS_MANAGEMENT_GROUP_ID"
-          $managedIdentityId = "$env:VARS_MANAGED_IDENTITY_ID"
-          $logAnalyticsWorkspaceId = "$env:VARS_LOG_ANALYTICS_WORKSPACE_ID"
-          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $policyDefinitionManagementGroupId -ManagedIdentityId $ManagedIdentityId -LogAnalyticsWorkspaceId $logAnalyticsWorkspaceId
+          ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $env:MANAGEMENT_GROUP_ID -ManagedIdentityId $env:MANAGED_IDENTITY_ID -LogAnalyticsWorkspaceId $env:LOG_ANALYTICS_WORKSPACE_ID
         shell: pwsh
         env:
-          VARS_MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
-          VARS_MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
-          VARS_LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
+          MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
+          LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
         uses: azure/arm-deploy@v2.0.0
         with:
