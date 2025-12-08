@@ -39,7 +39,7 @@ jobs:
       assignments: ${{ steps.filter.outputs.assignments }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Detect changes
@@ -61,7 +61,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Run Pester Tests
@@ -83,18 +83,18 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Definitions
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -106,7 +106,7 @@ jobs:
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
         shell: pwsh
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -115,7 +115,7 @@ jobs:
           template: modules/policies/definitions/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -124,7 +124,7 @@ jobs:
           template: modules/policies/definitions/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: definitions-canary-${{ github.run_id }}-${{ github.job }}
@@ -148,18 +148,18 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Initiatives
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -174,7 +174,7 @@ jobs:
         env:
           MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -183,7 +183,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -192,7 +192,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: initiative-definitions-canary-${{ github.run_id }}-${{ github.job }}
@@ -232,18 +232,18 @@ jobs:
             folder: sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Assignments
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
@@ -251,7 +251,7 @@ jobs:
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
           azPSVersion: latest
       - name: Compare Exemptions
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
@@ -269,7 +269,7 @@ jobs:
           MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
           LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -278,7 +278,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -287,7 +287,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: policy-assignments-canary-${{ github.run_id }}-${{ github.job }}
@@ -310,18 +310,18 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Definitions
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -334,7 +334,7 @@ jobs:
           ./modules/policies/scripts/Build-DefinitionTemplate.ps1
         shell: pwsh
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -343,7 +343,7 @@ jobs:
           template: modules/policies/definitions/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -352,7 +352,7 @@ jobs:
           template: modules/policies/definitions/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           deploymentName: definitions-production-${{ github.run_id }}-${{ github.job }}
@@ -376,18 +376,18 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Initiatives
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -402,7 +402,7 @@ jobs:
         env:
           MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -411,7 +411,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -420,7 +420,7 @@ jobs:
           template: modules/policies/initiatives/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           deploymentName: initiative-definitions-production-${{ github.run_id }}-${{ github.job }}
@@ -460,18 +460,18 @@ jobs:
             folder: sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Assignments
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
@@ -480,7 +480,7 @@ jobs:
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
       - name: Compare Exemptions
-        uses: azure/powershell@v2.0.0
+        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
             $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
@@ -498,7 +498,7 @@ jobs:
           MANAGED_IDENTITY_ID: ${{ vars.MANAGED_IDENTITY_ID }}
           LOG_ANALYTICS_WORKSPACE_ID: ${{ vars.LOG_ANALYTICS_WORKSPACE_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -507,7 +507,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}
           scope: managementgroup
@@ -516,7 +516,7 @@ jobs:
           template: modules/policies/assignments/${{ matrix.scopes.folder }}/main.bicep
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           deploymentName: policy-assignments-production-${{ github.run_id }}-${{ github.job }}

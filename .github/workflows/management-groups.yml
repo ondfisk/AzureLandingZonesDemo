@@ -41,17 +41,17 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -60,7 +60,7 @@ jobs:
           parameters: environments/canary/management-groups.bicepparam
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -69,7 +69,7 @@ jobs:
           parameters: environments/canary/management-groups.bicepparam
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'pull_request' }}
         with:
           deploymentName: management-groups-canary-${{ github.run_id }}-${{ github.job }}
@@ -88,17 +88,17 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
-        uses: azure/login@v2.3.0
+        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # v2.3.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - name: Validate Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -107,7 +107,7 @@ jobs:
           parameters: environments/prod/management-groups.bicepparam
           deploymentMode: Validate
       - name: What-if Deployment
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         with:
           deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
           scope: tenant
@@ -116,7 +116,7 @@ jobs:
           parameters: environments/prod/management-groups.bicepparam
           additionalArguments: --what-if
       - name: Deploy Resources
-        uses: azure/arm-deploy@v2.0.0
+        uses: azure/arm-deploy@a1361c2c2cd398621955b16ca32e01c65ea340f5 # v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           deploymentName: management-groups-production-${{ github.run_id }}-${{ github.job }}
