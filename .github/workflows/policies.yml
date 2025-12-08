@@ -21,7 +21,7 @@ name: Policies
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions: {}
@@ -246,10 +246,11 @@ jobs:
         uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
-            $folder = "${{ matrix.scopes.folder }}"
-            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
           azPSVersion: latest
+        env:
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Compare Exemptions
         uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
@@ -474,20 +475,22 @@ jobs:
         uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
-            $folder = "${{ matrix.scopes.folder }}"
-            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+            ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+        env:
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Compare Exemptions
         uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
-            $folder = "${{ matrix.scopes.folder }}"
-            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $managementGroupId -Folder $folder
+            ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
           azPSVersion: latest
           errorActionPreference: ${{ github.ref == 'refs/heads/main' && 'Stop' || 'Continue' }}
+        env:
+          FOLDER: ${{ matrix.scopes.folder }}
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Build Template
         run: |
           ./modules/policies/scripts/Build-AssignmentTemplate.ps1 -Folder $folder -PolicyDefinitionManagementGroupId $env:MANAGEMENT_GROUP_ID -ManagedIdentityId $env:MANAGED_IDENTITY_ID -LogAnalyticsWorkspaceId $env:LOG_ANALYTICS_WORKSPACE_ID

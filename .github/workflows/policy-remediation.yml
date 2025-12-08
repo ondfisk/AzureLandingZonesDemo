@@ -20,7 +20,7 @@ name: Policy Remediation
     - cron: 0 0 * * *
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions: {}
@@ -59,9 +59,10 @@ jobs:
         uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
-            ./modules/policies/scripts/Start-PolicyRemediation.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Start-PolicyRemediation.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
 
   prod:
     name: Production
@@ -96,6 +97,7 @@ jobs:
         uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
         with:
           inlineScript: |
-            $managementGroupId = "${{ matrix.scopes.managementGroupId }}"
-            ./modules/policies/scripts/Start-PolicyRemediation.ps1 -ManagementGroupId $managementGroupId
+            ./modules/policies/scripts/Start-PolicyRemediation.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
           azPSVersion: latest
+        env:
+          MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
