@@ -1,57 +1,57 @@
 {
-  "properties": {
-    "displayName": "Configure Event Hub namespaces to use the latest TLS version",
-    "policyType": "Custom",
-    "mode": "Indexed",
-    "description": "Configure Event Hub namespaces to use the latest TLS version.",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "Event Hub"
-    },
-    "parameters": {
-      "effect": {
-        "type": "String",
-        "metadata": {
-          "displayName": "Effect",
-          "description": "Enable or disable the execution of the policy"
-        },
-        "allowedValues": ["Modify", "Disabled"],
-        "defaultValue": "Modify"
-      }
-    },
-    "policyRule": {
-      "if": {
-        "allOf": [
-          {
-            "field": "type",
-            "equals": "Microsoft.EventHub/namespaces"
-          },
-          {
-            "not": {
-              "field": "Microsoft.EventHub/namespaces/minimumTlsVersion",
-              "equals": "1.2"
-            }
-          }
-        ]
-      },
-      "then": {
-        "effect": "[parameters('effect')]",
-        "details": {
-          "roleDefinitionIds": [
-            "/providers/Microsoft.Authorization/roleDefinitions/f526a384-b230-433a-b45c-95f59c4a2dec"
-          ],
-          "conflictEffect": "audit",
-          "operations": [
-            {
-              "operation": "addOrReplace",
-              "field": "Microsoft.EventHub/namespaces/minimumTlsVersion",
-              "value": "1.2"
-            }
-          ]
-        }
-      }
-    }
-  },
-  "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "event-hub-configure-minimum-tls"
+	"properties": {
+		"displayName": "Configure Event Hub namespaces to use the latest TLS version",
+		"policyType": "Custom",
+		"mode": "Indexed",
+		"description": "Configure Event Hub namespaces to use the latest TLS version.",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "Event Hub"
+		},
+		"parameters": {
+			"effect": {
+				"type": "String",
+				"metadata": {
+					"displayName": "Effect",
+					"description": "Enable or disable the execution of the policy"
+				},
+				"allowedValues": ["Modify", "Disabled"],
+				"defaultValue": "Modify"
+			}
+		},
+		"policyRule": {
+			"if": {
+				"allOf": [
+					{
+						"field": "type",
+						"equals": "Microsoft.EventHub/namespaces"
+					},
+					{
+						"not": {
+							"field": "Microsoft.EventHub/namespaces/minimumTlsVersion",
+							"equals": "1.2"
+						}
+					}
+				]
+			},
+			"then": {
+				"effect": "[parameters('effect')]",
+				"details": {
+					"roleDefinitionIds": [
+						"/providers/Microsoft.Authorization/roleDefinitions/f526a384-b230-433a-b45c-95f59c4a2dec"
+					],
+					"conflictEffect": "audit",
+					"operations": [
+						{
+							"operation": "addOrReplace",
+							"field": "Microsoft.EventHub/namespaces/minimumTlsVersion",
+							"value": "1.2"
+						}
+					]
+				}
+			}
+		}
+	},
+	"type": "Microsoft.Authorization/policyDefinitions",
+	"name": "event-hub-configure-minimum-tls"
 }

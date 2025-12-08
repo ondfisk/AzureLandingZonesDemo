@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: read          # zizmor needs to read workflow files
+      actions: read # zizmor needs to read workflow files
       security-events: write # zizmor needs to upload the results
     steps:
       - name: Checkout repository

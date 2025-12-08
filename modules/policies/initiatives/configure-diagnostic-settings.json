@@ -1,206 +1,206 @@
 {
-  "properties": {
-    "displayName": "Configure Diagnostic Settings",
-    "policyType": "Custom",
-    "description": "Configure Diagnostic Settings",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "Monitoring"
-    },
-    "parameters": {
-      "logAnalyticsWorkspaceId": {
-        "type": "String",
-        "metadata": {
-          "strongType": "Microsoft.OperationalInsights/workspaces"
-        }
-      },
-      "categoryGroup": {
-        "type": "String",
-        "allowedValues": ["audit", "allLogs"],
-        "defaultValue": "audit"
-      },
-      "defenderForCloudExportResourceGroupName": {
-        "type": "String"
-      },
-      "defenderForCloudExportResourceGroupLocation": {
-        "type": "String"
-      }
-    },
-    "policyDefinitions": [
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-key-vault",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/bef3f64c-5290-43b7-85b0-9b254eef4c47",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "profileName": {
-            "value": "set_by_policy_log_analytics"
-          },
-          "matchWorkspace": {
-            "value": true
-          }
-        },
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-sql-databases",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b79fa14e-238a-4c2d-b376-442ce508fc84",
-        "parameters": {
-          "diagnosticsSettingNameToUse": {
-            "value": "set_by_policy_log_analytics"
-          },
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          }
-        },
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-sql-servers",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb",
-        "parameters": {
-          "logAnalyticsWorkspaceId": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          }
-        },
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-web-apps",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c0d8e23a-47be-4032-961f-8b0ff3957061",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "diagnosticSettingName": {
-            "value": "set_by_policy_log_analytics"
-          }
-        },
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-function-apps",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e9c22e0d-1f03-44da-a9d5-a9754ea53dc4",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "diagnosticSettingName": {
-            "value": "set_by_policy_log_analytics"
-          }
-        },
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-event-hub-to-log-analytics-workspace",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f6e93e8-6b31-41b1-83f6-36e449a42579",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "profileName": {
-            "value": "set_by_policy_log_analytics"
-          }
-        }
-      },
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-logic-apps-to-log-analytics-workspace",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b889a06c-ec72-4b03-910a-cb169ee18721",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "profileName": {
-            "value": "set_by_policy_log_analytics"
-          }
-        }
-      },
-      {
-        "policyDefinitionReferenceId": "deploy-diagnostic-settings-for-service-bus-to-log-analytics-workspace",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/04d53d87-841c-4f23-8a5b-21564380b55e",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "profileName": {
-            "value": "set_by_policy_log_analytics"
-          }
-        }
-      },
-      {
-        "policyDefinitionReferenceId": "enable-logging-by-category-group-for-container-apps-environments-to-log-analytics",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/6a664864-e2b5-413e-b930-f11caa132f16",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "diagnosticSettingName": {
-            "value": "set_by_policy_log_analytics"
-          },
-          "categoryGroup": {
-            "value": "[parameters('categoryGroup')]"
-          }
-        }
-      },
-      {
-        "policyDefinitionReferenceId": "enable-logging-by-category-group-for-container-registries-to-log-analytics",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/56288eb2-4350-461d-9ece-2bb242269dce",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "diagnosticSettingName": {
-            "value": "set_by_policy_log_analytics"
-          },
-          "categoryGroup": {
-            "value": "[parameters('categoryGroup')]"
-          }
-        }
-      },
-      {
-        "policyDefinitionReferenceId": "enable-logging-by-category-group-for-app-configuration-to-log-analytics",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/4b05de63-3ad2-4f6d-b421-da21f1328f3b",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          },
-          "diagnosticSettingName": {
-            "value": "set_by_policy_log_analytics"
-          },
-          "categoryGroup": {
-            "value": "[parameters('categoryGroup')]"
-          }
-        }
-      },
-      {
-        "policyDefinitionReferenceId": "configure-azure-activity-logs-to-stream-to-specified-log-analytics-workspace",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2465583e-4e78-4c15-b6be-a36cbc7c8b0f",
-        "parameters": {
-          "logAnalytics": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          }
-        }
-      },
-      {
-        "policyDefinitionReferenceId": "defender-for-cloud-export",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
-        "parameters": {
-          "resourceGroupName": {
-            "value": "[parameters('defenderForCloudExportResourceGroupName')]"
-          },
-          "resourceGroupLocation": {
-            "value": "[parameters('defenderForCloudExportResourceGroupLocation')]"
-          },
-          "workspaceResourceId": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
-          }
-        },
-        "groupNames": []
-      }
-    ],
-    "policyDefinitionGroups": []
-  },
-  "type": "Microsoft.Authorization/policySetDefinitions",
-  "name": "configure-diagnostic-settings"
+	"properties": {
+		"displayName": "Configure Diagnostic Settings",
+		"policyType": "Custom",
+		"description": "Configure Diagnostic Settings",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "Monitoring"
+		},
+		"parameters": {
+			"logAnalyticsWorkspaceId": {
+				"type": "String",
+				"metadata": {
+					"strongType": "Microsoft.OperationalInsights/workspaces"
+				}
+			},
+			"categoryGroup": {
+				"type": "String",
+				"allowedValues": ["audit", "allLogs"],
+				"defaultValue": "audit"
+			},
+			"defenderForCloudExportResourceGroupName": {
+				"type": "String"
+			},
+			"defenderForCloudExportResourceGroupLocation": {
+				"type": "String"
+			}
+		},
+		"policyDefinitions": [
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-key-vault",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/bef3f64c-5290-43b7-85b0-9b254eef4c47",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"profileName": {
+						"value": "set_by_policy_log_analytics"
+					},
+					"matchWorkspace": {
+						"value": true
+					}
+				},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-sql-databases",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b79fa14e-238a-4c2d-b376-442ce508fc84",
+				"parameters": {
+					"diagnosticsSettingNameToUse": {
+						"value": "set_by_policy_log_analytics"
+					},
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					}
+				},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-sql-servers",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/25da7dfb-0666-4a15-a8f5-402127efd8bb",
+				"parameters": {
+					"logAnalyticsWorkspaceId": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					}
+				},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-web-apps",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c0d8e23a-47be-4032-961f-8b0ff3957061",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"diagnosticSettingName": {
+						"value": "set_by_policy_log_analytics"
+					}
+				},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-function-apps",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e9c22e0d-1f03-44da-a9d5-a9754ea53dc4",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"diagnosticSettingName": {
+						"value": "set_by_policy_log_analytics"
+					}
+				},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-event-hub-to-log-analytics-workspace",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f6e93e8-6b31-41b1-83f6-36e449a42579",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"profileName": {
+						"value": "set_by_policy_log_analytics"
+					}
+				}
+			},
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-logic-apps-to-log-analytics-workspace",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b889a06c-ec72-4b03-910a-cb169ee18721",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"profileName": {
+						"value": "set_by_policy_log_analytics"
+					}
+				}
+			},
+			{
+				"policyDefinitionReferenceId": "deploy-diagnostic-settings-for-service-bus-to-log-analytics-workspace",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/04d53d87-841c-4f23-8a5b-21564380b55e",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"profileName": {
+						"value": "set_by_policy_log_analytics"
+					}
+				}
+			},
+			{
+				"policyDefinitionReferenceId": "enable-logging-by-category-group-for-container-apps-environments-to-log-analytics",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/6a664864-e2b5-413e-b930-f11caa132f16",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"diagnosticSettingName": {
+						"value": "set_by_policy_log_analytics"
+					},
+					"categoryGroup": {
+						"value": "[parameters('categoryGroup')]"
+					}
+				}
+			},
+			{
+				"policyDefinitionReferenceId": "enable-logging-by-category-group-for-container-registries-to-log-analytics",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/56288eb2-4350-461d-9ece-2bb242269dce",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"diagnosticSettingName": {
+						"value": "set_by_policy_log_analytics"
+					},
+					"categoryGroup": {
+						"value": "[parameters('categoryGroup')]"
+					}
+				}
+			},
+			{
+				"policyDefinitionReferenceId": "enable-logging-by-category-group-for-app-configuration-to-log-analytics",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/4b05de63-3ad2-4f6d-b421-da21f1328f3b",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					},
+					"diagnosticSettingName": {
+						"value": "set_by_policy_log_analytics"
+					},
+					"categoryGroup": {
+						"value": "[parameters('categoryGroup')]"
+					}
+				}
+			},
+			{
+				"policyDefinitionReferenceId": "configure-azure-activity-logs-to-stream-to-specified-log-analytics-workspace",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2465583e-4e78-4c15-b6be-a36cbc7c8b0f",
+				"parameters": {
+					"logAnalytics": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					}
+				}
+			},
+			{
+				"policyDefinitionReferenceId": "defender-for-cloud-export",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ffb6f416-7bd2-4488-8828-56585fef2be9",
+				"parameters": {
+					"resourceGroupName": {
+						"value": "[parameters('defenderForCloudExportResourceGroupName')]"
+					},
+					"resourceGroupLocation": {
+						"value": "[parameters('defenderForCloudExportResourceGroupLocation')]"
+					},
+					"workspaceResourceId": {
+						"value": "[parameters('logAnalyticsWorkspaceId')]"
+					}
+				},
+				"groupNames": []
+			}
+		],
+		"policyDefinitionGroups": []
+	},
+	"type": "Microsoft.Authorization/policySetDefinitions",
+	"name": "configure-diagnostic-settings"
 }

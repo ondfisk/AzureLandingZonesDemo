@@ -1,66 +1,66 @@
 {
-  "properties": {
-    "displayName": "Configure Key Vault to enable RBAC authorization",
-    "policyType": "Custom",
-    "mode": "Indexed",
-    "description": "Configure Key Vault to enable RBAC authorization",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "Key Vault"
-    },
-    "parameters": {
-      "effectType": {
-        "type": "String",
-        "allowedValues": ["Audit", "Disabled", "Modify"],
-        "defaultValue": "Modify"
-      }
-    },
-    "policyRule": {
-      "if": {
-        "allOf": [
-          {
-            "field": "type",
-            "equals": "Microsoft.KeyVault/vaults"
-          },
-          {
-            "anyOf": [
-              {
-                "not": {
-                  "field": "Microsoft.KeyVault/vaults/enableRbacAuthorization",
-                  "equals": true
-                }
-              },
-              {
-                "value": "[empty(field('Microsoft.KeyVault/vaults/accessPolicies'))]",
-                "equals": false
-              }
-            ]
-          }
-        ]
-      },
-      "then": {
-        "effect": "[parameters('effectType')]",
-        "details": {
-          "roleDefinitionIds": [
-            "/providers/Microsoft.Authorization/roleDefinitions/f25e0fa2-a7c8-4377-a976-54943a77a395"
-          ],
-          "conflictEffect": "audit",
-          "operations": [
-            {
-              "operation": "addOrReplace",
-              "field": "Microsoft.KeyVault/vaults/enableRbacAuthorization",
-              "value": true
-            },
-            {
-              "operation": "addOrReplace",
-              "field": "Microsoft.KeyVault/vaults/accessPolicies",
-              "value": []
-            }
-          ]
-        }
-      }
-    }
-  },
-  "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "key-vault-configure-rbac-authorization"
+	"properties": {
+		"displayName": "Configure Key Vault to enable RBAC authorization",
+		"policyType": "Custom",
+		"mode": "Indexed",
+		"description": "Configure Key Vault to enable RBAC authorization",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "Key Vault"
+		},
+		"parameters": {
+			"effectType": {
+				"type": "String",
+				"allowedValues": ["Audit", "Disabled", "Modify"],
+				"defaultValue": "Modify"
+			}
+		},
+		"policyRule": {
+			"if": {
+				"allOf": [
+					{
+						"field": "type",
+						"equals": "Microsoft.KeyVault/vaults"
+					},
+					{
+						"anyOf": [
+							{
+								"not": {
+									"field": "Microsoft.KeyVault/vaults/enableRbacAuthorization",
+									"equals": true
+								}
+							},
+							{
+								"value": "[empty(field('Microsoft.KeyVault/vaults/accessPolicies'))]",
+								"equals": false
+							}
+						]
+					}
+				]
+			},
+			"then": {
+				"effect": "[parameters('effectType')]",
+				"details": {
+					"roleDefinitionIds": [
+						"/providers/Microsoft.Authorization/roleDefinitions/f25e0fa2-a7c8-4377-a976-54943a77a395"
+					],
+					"conflictEffect": "audit",
+					"operations": [
+						{
+							"operation": "addOrReplace",
+							"field": "Microsoft.KeyVault/vaults/enableRbacAuthorization",
+							"value": true
+						},
+						{
+							"operation": "addOrReplace",
+							"field": "Microsoft.KeyVault/vaults/accessPolicies",
+							"value": []
+						}
+					]
+				}
+			}
+		}
+	},
+	"type": "Microsoft.Authorization/policyDefinitions",
+	"name": "key-vault-configure-rbac-authorization"
 }

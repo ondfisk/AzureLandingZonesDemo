@@ -1,29 +1,29 @@
 {
-  "properties": {
-    "displayName": "Configure Container Registry security",
-    "policyType": "Custom",
-    "description": "Configure Container Registry security",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "Container Registry"
-    },
-    "parameters": {},
-    "policyDefinitions": [
-      {
-        "policyDefinitionReferenceId": "configure-container-registries-to-disable-anonymous-authentication",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cced2946-b08a-44fe-9fd9-e4ed8a779897",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "configure-container-registries-to-disable-local-admin-account",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/79fdfe03-ffcb-4e55-b4d0-b925b8241759",
-        "parameters": {},
-        "groupNames": []
-      }
-    ],
-    "policyDefinitionGroups": []
-  },
-  "type": "Microsoft.Authorization/policySetDefinitions",
-  "name": "configure-container-registry-security"
+	"properties": {
+		"displayName": "Configure Container Registry security",
+		"policyType": "Custom",
+		"description": "Configure Container Registry security",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "Container Registry"
+		},
+		"parameters": {},
+		"policyDefinitions": [
+			{
+				"policyDefinitionReferenceId": "configure-container-registries-to-disable-anonymous-authentication",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cced2946-b08a-44fe-9fd9-e4ed8a779897",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "configure-container-registries-to-disable-local-admin-account",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/79fdfe03-ffcb-4e55-b4d0-b925b8241759",
+				"parameters": {},
+				"groupNames": []
+			}
+		],
+		"policyDefinitionGroups": []
+	},
+	"type": "Microsoft.Authorization/policySetDefinitions",
+	"name": "configure-container-registry-security"
 }

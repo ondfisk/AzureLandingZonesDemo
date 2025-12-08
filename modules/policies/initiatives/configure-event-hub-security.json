@@ -1,39 +1,39 @@
 {
-  "properties": {
-    "displayName": "Configure Event Hub security",
-    "policyType": "Custom",
-    "description": "Configure Event Hub security",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "Event Hub"
-    },
-    "parameters": {},
-    "policyDefinitions": [
-      {
-        "policyDefinitionReferenceId": "all-authorization-rules-except-root-manage-shared-access-key-should-be-removed-from-event-hub-namespace",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b278e460-7cfc-4451-8294-cccc40a940d7",
-        "parameters": {
-          "effect": {
-            "value": "Deny"
-          }
-        },
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "configure-azure-event-hub-namespaces-to-disable-local-authentication",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/57f35901-8389-40bb-ac49-3ba4f86d889d",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "event-hub-configure-minimum-tls",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/event-hub-configure-minimum-tls",
-        "parameters": {},
-        "groupNames": []
-      }
-    ],
-    "policyDefinitionGroups": []
-  },
-  "type": "Microsoft.Authorization/policySetDefinitions",
-  "name": "configure-event-hub-security"
+	"properties": {
+		"displayName": "Configure Event Hub security",
+		"policyType": "Custom",
+		"description": "Configure Event Hub security",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "Event Hub"
+		},
+		"parameters": {},
+		"policyDefinitions": [
+			{
+				"policyDefinitionReferenceId": "all-authorization-rules-except-root-manage-shared-access-key-should-be-removed-from-event-hub-namespace",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b278e460-7cfc-4451-8294-cccc40a940d7",
+				"parameters": {
+					"effect": {
+						"value": "Deny"
+					}
+				},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "configure-azure-event-hub-namespaces-to-disable-local-authentication",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/57f35901-8389-40bb-ac49-3ba4f86d889d",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "event-hub-configure-minimum-tls",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/event-hub-configure-minimum-tls",
+				"parameters": {},
+				"groupNames": []
+			}
+		],
+		"policyDefinitionGroups": []
+	},
+	"type": "Microsoft.Authorization/policySetDefinitions",
+	"name": "configure-event-hub-security"
 }
