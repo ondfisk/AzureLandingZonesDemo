@@ -1,41 +1,41 @@
 {
-  "properties": {
-    "displayName": "Virtual networks should not have peerings",
-    "mode": "Indexed",
-    "description": "This policy denies virtual network peerings.",
-    "metadata": {
-      "version": "1.0",
-      "category": "Network"
-    },
-    "parameters": {
-      "effect": {
-        "type": "String",
-        "metadata": {
-          "displayName": "Effect",
-          "description": "Enable or disable the execution of the policy"
-        },
-        "allowedValues": ["Deny", "Audit", "Disabled"],
-        "defaultValue": "Deny"
-      }
-    },
-    "policyRule": {
-      "if": {
-        "allOf": [
-          {
-            "field": "type",
-            "equals": "Microsoft.Network/virtualNetworks"
-          },
-          {
-            "value": "[length(field('Microsoft.Network/virtualNetworks/virtualNetworkPeerings'))]",
-            "greater": 0
-          }
-        ]
-      },
-      "then": {
-        "effect": "[parameters('effect')]"
-      }
-    }
-  },
-  "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "vnet-deny-peering"
+	"properties": {
+		"displayName": "Virtual networks should not have peerings",
+		"mode": "Indexed",
+		"description": "This policy denies virtual network peerings.",
+		"metadata": {
+			"version": "1.0",
+			"category": "Network"
+		},
+		"parameters": {
+			"effect": {
+				"type": "String",
+				"metadata": {
+					"displayName": "Effect",
+					"description": "Enable or disable the execution of the policy"
+				},
+				"allowedValues": ["Deny", "Audit", "Disabled"],
+				"defaultValue": "Deny"
+			}
+		},
+		"policyRule": {
+			"if": {
+				"allOf": [
+					{
+						"field": "type",
+						"equals": "Microsoft.Network/virtualNetworks"
+					},
+					{
+						"value": "[length(field('Microsoft.Network/virtualNetworks/virtualNetworkPeerings'))]",
+						"greater": 0
+					}
+				]
+			},
+			"then": {
+				"effect": "[parameters('effect')]"
+			}
+		}
+	},
+	"type": "Microsoft.Authorization/policyDefinitions",
+	"name": "vnet-deny-peering"
 }

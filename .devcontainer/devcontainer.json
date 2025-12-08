@@ -1,36 +1,35 @@
 {
-  "name": "Azure Landing Zones",
-  "image": "mcr.microsoft.com/devcontainers/base:dev-bookworm",
-  "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "installZsh": "true",
-      "configureZshAsDefaultShell": "true",
-      "installOhMyZsh": "true",
-      "installOhMyZshConfig": "true",
-      "upgradePackages": "true",
-      "username": "vscode",
-      "nonFreePackages": "true"
-    },
-    "ghcr.io/devcontainers/features/azure-cli:1": {
-      "version": "latest",
-      "installBicep": true,
-      "bicepVersion": "latest"
-    }
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "davidanson.vscode-markdownlint",
-        "esbenp.prettier-vscode",
-        "github.copilot",
-        "github.copilot-chat",
-        "github.vscode-github-actions",
-        "ms-azuretools.vscode-azureresourcegroups",
-        "ms-azuretools.vscode-bicep",
-        "ms-vscode.powershell",
-        "streetsidesoftware.code-spell-checker",
-        "redhat.vscode-yaml"
-      ]
-    }
-  }
+	"name": "Azure Landing Zones",
+	"image": "mcr.microsoft.com/devcontainers/base:dev-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": "true",
+			"configureZshAsDefaultShell": "true",
+			"installOhMyZsh": "true",
+			"installOhMyZshConfig": "true",
+			"upgradePackages": "true",
+			"username": "vscode",
+			"nonFreePackages": "true"
+		},
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"installBicep": true
+		},
+		"ghcr.io/devcontainers/features/powershell:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"davidanson.vscode-markdownlint",
+				"esbenp.prettier-vscode",
+				"github.copilot",
+				"github.copilot-chat",
+				"github.vscode-github-actions",
+				"ms-azuretools.vscode-azureresourcegroups",
+				"ms-azuretools.vscode-bicep",
+				"ms-vscode.powershell",
+				"streetsidesoftware.code-spell-checker",
+				"redhat.vscode-yaml"
+			]
+		}
+	}
 }

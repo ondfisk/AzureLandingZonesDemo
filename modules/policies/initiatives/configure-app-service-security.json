@@ -1,101 +1,101 @@
 {
-  "properties": {
-    "displayName": "Configure App Service security",
-    "policyType": "Custom",
-    "description": "Configure App Service security",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "App Service"
-    },
-    "parameters": {},
-    "policyDefinitions": [
-      {
-        "policyDefinitionReferenceId": "app-service-https",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0f98368e-36bc-4716-8ac2-8f8067203b63",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-slot-https",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a18c77f2-3d6d-497a-9f61-849a7e8a3b79",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-tls",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ae44c1d1-0df2-4ca9-98fa-a3d3ae5b409d",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-slot-tls",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/014664e7-e348-41a3-aeb9-566e4ff6a9df",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-disable-local-authentication-for-ftp",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/572e342c-c920-4ef5-be2e-1ed3c6a51dc5",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-slots-disable-local-authentication-for-ftp",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f493116f-3b7f-4ab3-bf80-0c2af35e46c2",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "function-app-https",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f01f1c7-539c-49b5-9ef4-d4ffa37d22e0",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "function-app-slot-https",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/08cf2974-d178-48a0-b26d-f6b8e555748b",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "function-app-tls",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a096cbd0-4693-432f-9374-682f485f23f3",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "function-app-slot-tls",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/fa3a6357-c6d6-4120-8429-855577ec0063",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-configure-ftp",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-configure-ftp",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-slots-configure-ftp",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-configure-ftp",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-configure-latest-http-version",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-configure-latest-http-version",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "app-service-slots-configure-latest-http-version",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-configure-latest-http-version",
-        "parameters": {},
-        "groupNames": []
-      }
-    ],
-    "policyDefinitionGroups": []
-  },
-  "type": "Microsoft.Authorization/policySetDefinitions",
-  "name": "configure-app-service-security"
+	"properties": {
+		"displayName": "Configure App Service security",
+		"policyType": "Custom",
+		"description": "Configure App Service security",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "App Service"
+		},
+		"parameters": {},
+		"policyDefinitions": [
+			{
+				"policyDefinitionReferenceId": "app-service-https",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0f98368e-36bc-4716-8ac2-8f8067203b63",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-slot-https",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a18c77f2-3d6d-497a-9f61-849a7e8a3b79",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-tls",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ae44c1d1-0df2-4ca9-98fa-a3d3ae5b409d",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-slot-tls",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/014664e7-e348-41a3-aeb9-566e4ff6a9df",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-disable-local-authentication-for-ftp",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/572e342c-c920-4ef5-be2e-1ed3c6a51dc5",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-slots-disable-local-authentication-for-ftp",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f493116f-3b7f-4ab3-bf80-0c2af35e46c2",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "function-app-https",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1f01f1c7-539c-49b5-9ef4-d4ffa37d22e0",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "function-app-slot-https",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/08cf2974-d178-48a0-b26d-f6b8e555748b",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "function-app-tls",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a096cbd0-4693-432f-9374-682f485f23f3",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "function-app-slot-tls",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/fa3a6357-c6d6-4120-8429-855577ec0063",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-configure-ftp",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-configure-ftp",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-slots-configure-ftp",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-configure-ftp",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-configure-latest-http-version",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-configure-latest-http-version",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "app-service-slots-configure-latest-http-version",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/app-service-slots-configure-latest-http-version",
+				"parameters": {},
+				"groupNames": []
+			}
+		],
+		"policyDefinitionGroups": []
+	},
+	"type": "Microsoft.Authorization/policySetDefinitions",
+	"name": "configure-app-service-security"
 }

@@ -1,23 +1,23 @@
 {
-  "properties": {
-    "displayName": "Configure Cosmos DB security",
-    "policyType": "Custom",
-    "description": "Configure Cosmos DB security",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "Cosmos DB"
-    },
-    "parameters": {},
-    "policyDefinitions": [
-      {
-        "policyDefinitionReferenceId": "configure-cosmos-db-database-accounts-to-disable-local-authentication",
-        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/dc2d41d1-4ab1-4666-a3e1-3d51c43e0049",
-        "parameters": {},
-        "groupNames": []
-      }
-    ],
-    "policyDefinitionGroups": []
-  },
-  "type": "Microsoft.Authorization/policySetDefinitions",
-  "name": "configure-cosmos-db-security"
+	"properties": {
+		"displayName": "Configure Cosmos DB security",
+		"policyType": "Custom",
+		"description": "Configure Cosmos DB security",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "Cosmos DB"
+		},
+		"parameters": {},
+		"policyDefinitions": [
+			{
+				"policyDefinitionReferenceId": "configure-cosmos-db-database-accounts-to-disable-local-authentication",
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/dc2d41d1-4ab1-4666-a3e1-3d51c43e0049",
+				"parameters": {},
+				"groupNames": []
+			}
+		],
+		"policyDefinitionGroups": []
+	},
+	"type": "Microsoft.Authorization/policySetDefinitions",
+	"name": "configure-cosmos-db-security"
 }

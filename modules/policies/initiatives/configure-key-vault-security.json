@@ -1,35 +1,35 @@
 {
-  "properties": {
-    "displayName": "Configure Key Vault security",
-    "policyType": "Custom",
-    "description": "Configure Key Vault security",
-    "metadata": {
-      "version": "1.0.0",
-      "category": "Key Vault"
-    },
-    "parameters": {},
-    "policyDefinitions": [
-      {
-        "policyDefinitionReferenceId": "key-vault-configure-purge-protection",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/key-vault-configure-purge-protection",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "key-vault-configure-soft-delete",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/key-vault-configure-soft-delete",
-        "parameters": {},
-        "groupNames": []
-      },
-      {
-        "policyDefinitionReferenceId": "key-vault-configure-rbac-authorization",
-        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/key-vault-configure-rbac-authorization",
-        "parameters": {},
-        "groupNames": []
-      }
-    ],
-    "policyDefinitionGroups": []
-  },
-  "type": "Microsoft.Authorization/policySetDefinitions",
-  "name": "configure-key-vault-security"
+	"properties": {
+		"displayName": "Configure Key Vault security",
+		"policyType": "Custom",
+		"description": "Configure Key Vault security",
+		"metadata": {
+			"version": "1.0.0",
+			"category": "Key Vault"
+		},
+		"parameters": {},
+		"policyDefinitions": [
+			{
+				"policyDefinitionReferenceId": "key-vault-configure-purge-protection",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/key-vault-configure-purge-protection",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "key-vault-configure-soft-delete",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/key-vault-configure-soft-delete",
+				"parameters": {},
+				"groupNames": []
+			},
+			{
+				"policyDefinitionReferenceId": "key-vault-configure-rbac-authorization",
+				"policyDefinitionId": "/providers/Microsoft.Management/managementGroups/<prefix>/providers/Microsoft.Authorization/policyDefinitions/key-vault-configure-rbac-authorization",
+				"parameters": {},
+				"groupNames": []
+			}
+		],
+		"policyDefinitionGroups": []
+	},
+	"type": "Microsoft.Authorization/policySetDefinitions",
+	"name": "configure-key-vault-security"
 }
