@@ -39,7 +39,7 @@ jobs:
       assignments: ${{ steps.filter.outputs.assignments }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Detect changes
@@ -61,7 +61,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Run Pester Tests
@@ -83,7 +83,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
@@ -148,7 +148,7 @@ jobs:
       name: Canary
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
@@ -232,7 +232,7 @@ jobs:
             folder: sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
@@ -310,7 +310,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
@@ -376,7 +376,7 @@ jobs:
       name: Production
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
@@ -460,7 +460,7 @@ jobs:
             folder: sandbox
     steps:
       - name: Checkout
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - name: Login to Azure
