@@ -94,7 +94,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Definitions
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -159,7 +159,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Initiatives
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -243,7 +243,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Assignments
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
@@ -252,7 +252,7 @@ jobs:
           FOLDER: ${{ matrix.scopes.folder }}
           MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Compare Exemptions
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
@@ -322,7 +322,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Definitions
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Definition.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -388,7 +388,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Initiatives
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Initiative.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID
@@ -472,7 +472,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Compare Assignments
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Assignment.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
@@ -482,7 +482,7 @@ jobs:
           FOLDER: ${{ matrix.scopes.folder }}
           MANAGEMENT_GROUP_ID: ${{ vars.MANAGEMENT_GROUP_ID }}
       - name: Compare Exemptions
-        uses: azure/powershell@53dd145408794f7e80f97cfcca04155c85234709 # v2.0.0
+        uses: azure/powershell@f5b8adcfff1904872c7b98d4012d4914d74b1a82 # v3.0.0
         with:
           inlineScript: |
             ./modules/policies/scripts/Compare-Exemption.ps1 -ManagementGroupId $env:MANAGEMENT_GROUP_ID -Folder $env:FOLDER
