@@ -1,8 +1,8 @@
 {
-  "files": {
-    "ignore": ["docs/**/*.svg"]
-  },
-  "linter": {
-    "enabled": true
-  }
+	"files": {
+		"includes": ["**", "!docs/**/*.svg"]
+	},
+	"linter": {
+		"enabled": true
+	}
 }
