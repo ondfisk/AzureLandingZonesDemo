@@ -93,6 +93,7 @@ Landing zones are deployed using GitHub Actions.
    -e FIX_SHELL_SHFMT=true \
    -e FIX_YAML_PRETTIER=true \
    -v .:/tmp/lint \
+   --platform linux/amd64 \
    --rm ghcr.io/super-linter/super-linter:latest
    ```
 
