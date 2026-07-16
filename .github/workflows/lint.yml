@@ -25,7 +25,10 @@ jobs:
 
     permissions:
       contents: read
-      statuses: write
+      packages: read # Required for Super-Linter
+      issues: write # Required for Super-Linter
+      pull-requests: write # Required for Super-Linter
+      statuses: write # Required for Super-Linter
 
     steps:
       - name: Checkout Code
@@ -35,9 +38,10 @@ jobs:
           persist-credentials: false
 
       - name: Super-Linter
-        uses: super-linter/super-linter@9e863354e3ff62e0727d37183162c4a88873df41 # v8.6.0
+        uses: super-linter/super-linter@4ce20838b8ab83717e78138c5b3a1407148e0918 # v8.7.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SAVE_SUPER_LINTER_SUMMARY: true
           VALIDATE_BIOME_FORMAT: true
           VALIDATE_BIOME_LINT: true
           VALIDATE_CHECKOV: true
@@ -50,3 +54,8 @@ jobs:
           VALIDATE_SHELL_SHFMT: true
           VALIDATE_YAML: true
           VALIDATE_YAML_PRETTIER: true
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
+          TERM: xterm-256color
+          PYTHONIOENCODING: utf-8
+          PYTHONUNBUFFERED: 1

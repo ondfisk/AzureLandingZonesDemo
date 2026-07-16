@@ -1,0 +1,8 @@
+{
+	"files": {
+		"includes": ["**", "!docs/**/*.svg"]
+	},
+	"linter": {
+		"enabled": true
+	}
+}
