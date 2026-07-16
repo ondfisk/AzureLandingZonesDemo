@@ -1,0 +1,8 @@
+{
+  "files": {
+    "ignore": ["docs/**/*.svg"]
+  },
+  "linter": {
+    "enabled": true
+  }
+}
