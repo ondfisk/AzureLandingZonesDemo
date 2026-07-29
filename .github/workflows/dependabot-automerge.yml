@@ -6,14 +6,20 @@ name: Dependabot auto-merge
     branches:
       - main
 
-permissions:
-  contents: write
-  pull-requests: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
 
 jobs:
   dependabot:
+    name: Configure auto-merge
     runs-on: ubuntu-latest
     if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'ondfisk/AzureLandingZonesDemo'
+    permissions:
+      contents: write # Required to enable auto-merge on the PR
+      pull-requests: write # Required to enable auto-merge on the PR
     steps:
       - name: Dependabot metadata
         id: metadata
@@ -21,7 +27,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable auto-merge for Dependabot PRs
-        run: gh pr merge --auto --merge "$PR_URL"
+        run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
